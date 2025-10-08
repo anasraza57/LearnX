@@ -1,3 +1,31 @@
-langchain
-openai
-gradio
+# Core LLM framework
+langchain>=0.1.0
+openai>=1.0.0
+
+# Web interface
+gradio>=4.0.0
+
+# Configuration management
+python-dotenv>=1.0.0
+
+# Data validation
+jsonschema>=4.20.0
+pydantic>=2.0.0
+
+# RAG and embeddings (Phase 3)
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+faiss-cpu>=1.7.4
+
+# Document processing (Phase 3)
+pypdf>=3.17.0
+pypdf2>=3.0.0
+
+# Testing and development
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Code quality
+black>=23.0.0
+flake8>=6.0.0
+isort>=5.12.0

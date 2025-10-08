@@ -160,3 +160,38 @@ cython_debug/
 #.idea/
 .DS_Store
 .gradio
+
+# ===================================
+# EduGPT-PersonalisedLearning specific
+# ===================================
+
+# Sensitive data - NEVER commit (*.key, *.pem, secrets/, credentials.json)
+*.key
+*.pem
+secrets/
+credentials.json
+
+# User data and profiles (contains personal information)
+data/profiles/
+!data/profiles/.gitkeep
+!data/profiles/example_*.json
+
+# Vector database (large binary files)
+data/vectorstore/
+!data/vectorstore/.gitkeep
+
+# Logs and metrics (can be large, may contain sensitive info)
+data/logs/
+!data/logs/.gitkeep
+
+# Uploaded documents (may be copyrighted)
+data/documents/
+!data/documents/.gitkeep
+!data/documents/README.md
+
+# Temporary files
+*.tmp
+*.bak
+
+# IDE specific
+.vscode/
