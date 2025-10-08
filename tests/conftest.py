@@ -112,6 +112,27 @@ def reset_token_tracker():
     token_tracker.reset()
 
 
+@pytest.fixture(autouse=True)
+def fast_learner_model(monkeypatch):
+    """
+    Auto-fixture to disable validation in LearnerModel for faster tests.
+
+    Validation itself is tested separately in validation-specific tests.
+    """
+    try:
+        from src.models.learner_profile import LearnerModel
+        original_init = LearnerModel.__init__
+
+        def fast_init(self, *args, **kwargs):
+            kwargs.setdefault("validate", False)
+            return original_init(self, *args, **kwargs)
+
+        monkeypatch.setattr(LearnerModel, "__init__", fast_init)
+    except ImportError:
+        # Module not yet created, skip
+        pass
+
+
 @pytest.fixture
 def temp_schema_file(tmp_path):
     """

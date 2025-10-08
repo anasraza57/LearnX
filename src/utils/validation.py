@@ -21,7 +21,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 
-import jsonschema
 from jsonschema import Draft7Validator, FormatChecker, ValidationError
 
 
@@ -562,7 +561,115 @@ class SyllabusValidator(SchemaValidator):
         return acyclic, sorted_modules
 
 
-# Convenience function for quick validation
+class LearnerProfileValidator(SchemaValidator):
+    """
+    Validator for learner profile data with profile-specific checks.
+
+    Features:
+    - JSON Schema validation
+    - Assessment history validation
+    - Performance analytics validation
+    - Module progress consistency checks
+    """
+
+    def __init__(self):
+        """Initialize validator with learner profile schema."""
+        try:
+            from ..config import config
+            schema_path = config.paths.project_root / "schemas" / "learner_profile.schema.json"
+        except (ImportError, AttributeError):
+            # Fallback: search from current file location
+            project_root = Path(__file__).parent.parent.parent
+            schema_path = project_root / "schemas" / "learner_profile.schema.json"
+
+        super().__init__(schema_path)
+
+    def validate(
+        self, data: dict, auto_repair: bool = False
+    ) -> ValidationResult:
+        """
+        Validate learner profile with profile-specific checks.
+
+        Args:
+            data: Learner profile data
+            auto_repair: Whether to attempt automatic repairs
+
+        Returns:
+            ValidationResult
+        """
+        # First run base schema validation
+        result = super().validate(data, auto_repair=auto_repair)
+
+        if not result.valid and not auto_repair:
+            return result
+
+        # Additional profile-specific validations
+        data_to_validate = result.data if auto_repair else data
+        profile_errors = []
+
+        # Check 1: Completion percentage matches actual completion
+        if "progress" in data_to_validate:
+            progress = data_to_validate["progress"]
+            if "module_progress" in progress and "modules_completed" in progress:
+                total = len(progress["module_progress"])
+                completed = len(progress["modules_completed"])
+
+                if total > 0:
+                    expected_percent = round((completed / total) * 100, 2)
+                    actual_percent = progress.get("overall_completion_percent", 0)
+
+                    if abs(expected_percent - actual_percent) > 0.1:
+                        profile_errors.append(
+                            f"Completion percentage mismatch: expected {expected_percent}%, "
+                            f"got {actual_percent}%"
+                        )
+
+        # Check 2: Completed modules should be in module_progress
+        if "progress" in data_to_validate:
+            progress = data_to_validate["progress"]
+            completed = set(progress.get("modules_completed", []))
+            in_progress = set(progress.get("module_progress", {}).keys())
+
+            missing = completed - in_progress
+            if missing:
+                profile_errors.append(
+                    f"Completed modules not in module_progress: {missing}"
+                )
+
+        # Check 3: Current module should be in module_progress
+        if "progress" in data_to_validate:
+            progress = data_to_validate["progress"]
+            current = progress.get("current_module_id")
+            if current and current not in progress.get("module_progress", {}):
+                profile_errors.append(
+                    f"Current module '{current}' not found in module_progress"
+                )
+
+        # Check 4: Assessment history module IDs should be valid
+        if "performance_analytics" in data_to_validate:
+            analytics = data_to_validate["performance_analytics"]
+            history = analytics.get("assessment_history", [])
+
+            for i, assessment in enumerate(history):
+                module_id = assessment.get("module_id", "")
+                # Check module_id format
+                if not re.match(r"^m[0-9]{2}-[a-z0-9-]+$", module_id):
+                    profile_errors.append(
+                        f"Assessment {i}: invalid module_id format '{module_id}'"
+                    )
+
+        # Combine errors
+        all_errors = result.errors + profile_errors
+
+        return ValidationResult(
+            valid=len(all_errors) == 0,
+            errors=all_errors,
+            data=result.data,
+            repairs=result.repairs,
+        )
+
+
+# Convenience functions for quick validation
 def validate_syllabus(data: dict, auto_repair: bool = True) -> ValidationResult:
     """
     Quick validation of syllabus data.
@@ -583,4 +690,26 @@ def validate_syllabus(data: dict, auto_repair: bool = True) -> ValidationResult:
             print("Errors:", result.errors)
     """
     validator = SyllabusValidator()
+    return validator.validate(data, auto_repair=auto_repair)
+
+
+def validate_learner_profile(data: dict, auto_repair: bool = False) -> ValidationResult:
+    """
+    Quick validation of learner profile data.
+
+    Args:
+        data: Learner profile dictionary to validate
+        auto_repair: Whether to attempt automatic repairs
+
+    Returns:
+        ValidationResult
+
+    Example:
+        result = validate_learner_profile(profile_dict)
+        if result:
+            print("Valid profile!")
+        else:
+            print("Errors:", result.errors)
+    """
+    validator = LearnerProfileValidator()
     return validator.validate(data, auto_repair=auto_repair)
