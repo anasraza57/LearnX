@@ -176,9 +176,18 @@ data/profiles/
 !data/profiles/.gitkeep
 !data/profiles/example_*.json
 
+# Teaching sessions (Phase 3 - contains user Q&A data)
+data/sessions/
+!data/sessions/.gitkeep
+!data/sessions/example_*.json
+
 # Vector database (large binary files)
 data/vectorstore/
 !data/vectorstore/.gitkeep
+
+# Embedding cache (Phase 3 - cached embeddings)
+data/embeddings_cache/
+!data/embeddings_cache/.gitkeep
 
 # Logs and metrics (can be large, may contain sensitive info)
 data/logs/

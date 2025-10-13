@@ -684,6 +684,57 @@ class LearnerModel:
                 "by_level": {k: len(v) for k, v in categories.items()},
             }
 
+    # ==================== Phase 3 Integration ====================
+
+    def add_history_entry(
+        self,
+        session_id: str,
+        question: str,
+        answer: str,
+        module_id: Optional[str] = None,
+        confidence: float = 1.0,
+        helpful: Optional[bool] = None,
+    ) -> None:
+        """
+        Add a teaching session to learner's history.
+
+        This enables Phase 2 + Phase 3 integration, tracking which RAG
+        sessions the learner participated in.
+
+        Args:
+            session_id: Teaching session ID (from Phase 3)
+            question: Question asked
+            answer: Answer provided (summary)
+            module_id: Optional module context
+            confidence: RAG confidence score
+            helpful: Optional learner feedback on helpfulness
+        """
+        with self._lock:
+            # Initialize history if not exists
+            if "history" not in self._data:
+                self._data["history"] = []
+
+            # Add history entry
+            entry = {
+                "session_id": session_id,
+                "timestamp": self._utc_now(),
+                "question": question,
+                "answer_preview": answer[:200] + "..." if len(answer) > 200 else answer,
+                "module_id": module_id,
+                "confidence": round(confidence, 2),
+            }
+
+            if helpful is not None:
+                entry["helpful"] = helpful
+
+            self._data["history"].append(entry)
+
+            # Limit history to last 100 entries
+            if len(self._data["history"]) > 100:
+                self._data["history"] = self._data["history"][-100:]
+
+            self._update_timestamp()
+
     def __repr__(self) -> str:
         """String representation."""
         return (

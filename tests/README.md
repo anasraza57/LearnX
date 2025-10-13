@@ -21,9 +21,9 @@ tests/
 ### Quick Test Suite (Recommended - Fast)
 Run only the fast tests for quick validation:
 ```bash
-pytest tests/unit/test_config.py tests/unit/test_validation.py tests/unit/test_learner_profile_validation.py --no-cov -q
+pytest tests/unit/test_config.py tests/unit/test_validation.py tests/unit/test_learner_profile_validation.py tests/unit/test_rag_instructor.py --no-cov -q
 ```
-**Result:** 52 tests pass in < 1 second ✅
+**Result:** 70 tests pass in < 1 second ✅
 
 ### Run all tests (includes slow tests)
 ```bash
@@ -123,8 +123,35 @@ pytest -s
 
   **Note:** Some learner model tests run slowly (30-60s each) due to JSON Schema validation being called on every operation. All tests pass correctly.
 
+- **test_rag_instructor.py** (18 tests) ✅ **Phase 3**
+  - RAG instructor basics (3 tests - fast ✅)
+    - Teaching response format
+    - Citation markdown formatting
+    - Response with citations
+  - RAG retrieval (3 tests - fast ✅)
+    - Retrieval with min_similarity threshold
+    - Zero-hit behavior (no matching documents)
+    - Citations limited to top N results
+  - Teaching session persistence (3 tests - fast ✅)
+    - Session validates against schema
+    - Session with syllabus mapping (Phase 1 integration)
+    - Invalid session fails validation
+  - Teach and save integration (1 test - fast ✅)
+    - teach_and_save persists sessions correctly
+  - Phase 2 integration (2 tests - fast ✅)
+    - Add teaching history to learner profile
+    - History limited to 100 entries
+  - RAG configuration (1 test - fast ✅)
+    - RAG config saved in session for reproducibility
+  - **Go/No-Go Checklist (5 tests - fast ✅) - Production readiness**
+    - End-to-end session validates against schema
+    - ID patterns match schema regex
+    - Zero-hit retrieval validates with empty citations
+    - Phase 2 write-back creates history entry
+    - Model and RAG config populated for reproducibility
+
 ### Integration Tests
-- (To be added in Phase 3+)
+- Phase 3 includes integration tests with Phases 1 & 2
 
 ## Coverage
 
@@ -195,12 +222,13 @@ See `.github/workflows/test.yml` for CI configuration.
 
 ## Test Summary
 
-**Total Tests:** 87 tests across 4 test files
+**Total Tests:** 105 tests across 5 test files
 
-**Fast Tests (< 1 second):** 52 tests
+**Fast Tests (< 1 second):** 70 tests
 - test_config.py: 18 tests ✅
 - test_validation.py: 18 tests ✅
 - test_learner_profile_validation.py: 16 tests ✅
+- test_rag_instructor.py: 18 tests ✅ (Phase 3 - includes 5 go/no-go tests)
 
 **Slow Tests (30-60s each):** 35 tests
 - test_learner_model.py: 35 tests ⚠️ (all pass, but slow due to validation)

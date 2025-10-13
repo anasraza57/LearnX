@@ -1,6 +1,8 @@
 # Core LLM framework
 langchain>=0.1.0
+langchain-openai>=0.3.35
 openai>=1.0.0
+tiktoken>=0.7.0
 
 # Web interface
 gradio>=4.0.0
@@ -12,18 +14,19 @@ python-dotenv>=1.0.0
 jsonschema>=4.20.0
 pydantic>=2.0.0
 
-# RAG and embeddings (Phase 3)
+# RAG and embeddings
 chromadb>=0.4.0
 sentence-transformers>=2.2.0
 faiss-cpu>=1.7.4
 
-# Document processing (Phase 3)
+# Document processing
 pypdf>=3.17.0
 pypdf2>=3.0.0
 
 # Testing and development
 pytest>=7.4.0
 pytest-cov>=4.1.0
+pytest-mock>=3.15.0
 
 # Code quality
 black>=23.0.0
