@@ -1,0 +1,248 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://edugpt.example.com/schemas/quiz_session.schema.json",
+  "title": "Quiz Session Schema",
+  "description": "Schema for quiz/assessment sessions with learner responses",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["session_id", "timestamp", "learner_id", "module_id", "questions", "status"],
+
+  "$defs": {
+    "iso_datetime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 datetime"
+    },
+    "session_status": {
+      "type": "string",
+      "enum": ["in_progress", "completed", "abandoned", "expired"],
+      "description": "Status of the quiz session"
+    },
+    "question_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question_id", "question_text", "difficulty", "response_status"],
+      "properties": {
+        "question_id": {
+          "type": "string",
+          "pattern": "^q-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Question ID"
+        },
+        "question_text": {
+          "type": "string",
+          "description": "Question text (for reference)"
+        },
+        "question_type": {
+          "type": "string",
+          "enum": ["multiple_choice", "true_false", "short_answer", "essay", "code"]
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["very_easy", "easy", "medium", "hard", "very_hard"]
+        },
+        "learner_answer": {
+          "type": ["string", "null"],
+          "description": "Learner's response"
+        },
+        "is_correct": {
+          "type": ["boolean", "null"],
+          "description": "Whether answer is correct (null if not graded yet)"
+        },
+        "score": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Score for this question (0-100)"
+        },
+        "points": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 1,
+          "description": "Points this question is worth (for weighted scoring)"
+        },
+        "time_taken_seconds": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Time taken to answer in seconds"
+        },
+        "hints_used": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Number of hints used"
+        },
+        "response_status": {
+          "type": "string",
+          "enum": ["unanswered", "answered", "skipped", "graded"],
+          "description": "Status of this question response"
+        },
+        "feedback": {
+          "type": ["string", "null"],
+          "description": "Feedback for this response"
+        },
+        "graded_by": {
+          "type": ["string", "null"],
+          "enum": ["auto", "llm", "human", null],
+          "description": "How this was graded"
+        }
+      }
+    }
+  },
+
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "pattern": "^qs-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Unique quiz session ID (UUID v4 format with 'qs-' prefix)"
+    },
+
+    "timestamp": {
+      "$ref": "#/$defs/iso_datetime",
+      "description": "When the quiz session started"
+    },
+
+    "completed_at": {
+      "oneOf": [
+        {"$ref": "#/$defs/iso_datetime"},
+        {"type": "null"}
+      ],
+      "description": "When the quiz was completed (null if in progress)"
+    },
+
+    "learner_id": {
+      "type": "string",
+      "pattern": "^learner-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Reference to learner profile"
+    },
+
+    "syllabus_id": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "description": "Optional reference to syllabus (Phase 1)"
+    },
+
+    "module_id": {
+      "type": "string",
+      "pattern": "^m[0-9]{2}-[a-z0-9-]+$",
+      "description": "Module being assessed (Phase 1)"
+    },
+
+    "topic_id": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "description": "Optional specific topic"
+    },
+
+    "teaching_session_id": {
+      "type": ["string", "null"],
+      "pattern": "^ts-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Optional reference to teaching session (Phase 3) for teach→assess→update mastery flow"
+    },
+
+    "quiz_type": {
+      "type": "string",
+      "enum": ["diagnostic", "formative", "summative", "practice"],
+      "description": "Type of quiz"
+    },
+
+    "status": {
+      "$ref": "#/$defs/session_status"
+    },
+
+    "adaptive": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether difficulty adapts based on performance"
+    },
+
+    "questions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/question_response"
+      },
+      "minItems": 1,
+      "maxItems": 100,
+      "description": "Questions and responses in this quiz"
+    },
+
+    "total_questions": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Total number of questions"
+    },
+
+    "answered_questions": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of questions answered"
+    },
+
+    "score": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Overall score (0-100)"
+    },
+
+    "passing_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 70,
+      "description": "Score required to pass"
+    },
+
+    "passed": {
+      "type": ["boolean", "null"],
+      "description": "Whether learner passed (null if not graded)"
+    },
+
+    "total_time_seconds": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Total time spent on quiz"
+    },
+
+    "difficulty_progression": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "string",
+        "enum": ["very_easy", "easy", "medium", "hard", "very_hard"]
+      },
+      "description": "Track difficulty changes during adaptive quiz"
+    },
+
+    "recommendations": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "should_review": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Topics to review"
+        },
+        "next_difficulty": {
+          "type": ["string", "null"],
+          "enum": ["very_easy", "easy", "medium", "hard", "very_hard", null],
+          "description": "Recommended difficulty for next quiz (null when decision is topic-driven)"
+        },
+        "next_topic_id": {
+          "type": ["string", "null"],
+          "description": "Recommended next topic to study"
+        },
+        "ready_for_next_module": {
+          "type": "boolean",
+          "description": "Whether learner is ready to proceed"
+        }
+      },
+      "description": "Recommendations based on performance"
+    },
+
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Additional metadata"
+    }
+  }
+}

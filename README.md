@@ -52,3 +52,34 @@ python src/run.py
 - **EduGPT**: A LangChain-based project where a learner and instructor agent role-play to generate a syllabus and deliver lessons.
 
 - **EduGPT-PersonalisedLearning**: This fork extends EduGPT with retrieval grounding, adaptive assessment, and learner modelling to deliver a more personalised learning experience.
+
+## 🧪 Testing
+
+### Run All Tests
+```bash
+python -m unittest discover tests/unit -v
+```
+
+### Test Coverage
+- **Configuration & Validation**: `test_config.py`, `test_validation.py`
+- **Learner Profile**: `test_learner_model.py`, `test_learner_profile_validation.py`
+- **RAG Instructor**: `test_rag_instructor.py`
+- **Assessment System**:
+  - `test_assessment_generator.py` - Question generation and validation
+  - `test_grading_agent.py` - LLM-based grading for open-ended responses
+  - `test_quiz_session.py` - Adaptive quiz and points-weighted scoring
+  - `test_assessment_schemas.py` - Schema validation for assessments and quiz sessions
+
+### Run Specific Test Suites
+```bash
+# Learner profile tests
+python -m unittest tests.unit.test_learner_model -v
+
+# Assessment system tests
+python -m unittest tests.unit.test_assessment_generator -v
+python -m unittest tests.unit.test_grading_agent -v
+python -m unittest tests.unit.test_quiz_session -v
+
+# Schema validation tests
+python -m unittest tests.unit.test_assessment_schemas -v
+```

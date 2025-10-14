@@ -1,0 +1,191 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://edugpt.example.com/schemas/assessment.schema.json",
+  "title": "Assessment Schema",
+  "description": "Schema for individual assessment questions",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["question_id", "question_text", "question_type", "difficulty", "module_id"],
+
+  "$defs": {
+    "difficulty_level": {
+      "type": "string",
+      "enum": ["very_easy", "easy", "medium", "hard", "very_hard"],
+      "description": "Question difficulty level"
+    },
+    "question_type": {
+      "type": "string",
+      "enum": ["multiple_choice", "true_false", "short_answer", "essay", "code"],
+      "description": "Type of question"
+    },
+    "mcq_option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["option_id", "text", "is_correct"],
+      "properties": {
+        "option_id": {
+          "type": "string",
+          "pattern": "^[A-Z]$",
+          "description": "Option identifier (A, B, C, D, etc.)"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Option text"
+        },
+        "is_correct": {
+          "type": "boolean",
+          "description": "Whether this is the correct answer"
+        },
+        "explanation": {
+          "type": ["string", "null"],
+          "description": "Explanation for why this is correct/incorrect"
+        }
+      }
+    }
+  },
+
+  "properties": {
+    "question_id": {
+      "type": "string",
+      "pattern": "^q-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Unique question ID (UUID v4 format with 'q-' prefix)"
+    },
+
+    "question_text": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 2000,
+      "description": "The question text"
+    },
+
+    "question_type": {
+      "$ref": "#/$defs/question_type"
+    },
+
+    "difficulty": {
+      "$ref": "#/$defs/difficulty_level"
+    },
+
+    "module_id": {
+      "type": "string",
+      "pattern": "^m[0-9]{2}-[a-z0-9-]+$",
+      "description": "Reference to syllabus module (Phase 1 integration)"
+    },
+
+    "topic_id": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "description": "Optional reference to specific topic"
+    },
+
+    "learning_objectives": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 5,
+      "description": "Learning objectives this question tests"
+    },
+
+    "bloom_level": {
+      "type": ["string", "null"],
+      "enum": ["remember", "understand", "apply", "analyze", "evaluate", "create", null],
+      "description": "Bloom's taxonomy cognitive level"
+    },
+
+    "options": {
+      "type": ["array", "null"],
+      "items": {
+        "$ref": "#/$defs/mcq_option"
+      },
+      "minItems": 2,
+      "maxItems": 6,
+      "description": "Options for multiple choice questions"
+    },
+
+    "correct_answer": {
+      "type": ["string", "null"],
+      "description": "Correct answer for short answer/essay questions"
+    },
+
+    "answer_rubric": {
+      "type": ["string", "null"],
+      "description": "Grading rubric for evaluating answers"
+    },
+
+    "hints": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3,
+      "description": "Progressive hints for learners"
+    },
+
+    "time_limit_seconds": {
+      "type": ["integer", "null"],
+      "minimum": 10,
+      "maximum": 3600,
+      "description": "Optional time limit in seconds"
+    },
+
+    "points": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 1,
+      "description": "Points this question is worth"
+    },
+
+    "tags": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 10,
+      "description": "Tags for categorization"
+    },
+
+    "explanation": {
+      "type": ["string", "null"],
+      "description": "Explanation of the correct answer"
+    },
+
+    "source_material": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Source document name"
+        },
+        "page": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Page number"
+        },
+        "section": {
+          "type": ["string", "null"],
+          "description": "Section or chapter"
+        },
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI to source material"
+        }
+      },
+      "description": "Reference to source material"
+    },
+
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Additional metadata"
+    }
+  }
+}

@@ -8,12 +8,15 @@ Comprehensive test suite for EduGPT-PersonalisedLearning following pytest conven
 tests/
 ├── conftest.py                             # Shared fixtures and pytest configuration
 ├── unit/                                   # Unit tests (isolated, fast)
-│   ├── test_config.py                      # Configuration and token tracking tests
-│   ├── test_validation.py                  # Syllabus schema validation tests
-│   ├── test_learner_profile_validation.py  # Learner profile validation tests
-│   └── test_learner_model.py               # Learner model functionality tests
-└── integration/                            # Integration tests (multiple components)
-    └── (future tests)
+│   ├── test_config.py                      # Configuration and token tracking
+│   ├── test_validation.py                  # Syllabus schema validation
+│   ├── test_learner_profile_validation.py  # Learner profile validation
+│   ├── test_learner_model.py               # Learner model functionality
+│   ├── test_rag_instructor.py              # RAG teaching with citations
+│   ├── test_assessment_generator.py        # Question generation & validation
+│   ├── test_grading_agent.py               # LLM-based grading
+│   ├── test_quiz_session.py                # Adaptive quiz & scoring
+│   └── test_assessment_schemas.py          # Assessment & quiz schema 
 ```
 
 ## Running Tests
@@ -21,9 +24,9 @@ tests/
 ### Quick Test Suite (Recommended - Fast)
 Run only the fast tests for quick validation:
 ```bash
-pytest tests/unit/test_config.py tests/unit/test_validation.py tests/unit/test_learner_profile_validation.py tests/unit/test_rag_instructor.py --no-cov -q
+pytest tests/unit/test_config.py tests/unit/test_validation.py tests/unit/test_learner_profile_validation.py tests/unit/test_rag_instructor.py tests/unit/test_assessment_generator.py tests/unit/test_grading_agent.py tests/unit/test_quiz_session.py tests/unit/test_assessment_schemas.py --no-cov -q
 ```
-**Result:** 70 tests pass in < 1 second ✅
+**Result:** 140 tests pass in < 2 seconds ✅
 
 ### Run all tests (includes slow tests)
 ```bash
@@ -123,7 +126,7 @@ pytest -s
 
   **Note:** Some learner model tests run slowly (30-60s each) due to JSON Schema validation being called on every operation. All tests pass correctly.
 
-- **test_rag_instructor.py** (18 tests) ✅ **Phase 3**
+- **test_rag_instructor.py** (18 tests) ✅ **RAG Teaching**
   - RAG instructor basics (3 tests - fast ✅)
     - Teaching response format
     - Citation markdown formatting
@@ -150,8 +153,61 @@ pytest -s
     - Phase 2 write-back creates history entry
     - Model and RAG config populated for reproducibility
 
+- **test_assessment_generator.py** (15 tests) ✅ **Assessment Generation**
+  - AssessmentQuestion validation (10 tests - fast ✅)
+    - MCQ validation (options, correct answers, option_id format)
+    - True/False validation
+    - Points validation (0-100 range)
+    - Page number normalization
+  - Assessment generator (5 tests - fast ✅)
+    - Initialization with/without RAG
+    - Bloom's level suggestion
+    - MCQ generation with RAG context
+    - Question ID format (q-<uuid>)
+
+- **test_grading_agent.py** (12 tests) ✅ **LLM Grading**
+  - GradingResult dataclass (2 tests - fast ✅)
+    - Creation and serialization
+    - graded_by field tracking
+  - Grading agent (10 tests - fast ✅)
+    - Validation (empty answers, invalid points)
+    - Essay and code response grading
+    - Score normalization to 0-100
+    - Fallback grading on errors
+    - Batch grading
+
+- **test_quiz_session.py** (23 tests) ✅ **Adaptive Quiz**
+  - QuestionResponse (2 tests - fast ✅)
+    - Creation with points field
+    - Serialization
+  - AdaptiveQuiz (21 tests - fast ✅)
+    - Initialization and session ID format (qs-<uuid>)
+    - teaching_session_id integration
+    - Auto-grading (MCQ, True/False)
+    - Validation (empty answers, duplicates)
+    - Adaptive difficulty (increases/decreases after 2 correct/incorrect)
+    - Points-weighted scoring
+    - Quiz completion with integrity checks
+    - Recommendations generation
+    - Session reproducibility
+
+- **test_assessment_schemas.py** (20 tests) ✅ **Schema Validation**
+  - Assessment schema (11 tests - fast ✅)
+    - Valid MCQ, True/False, Short Answer questions
+    - Invalid ID/difficulty/question_type
+    - Bloom's taxonomy validation
+    - source_material with URI (file:// support)
+  - Quiz session schema (9 tests - fast ✅)
+    - Valid quiz session structure
+    - question_response with points field
+    - teaching_session_id (ts-<uuid>)
+    - Recommendations with next_topic_id
+    - graded_by field (auto/llm/human)
+
 ### Integration Tests
-- Phase 3 includes integration tests with Phases 1 & 2
+- RAG instructor integrates with syllabus and learner profile
+- Assessment system integrates with RAG, learner profile, and syllabus
+- Complete workflow example demonstrates end-to-end integration
 
 ## Coverage
 
@@ -222,18 +278,31 @@ See `.github/workflows/test.yml` for CI configuration.
 
 ## Test Summary
 
-**Total Tests:** 105 tests across 5 test files
+**Total Tests:** 175 tests across 9 test files
 
-**Fast Tests (< 1 second):** 70 tests
+**Fast Tests (< 1 second):** 140 tests
 - test_config.py: 18 tests ✅
 - test_validation.py: 18 tests ✅
 - test_learner_profile_validation.py: 16 tests ✅
-- test_rag_instructor.py: 18 tests ✅ (Phase 3 - includes 5 go/no-go tests)
+- test_rag_instructor.py: 18 tests ✅ (includes 5 go/no-go tests)
+- test_assessment_generator.py: 15 tests ✅
+- test_grading_agent.py: 12 tests ✅
+- test_quiz_session.py: 23 tests ✅
+- test_assessment_schemas.py: 20 tests ✅
 
 **Slow Tests (30-60s each):** 35 tests
 - test_learner_model.py: 35 tests ⚠️ (all pass, but slow due to validation)
 
 **Overall Status:** ✅ All tests passing
+
+**System Coverage:**
+- ✅ Configuration & Validation
+- ✅ Learner Profile & Progress Tracking
+- ✅ RAG-Based Teaching (with citations)
+- ✅ Assessment Generation (with RAG)
+- ✅ Adaptive Quizzing (auto & LLM grading)
+- ✅ Points-Weighted Scoring
+- ✅ Cross-System Integration
 
 ## Current Coverage
 

@@ -735,6 +735,49 @@ class LearnerModel:
 
             self._update_timestamp()
 
+    # ==================== Phase 4 Integration ====================
+
+    def record_quiz_result(
+        self,
+        quiz_session_id: str,
+        module_id: str,
+        score: float,
+        difficulty: DifficultyLevel,
+        num_questions: int,
+        time_taken_minutes: int,
+        passed: bool,
+    ) -> None:
+        """
+        Record quiz/assessment results (Phase 4 integration).
+
+        This updates the learner's assessment history and triggers
+        performance recomputation just like regular assessments.
+
+        Args:
+            quiz_session_id: Quiz session ID (from Phase 4)
+            module_id: Module assessed
+            score: Overall score (0-100)
+            difficulty: Quiz difficulty level
+            num_questions: Number of questions in quiz
+            time_taken_minutes: Total time spent
+            passed: Whether learner passed
+        """
+        # Record as a regular assessment (reuses existing logic)
+        self.record_assessment(
+            module_id=module_id,
+            score=score,
+            difficulty=difficulty,
+            time_taken_minutes=time_taken_minutes,
+            hints_used=0,  # Quiz-level doesn't track individual hints
+        )
+
+        # Also store quiz-specific metadata in assessment history
+        if self._data["performance_analytics"]["assessment_history"]:
+            last_assessment = self._data["performance_analytics"]["assessment_history"][-1]
+            last_assessment["quiz_session_id"] = quiz_session_id
+            last_assessment["num_questions"] = num_questions
+            last_assessment["passed"] = passed
+
     def __repr__(self) -> str:
         """String representation."""
         return (
