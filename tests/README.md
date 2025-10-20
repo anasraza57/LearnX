@@ -16,7 +16,9 @@ tests/
 │   ├── test_assessment_generator.py        # Question generation & validation
 │   ├── test_grading_agent.py               # LLM-based grading
 │   ├── test_quiz_session.py                # Adaptive quiz & scoring
-│   └── test_assessment_schemas.py          # Assessment & quiz schema 
+│   ├── test_assessment_schemas.py          # Assessment & quiz schema
+│   ├── test_orchestrator.py                # Complete pipeline orchestration
+│   └── test_syllabus_planner.py            # Multi-agent syllabus generation 
 ```
 
 ## Running Tests
@@ -24,9 +26,9 @@ tests/
 ### Quick Test Suite (Recommended - Fast)
 Run only the fast tests for quick validation:
 ```bash
-pytest tests/unit/test_config.py tests/unit/test_validation.py tests/unit/test_learner_profile_validation.py tests/unit/test_rag_instructor.py tests/unit/test_assessment_generator.py tests/unit/test_grading_agent.py tests/unit/test_quiz_session.py tests/unit/test_assessment_schemas.py --no-cov -q
+pytest tests/unit/test_config.py tests/unit/test_validation.py tests/unit/test_learner_profile_validation.py tests/unit/test_rag_instructor.py tests/unit/test_assessment_generator.py tests/unit/test_grading_agent.py tests/unit/test_quiz_session.py tests/unit/test_assessment_schemas.py tests/unit/test_orchestrator.py tests/unit/test_syllabus_planner.py --no-cov -q
 ```
-**Result:** 140 tests pass in < 2 seconds ✅
+**Result:** 185+ tests pass in < 3 seconds ✅
 
 ### Run all tests (includes slow tests)
 ```bash
@@ -276,11 +278,28 @@ See `.github/workflows/test.yml` for CI configuration.
 - **Self-validating**: Clear pass/fail
 - **Timely**: Write tests as you code
 
+- **test_orchestrator.py** (20 tests) ✅ **Pipeline Orchestration**
+  - Orchestrator initialization
+  - Learner enrollment
+  - Teaching session management
+  - Assessment orchestration
+  - Mastery-based pathway adaptation
+  - Session persistence (save/load)
+  - Learner summaries
+
+- **test_syllabus_planner.py** (15 tests) ✅ **Multi-Agent Syllabus**
+  - Learner Advocate agent
+  - Curriculum Designer agent
+  - Negotiation protocol
+  - Structured JSON extraction
+  - Schema validation and auto-fixing
+  - Workload feasibility calculation
+
 ## Test Summary
 
-**Total Tests:** 175 tests across 9 test files
+**Total Tests:** 210+ tests across 11 test files
 
-**Fast Tests (< 1 second):** 140 tests
+**Fast Tests (< 1 second):** 175+ tests
 - test_config.py: 18 tests ✅
 - test_validation.py: 18 tests ✅
 - test_learner_profile_validation.py: 16 tests ✅
@@ -289,6 +308,8 @@ See `.github/workflows/test.yml` for CI configuration.
 - test_grading_agent.py: 12 tests ✅
 - test_quiz_session.py: 23 tests ✅
 - test_assessment_schemas.py: 20 tests ✅
+- test_orchestrator.py: 20 tests ✅
+- test_syllabus_planner.py: 15 tests ✅
 
 **Slow Tests (30-60s each):** 35 tests
 - test_learner_model.py: 35 tests ⚠️ (all pass, but slow due to validation)
@@ -302,6 +323,10 @@ See `.github/workflows/test.yml` for CI configuration.
 - ✅ Assessment Generation (with RAG)
 - ✅ Adaptive Quizzing (auto & LLM grading)
 - ✅ Points-Weighted Scoring
+- ✅ Multi-Agent Syllabus Planning
+- ✅ Complete Pipeline Orchestration
+- ✅ Mastery-Based Adaptation
+- ✅ Session Persistence
 - ✅ Cross-System Integration
 
 ## Current Coverage

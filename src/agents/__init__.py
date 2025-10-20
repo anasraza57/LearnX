@@ -10,6 +10,12 @@ This module contains LangChain-based agents (AI/LLM-powered decision makers):
 Note: AdaptiveQuiz is in src/models (pure logic, not an agent)
 """
 
+from .syllabus_planner import (
+    SyllabusPlanner,
+    LearnerAdvocateAgent,
+    CurriculumDesignerAgent,
+    generate_syllabus,  # Legacy function
+)
 from .rag_instructor import (
     RAGInstructor,
     Citation,
@@ -26,6 +32,11 @@ from .grading_agent import (
 )
 
 __all__ = [
+    # Syllabus Planning
+    "SyllabusPlanner",
+    "LearnerAdvocateAgent",
+    "CurriculumDesignerAgent",
+    "generate_syllabus",
     # RAG Instruction
     "RAGInstructor",
     "Citation",
