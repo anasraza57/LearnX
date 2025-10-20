@@ -257,7 +257,15 @@ class SyllabusPlanner:
         validator: Optional[SchemaValidator] = None,
     ):
         self.learner = learner
-        self.validator = validator or SchemaValidator("syllabus")
+
+        # Initialize schema validator with correct path
+        if validator is None:
+            from pathlib import Path
+            schema_path = Path(__file__).parent.parent.parent / "schemas" / "syllabus.schema.json"
+            self.validator = SchemaValidator(schema_path)
+        else:
+            self.validator = validator
+
         self.negotiation_history: List[Dict[str, str]] = []
 
     def generate_syllabus(

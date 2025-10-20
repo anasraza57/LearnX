@@ -263,6 +263,9 @@ class TestLearningOrchestrator(unittest.TestCase):
 
     def test_adapt_pathway_no_assessments(self):
         """Test pathway adaptation with no assessments."""
+        # Enroll learner in a module first
+        self.orchestrator.enroll_learner("m01-python-basics")
+
         result = self.orchestrator.adapt_pathway()
 
         self.assertEqual(result["action"], "assess")
@@ -282,8 +285,8 @@ class TestLearningOrchestrator(unittest.TestCase):
             passed=True,
         )
 
-        # Manually set high mastery
-        self.learner._data["mastery_levels"]["m01-python-basics"] = 0.85
+        # Manually set high mastery score in module progress
+        self.learner._data["progress"]["module_progress"]["m01-python-basics"]["best_score"] = 85.0
 
         result = self.orchestrator.adapt_pathway()
 
@@ -542,11 +545,13 @@ class TestLearningOrchestrator(unittest.TestCase):
 
         # Mock instructor to return citations
         mock_response = TeachingResponse(
-            response="Python is a programming language.",
+            answer="Python is a programming language.",
             citations=[
-                Citation(source="python_docs.pdf", page=1, excerpt="Python overview"),
-                Citation(source="tutorial.pdf", page=5, excerpt="Introduction"),
+                Citation(source="python_docs.pdf", page=1, content="Python overview", relevance_score=0.9),
+                Citation(source="tutorial.pdf", page=5, content="Introduction", relevance_score=0.8),
             ],
+            retrieved_docs=[],
+            confidence=0.9,
         )
         self.orchestrator.instructor = Mock()
         self.orchestrator.instructor.teach = Mock(return_value=mock_response)
@@ -596,7 +601,7 @@ class TestLearningOrchestrator(unittest.TestCase):
         self.orchestrator.start_teaching_session(load_documents=False)
         self.orchestrator.instructor = Mock()
         self.orchestrator.instructor.teach = Mock(return_value=TeachingResponse(
-            response="Python is great", citations=[]
+            answer="Python is great", citations=[], retrieved_docs=[], confidence=0.9
         ))
         self.orchestrator.teach("What is Python?")
 
@@ -641,7 +646,7 @@ class TestLearningOrchestrator(unittest.TestCase):
         self.orchestrator.start_teaching_session(load_documents=False)
         self.orchestrator.instructor = Mock()
         self.orchestrator.instructor.teach = Mock(return_value=TeachingResponse(
-            response="Content", citations=[]
+            answer="Content", citations=[], retrieved_docs=[], confidence=0.9
         ))
         self.orchestrator.teach("Question")
 

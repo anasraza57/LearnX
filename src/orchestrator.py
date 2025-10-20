@@ -199,12 +199,8 @@ class LearningOrchestrator:
         if not module:
             raise ValueError(f"Module {module_id} not found in syllabus")
 
-        # Enroll in learner profile
-        self.learner.enroll_module(
-            module_id=module_id,
-            title=module.get("title", "Unknown Module"),
-            difficulty=module.get("difficulty", "medium"),
-        )
+        # Start module in learner profile
+        self.learner.start_module(module_id=module_id)
 
         self.current_module_id = module_id
 
@@ -283,20 +279,16 @@ class LearningOrchestrator:
         response = self.instructor.teach(question=question, max_tokens=max_tokens)
 
         # Store citations for session tracking
-        citations_list = [c.to_dict() for c in response.citations]
+        citations_list = [asdict(c) for c in response.citations]
         self._last_citations = [
             f"{c.get('source', 'unknown')} (p.{c.get('page', '?')})"
             for c in citations_list
         ]
 
-        # Record in learner's teaching history
-        self.learner.add_teaching_session(
-            session_id=self.current_teaching_session_id,
-            module_id=self.current_module_id,
-        )
+        # Teaching session tracked in orchestrator's session_state
 
         return {
-            "response": response.response,
+            "response": response.answer,
             "citations": citations_list,
             "cited_sources": self._last_citations,  # Simplified source list
             "teaching_session_id": self.current_teaching_session_id,
@@ -476,9 +468,10 @@ class LearningOrchestrator:
         else:
             time_delta = 5.0  # Fallback
 
-        # Get mastery before and after
-        mastery_levels_before = self.learner.get_mastery_levels()
-        mastery_before = mastery_levels_before.get(self.current_module_id, 0.0)
+        # Get mastery before (from module_progress)
+        learner_data_before = self.learner.to_dict()
+        module_progress_before = learner_data_before["progress"].get("module_progress", {})
+        mastery_before = module_progress_before.get(self.current_module_id, {}).get("best_score", 0.0)
 
         # Update learner profile with quiz results
         self.learner.record_quiz_result(
@@ -491,9 +484,10 @@ class LearningOrchestrator:
             passed=result["passed"],
         )
 
-        # Get mastery after update
-        mastery_levels_after = self.learner.get_mastery_levels()
-        mastery_after = mastery_levels_after.get(self.current_module_id, 0.0)
+        # Get mastery after update (from module_progress)
+        learner_data_after = self.learner.to_dict()
+        module_progress_after = learner_data_after["progress"].get("module_progress", {})
+        mastery_after = module_progress_after.get(self.current_module_id, {}).get("best_score", 0.0)
         mastery_delta = mastery_after - mastery_before
 
         # Save quiz session
@@ -631,16 +625,17 @@ class LearningOrchestrator:
         if not self.current_module_id:
             return {"action": "enroll", "message": "No current module"}
 
-        # Get latest assessment
-        assessment_history = self.learner.get_assessment_history()
+        # Get latest assessment from learner data
+        learner_data = self.learner.to_dict()
+        assessment_history = learner_data["performance_analytics"].get("assessment_history", [])
         if not assessment_history:
             return {"action": "assess", "message": "No assessments yet"}
 
         latest = assessment_history[-1]
 
-        # Get mastery level for current module
-        mastery_levels = self.learner.get_mastery_levels()
-        current_mastery = mastery_levels.get(self.current_module_id, 0.0)
+        # Get mastery level for current module from module_progress
+        module_progress = learner_data["progress"].get("module_progress", {})
+        current_mastery = module_progress.get(self.current_module_id, {}).get("best_score", 0.0) / 100.0
 
         # Decision logic using constants
         if latest["passed"] and current_mastery >= ADVANCE_MASTERY_THRESHOLD:
@@ -766,7 +761,7 @@ class LearningOrchestrator:
             return None
 
         for module in self.syllabus["modules"]:
-            if module.get("module_id") == module_id:
+            if module.get("id") == module_id:
                 return module
         return None
 
@@ -777,9 +772,9 @@ class LearningOrchestrator:
 
         modules = self.syllabus["modules"]
         for i, module in enumerate(modules):
-            if module.get("module_id") == current_module_id:
+            if module.get("id") == current_module_id:
                 if i + 1 < len(modules):
-                    return modules[i + 1].get("module_id")
+                    return modules[i + 1].get("id")
         return None
 
     def _save_quiz_session(self, quiz: AdaptiveQuiz) -> None:
@@ -849,16 +844,25 @@ class LearningOrchestrator:
 
     def get_learner_summary(self) -> Dict[str, Any]:
         """Get comprehensive learner summary."""
-        analytics = self.learner.get_performance_analytics()
-        mastery = self.learner.get_mastery_levels()
+        learner_data = self.learner.to_dict()
+        mastery_summary = self.learner.get_mastery_summary()
+
+        analytics = learner_data["performance_analytics"]
+        progress = learner_data["progress"]
+
+        # Build mastery levels dict from module_progress
+        mastery_levels = {
+            module_id: prog.get("best_score", 0.0)
+            for module_id, prog in progress["module_progress"].items()
+        }
 
         return {
             "learner_id": self.learner.learner_id,
             "name": self.learner.name,
             "current_module": self.current_module_id,
-            "overall_gpa": analytics["overall_gpa"],
-            "mastery_levels": mastery,
-            "total_assessments": analytics["assessment_attempts"],
-            "study_time_hours": analytics["total_study_time_hours"],
+            "overall_gpa": analytics.get("average_score", 0.0),
+            "mastery_levels": mastery_levels,
+            "total_assessments": len(analytics.get("assessment_history", [])),
+            "study_time_hours": progress.get("total_study_time_minutes", 0) / 60.0,
             "session_count": len(self.session_history),
         }
