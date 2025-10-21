@@ -198,6 +198,9 @@ class LearningOrchestrator:
 
         Returns:
             Enrollment confirmation with module details
+
+        Raises:
+            ValueError: If prerequisites are not met or previous module not completed
         """
         if not self.syllabus:
             raise ValueError("Cannot enroll: No syllabus loaded")
@@ -206,6 +209,46 @@ class LearningOrchestrator:
         module = self._find_module(module_id)
         if not module:
             raise ValueError(f"Module {module_id} not found in syllabus")
+
+        # Check if learner has completed the previous module (if not first module)
+        if self.current_module_id and self.current_module_id != module_id:
+            # Check if current module is completed
+            learner_data = self.learner.to_dict()
+            current_module_progress = learner_data["progress"]["module_progress"].get(
+                self.current_module_id, {}
+            )
+
+            # Check if passed assessment
+            if current_module_progress.get("status") != "completed":
+                raise ValueError(
+                    f"Cannot enroll in new module: You must complete and pass the assessment "
+                    f"for '{self.current_module_id}' first"
+                )
+
+        # Check prerequisites
+        prerequisites = module.get("prerequisites", [])
+        if prerequisites:
+            learner_data = self.learner.to_dict()
+            module_progress = learner_data["progress"].get("module_progress", {})
+
+            unmet_prerequisites = []
+            for prereq_id in prerequisites:
+                prereq_status = module_progress.get(prereq_id, {})
+                prereq_score = prereq_status.get("best_score", 0.0)
+
+                # Require at least 70% mastery on prerequisites
+                if prereq_score < (PASS_THRESHOLD * 100):
+                    prereq_module = self._find_module(prereq_id)
+                    prereq_title = prereq_module.get("title", prereq_id) if prereq_module else prereq_id
+                    unmet_prerequisites.append(
+                        f"{prereq_title} (current: {prereq_score:.1f}%, required: {PASS_THRESHOLD * 100:.0f}%)"
+                    )
+
+            if unmet_prerequisites:
+                raise ValueError(
+                    f"Cannot enroll in '{module.get('title')}': Prerequisites not met:\n"
+                    + "\n".join(f"  - {prereq}" for prereq in unmet_prerequisites)
+                )
 
         # Start module in learner profile
         self.learner.start_module(module_id=module_id)
@@ -589,6 +632,14 @@ Length: 300-500 words."""
             time_taken_minutes=time_delta,
             passed=result["passed"],
         )
+
+        # Mark module as completed if passed
+        if result["passed"]:
+            self.learner.complete_module(
+                module_id=self.current_module_id,
+                score=result["score"],
+                time_spent_minutes=int(time_delta),
+            )
 
         # Get mastery after update (from module_progress)
         learner_data_after = self.learner.to_dict()
