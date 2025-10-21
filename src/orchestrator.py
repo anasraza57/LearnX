@@ -179,7 +179,7 @@ class LearningOrchestrator:
 
         # Optionally save to disk
         if save_to_disk:
-            planner.save_syllabus(syllabus, output_dir=self.persist_dir / "syllabi")
+            planner.save_syllabus(syllabus, output_dir=self.persist_dir / "sessions" / "syllabi")
 
         # Automatically fetch educational content for modules
         if auto_fetch_content:
@@ -448,41 +448,61 @@ Length: 300-500 words."""
     def start_assessment(
         self,
         module_id: Optional[str] = None,
-        num_questions: int = 5,
-        difficulty: str = "medium",
+        num_questions: Optional[int] = None,
+        difficulty: Optional[str] = None,
         adaptive: bool = True,
     ) -> Dict[str, Any]:
         """
-        Start an adaptive assessment session.
+        Start an adaptive assessment session with intelligent defaults.
 
         Args:
             module_id: Module to assess (uses current if None)
-            num_questions: Number of questions
-            difficulty: Starting difficulty
+            num_questions: Number of questions (auto-determined if None)
+            difficulty: Starting difficulty (uses learner's performance if None)
             adaptive: Whether to adapt difficulty
 
         Returns:
-            Quiz session info
+            Quiz session info with first question
         """
         module_id = module_id or self.current_module_id
         if not module_id:
             raise ValueError("No module specified for assessment")
+
+        # Get module details
+        module = self._find_module(module_id)
+        if not module:
+            raise ValueError(f"Module {module_id} not found")
 
         # Initialize assessment generator if needed
         if self.assessment_generator is None:
             vector_store = self.instructor.vector_store if self.instructor else None
             self.assessment_generator = AssessmentGenerator(vector_store=vector_store)
 
-        # Map difficulty_hint to difficulty string if SessionState active
-        if self.session_state:
-            difficulty_map = {
-                -2: "easy",    # Remediation level 2
-                -1: "easy",    # Remediation level 1
-                0: "medium",   # Neutral
-                1: "medium",   # Slight challenge
-                2: "hard",     # Advanced
-            }
-            difficulty = difficulty_map.get(self.session_state.difficulty_hint, difficulty)
+        # Auto-determine number of questions based on module topics
+        if num_questions is None:
+            topics = module.get("topics", [])
+            # 1-2 questions per topic, minimum 3, maximum 10
+            num_questions = min(10, max(3, len(topics) * 2))
+
+        # Auto-determine starting difficulty based on learner's performance
+        if difficulty is None:
+            learner_data = self.learner.to_dict()
+            analytics = learner_data.get("performance_analytics", {})
+
+            # Use recommended difficulty from learner model
+            recommended = self.learner.recommended_difficulty
+            difficulty = recommended if recommended != "unknown" else "medium"
+
+            # Override with session state difficulty hint if available
+            if self.session_state:
+                difficulty_map = {
+                    -2: "easy",    # Remediation level 2
+                    -1: "easy",    # Remediation level 1
+                    0: "medium",   # Neutral
+                    1: "medium",   # Slight challenge
+                    2: "hard",     # Advanced
+                }
+                difficulty = difficulty_map.get(self.session_state.difficulty_hint, difficulty)
 
         # Create adaptive quiz
         self.current_quiz_session = AdaptiveQuiz(
@@ -497,13 +517,30 @@ Length: 300-500 words."""
         # Track session start time for metrics
         self._session_start_time = datetime.now(timezone.utc)
 
+        # Generate first question automatically
+        topics = module.get("topics", [])
+        if topics:
+            first_topic = topics[0]
+            first_question = self.generate_question(
+                topic=first_topic,
+                question_type="multiple_choice",
+                difficulty=difficulty
+            )
+        else:
+            first_question = None
+
         return {
             "quiz_session_id": self.current_quiz_session.session_id,
             "module_id": module_id,
+            "module_title": module.get("title"),
             "num_questions": num_questions,
             "adaptive": adaptive,
             "starting_difficulty": difficulty,
             "started_at": self._session_start_time.isoformat(),
+            "current_question": self._format_question(first_question) if first_question else None,
+            "current_question_number": 1,
+            "total_questions": num_questions,
+            "difficulty_reason": f"Based on your performance history (recommended: {self.learner.recommended_difficulty})"
         }
 
     def generate_question(
@@ -549,53 +586,81 @@ Length: 300-500 words."""
 
     def submit_answer(
         self,
-        question_id: str,
         answer: str,
         time_taken_seconds: Optional[int] = None,
     ) -> Dict[str, Any]:
         """
-        Submit learner's answer to a question.
+        Submit learner's answer to current question and get next question.
 
         Args:
-            question_id: Question identifier
             answer: Learner's answer
             time_taken_seconds: Time spent on question
 
         Returns:
-            Response with grading results
+            Response with grading results and next question (if available)
         """
         if not self.current_quiz_session:
             raise ValueError("No active assessment")
 
+        if not self.current_quiz_session.questions:
+            raise ValueError("No questions in assessment")
+
+        # Get current question (last added question)
+        current_question = self.current_quiz_session.questions[-1]
+
         # Submit answer (auto-grades if possible)
         response = self.current_quiz_session.submit_answer(
-            question_id=question_id,
+            question_id=current_question.question_id,
             learner_answer=answer,
             time_taken_seconds=time_taken_seconds,
         )
 
         # If needs manual grading, grade with LLM
         if response.score is None:
-            question = next(
-                (q for q in self.current_quiz_session.questions if q.question_id == question_id),
-                None
-            )
-            if question:
-                grading_result = self.grading_agent.grade_response(question, answer)
-                response.score = grading_result.score
-                response.is_correct = grading_result.is_correct
-                response.feedback = grading_result.feedback
-                response.graded_by = "llm"
-                response.response_status = "graded"
+            grading_result = self.grading_agent.grade_response(current_question, answer)
+            response.score = grading_result.score
+            response.is_correct = grading_result.is_correct
+            response.feedback = grading_result.feedback
+            response.graded_by = "llm"
+            response.response_status = "graded"
 
-        return {
-            "question_id": question_id,
+        # Prepare result
+        result = {
+            "question_number": len(self.current_quiz_session.responses),
+            "total_questions": self.current_quiz_session.num_questions,
             "is_correct": response.is_correct,
             "score": response.score,
             "feedback": response.feedback,
             "graded_by": response.graded_by,
             "current_difficulty": self.current_quiz_session.current_difficulty,
+            "questions_remaining": self.current_quiz_session.num_questions - len(self.current_quiz_session.responses),
         }
+
+        # Generate next question if not done
+        if len(self.current_quiz_session.responses) < self.current_quiz_session.num_questions:
+            module = self._find_module(self.current_module_id)
+            topics = module.get("topics", [])
+
+            # Cycle through topics
+            topic_index = len(self.current_quiz_session.responses) % len(topics)
+            next_topic = topics[topic_index] if topics else "General"
+
+            # Generate next question with current (adapted) difficulty
+            next_question = self.generate_question(
+                topic=next_topic,
+                question_type="multiple_choice",
+                difficulty=self.current_quiz_session.current_difficulty
+            )
+
+            result["next_question"] = self._format_question(next_question)
+            result["next_question_number"] = len(self.current_quiz_session.responses) + 1
+            result["assessment_complete"] = False
+        else:
+            result["next_question"] = None
+            result["assessment_complete"] = True
+            result["message"] = "All questions answered! Click 'Complete Assessment' to see your final results."
+
+        return result
 
     def complete_assessment(self) -> Dict[str, Any]:
         """
@@ -1026,6 +1091,38 @@ Length: 300-500 words."""
             print(f"Warning: Failed to load session state: {e}")
             return None
 
+    def _format_question(self, question: AssessmentQuestion) -> Dict[str, Any]:
+        """
+        Format a question for display in UI.
+
+        Args:
+            question: AssessmentQuestion object
+
+        Returns:
+            Formatted question dictionary
+        """
+        if not question:
+            return None
+
+        formatted = {
+            "question_id": question.question_id,
+            "question_text": question.question_text,
+            "question_type": question.question_type,
+            "difficulty": question.difficulty,
+            "points": question.points,
+        }
+
+        if question.question_type == "multiple_choice" and question.options:
+            formatted["options"] = [
+                {
+                    "option_id": opt.get("option_id"),
+                    "text": opt.get("text"),
+                }
+                for opt in question.options
+            ]
+
+        return formatted
+
     def _auto_fetch_module_content(self) -> None:
         """
         Automatically fetch educational content for all modules in the syllabus.
@@ -1048,7 +1145,7 @@ Length: 300-500 words."""
             created_files = auto_fetch_module_content(
                 module=module,
                 module_id=module_id,
-                output_dir=self.persist_dir.parent / "documents",  # data/documents
+                output_dir=self.persist_dir / "documents",  # data/documents
                 use_wikipedia=True,
                 use_arxiv=True,  # Fetch research papers
                 use_youtube=False,  # Disabled (requires transcript availability)
@@ -1082,7 +1179,13 @@ Length: 300-500 words."""
             "name": self.learner.name,
             "current_module": self.current_module_id,
             "overall_gpa": analytics.get("average_score", 0.0),
+            "overall_mastery_level": self.learner.overall_mastery_level,
             "mastery_levels": mastery_levels,
+            "mastery_summary": mastery_summary,  # Include detailed mastery breakdown
+            "strengths": analytics.get("strengths", []),
+            "weaknesses": analytics.get("weaknesses", []),
+            "performance_trend": analytics.get("performance_trend", "stable"),
+            "recommended_difficulty": self.learner.recommended_difficulty,
             "total_assessments": len(analytics.get("assessment_history", [])),
             "study_time_hours": progress.get("total_study_time_minutes", 0) / 60.0,
             "session_count": len(self.session_history),

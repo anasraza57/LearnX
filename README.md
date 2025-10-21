@@ -138,7 +138,7 @@ EduGPT-PersonalisedLearning/
 │       └── test_syllabus_planner.py
 ├── data/                     # Runtime data storage
 │   ├── sessions/             # Session state persistence
-│   └── learner_profiles/     # Learner profile storage
+│   └── profiles/             # Learner profile storage
 ├── schemas/                  # JSON Schema definitions
 ├── requirements.txt
 └── README.md

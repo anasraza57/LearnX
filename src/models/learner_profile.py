@@ -120,6 +120,10 @@ class LearnerModel:
             "learner_id": learner_id,
             "personal_info": {
                 "name": name,
+                "email": email,
+                "goals": [],
+                "interests": [],
+                "prior_knowledge": {},
             },
             "cognitive_profile": {
                 "learning_style": learning_style,
@@ -215,6 +219,41 @@ class LearnerModel:
     def overall_completion_percent(self) -> float:
         """Get overall completion percentage."""
         return self._data["progress"]["overall_completion_percent"]
+
+    # ==================== Personal Info Management ====================
+
+    def add_goal(self, goal: str) -> None:
+        """Add a learning goal."""
+        with self._lock:
+            if goal and goal not in self._data["personal_info"]["goals"]:
+                self._data["personal_info"]["goals"].append(goal)
+                self._update_timestamp()
+
+    def add_interest(self, interest: str) -> None:
+        """Add an interest."""
+        with self._lock:
+            if interest and interest not in self._data["personal_info"]["interests"]:
+                self._data["personal_info"]["interests"].append(interest)
+                self._update_timestamp()
+
+    def add_prior_knowledge(self, topic: str, level: str) -> None:
+        """Add prior knowledge for a topic."""
+        with self._lock:
+            if topic and level:
+                self._data["personal_info"]["prior_knowledge"][topic] = level
+                self._update_timestamp()
+
+    def get_goals(self) -> list[str]:
+        """Get list of learning goals."""
+        return self._data["personal_info"]["goals"]
+
+    def get_interests(self) -> list[str]:
+        """Get list of interests."""
+        return self._data["personal_info"]["interests"]
+
+    def get_prior_knowledge(self) -> dict[str, str]:
+        """Get prior knowledge dictionary."""
+        return self._data["personal_info"]["prior_knowledge"]
 
     # ==================== Enrollment & Progress ====================
 

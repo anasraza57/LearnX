@@ -78,9 +78,49 @@
           "maxLength": 200
         },
         "email": {
-          "type": "string",
-          "format": "email",
-          "maxLength": 320
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "email",
+              "maxLength": 320
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Optional email address"
+        },
+        "goals": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "description": "Learning goals",
+          "default": []
+        },
+        "interests": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "description": "Areas of interest",
+          "default": []
+        },
+        "prior_knowledge": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "enum": ["beginner", "intermediate", "advanced", "expert"]
+          },
+          "maxProperties": 50,
+          "description": "Prior knowledge by topic with proficiency level",
+          "default": {}
         },
         "age_group": {
           "type": "string",
