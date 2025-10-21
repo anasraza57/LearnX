@@ -347,14 +347,29 @@ class SyllabusPlanner:
         )
 
         # Validate
-        errors = self.validator.validate(structured_syllabus)
-        if errors:
-            print(f"⚠️  Schema validation warnings: {len(errors)} issues")
-            for error in errors[:3]:  # Show first 3
+        validation_result = self.validator.validate(structured_syllabus, auto_repair=True)
+        if not validation_result.valid:
+            print(f"⚠️  Schema validation warnings: {len(validation_result.errors)} issues")
+            for error in validation_result.errors[:3]:  # Show first 3
                 print(f"  - {error}")
             # Auto-fix common issues
             structured_syllabus = self._auto_fix_schema_issues(structured_syllabus)
+        elif validation_result.repairs:
+            print(f"✨ Auto-repaired {len(validation_result.repairs)} issues")
+            structured_syllabus = validation_result.data  # Use repaired data
 
+        # Validate workload constraints
+        total_hours = sum(m.get('estimated_hours', 0) for m in structured_syllabus.get('modules', []))
+        expected_hours = duration_weeks * weekly_hours
+
+        if total_hours < expected_hours * 0.8:  # Less than 80% of expected
+            print(f"⚠️ Warning: Total hours ({total_hours}) is significantly less than expected ({expected_hours})")
+            print(f"   Adjusting module estimates to better utilize available time...")
+            structured_syllabus = self._adjust_module_hours(structured_syllabus, expected_hours)
+            total_hours = sum(m.get('estimated_hours', 0) for m in structured_syllabus.get('modules', []))
+            print(f"   Adjusted total: {total_hours} hours")
+
+        print(f"📊 Final syllabus: {len(structured_syllabus.get('modules', []))} modules, {total_hours} hours total")
         print("✅ Syllabus generation complete!\n")
         return structured_syllabus
 
@@ -507,17 +522,38 @@ JSON:"""
 
     def _auto_fix_schema_issues(self, syllabus: Dict[str, Any]) -> Dict[str, Any]:
         """Attempt to auto-fix common schema validation issues."""
-        # Fix module ID patterns
-        for i, module in enumerate(syllabus.get("modules", [])):
-            if "id" in module:
+        modules = syllabus.get("modules", [])
+        num_modules = len(modules)
+
+        for i, module in enumerate(modules):
+            # Fix or add module ID
+            if "id" not in module or not module["id"]:
+                # Generate ID from title if missing
+                title = module.get("title", f"Module {i+1}")
+                slug = title.lower().replace(" ", "-")[:30]  # First 30 chars
+                module["id"] = f"m{i+1:02d}-{slug}"
+            else:
                 module_id = module["id"]
                 # Ensure starts with m + two digits
                 if not module_id.startswith("m"):
                     module["id"] = f"m{i+1:02d}-{module_id}"
                 elif not module_id[1:3].isdigit():
                     module["id"] = f"m{i+1:02d}-{module_id[1:]}"
-                # Ensure lowercase and hyphenated
-                module["id"] = module["id"].lower().replace("_", "-").replace(" ", "-")
+
+            # Ensure lowercase and hyphenated
+            module["id"] = module["id"].lower().replace("_", "-").replace(" ", "-")
+
+            # Add difficulty if missing (progressive difficulty based on position)
+            if "difficulty" not in module or not module["difficulty"]:
+                # Calculate difficulty based on position in curriculum (0.0 to 1.0)
+                position_ratio = i / max(num_modules - 1, 1)
+
+                if position_ratio < 0.3:  # First 30% = easy
+                    module["difficulty"] = "easy"
+                elif position_ratio < 0.6:  # Next 30% = medium
+                    module["difficulty"] = "medium"
+                else:  # Last 40% = hard
+                    module["difficulty"] = "hard"
 
         # Ensure meta fields
         if "meta" not in syllabus:
@@ -529,6 +565,31 @@ JSON:"""
         # Ensure required fields have defaults
         syllabus.setdefault("duration_weeks", 8)
         syllabus.setdefault("weekly_time_hours", 5.0)
+
+        return syllabus
+
+    def _adjust_module_hours(self, syllabus: Dict[str, Any], target_hours: float) -> Dict[str, Any]:
+        """
+        Adjust module hour estimates to better match target total hours.
+
+        Distributes hours proportionally while maintaining relative difficulty.
+        """
+        modules = syllabus.get("modules", [])
+        if not modules:
+            return syllabus
+
+        current_total = sum(m.get('estimated_hours', 0) for m in modules)
+        if current_total == 0:
+            # Distribute equally if no estimates
+            hours_per_module = target_hours / len(modules)
+            for module in modules:
+                module['estimated_hours'] = round(hours_per_module, 1)
+        else:
+            # Scale proportionally
+            scale_factor = target_hours / current_total
+            for module in modules:
+                current = module.get('estimated_hours', 0)
+                module['estimated_hours'] = round(current * scale_factor, 1)
 
         return syllabus
 

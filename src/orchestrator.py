@@ -26,6 +26,8 @@ from .agents.rag_instructor import RAGInstructor, create_instructor_from_documen
 from .agents.assessment_generator import AssessmentGenerator, AssessmentQuestion
 from .agents.grading_agent import GradingAgent
 from .models.quiz_session import AdaptiveQuiz
+from .utils.oer_fetcher import auto_fetch_module_content
+from .config import config
 
 
 # ==================== Configuration Constants ====================
@@ -147,6 +149,7 @@ class LearningOrchestrator:
         weekly_hours: float = 5.0,
         max_negotiation_rounds: int = 3,
         save_to_disk: bool = True,
+        auto_fetch_content: bool = True,
     ) -> Dict[str, Any]:
         """
         Generate personalized syllabus using multi-agent negotiation.
@@ -157,6 +160,7 @@ class LearningOrchestrator:
             weekly_hours: Available study time per week
             max_negotiation_rounds: Maximum rounds of agent negotiation
             save_to_disk: Whether to save syllabus to disk
+            auto_fetch_content: Whether to automatically fetch OER content for modules
 
         Returns:
             Generated syllabus dictionary
@@ -176,6 +180,10 @@ class LearningOrchestrator:
         # Optionally save to disk
         if save_to_disk:
             planner.save_syllabus(syllabus, output_dir=self.persist_dir / "syllabi")
+
+        # Automatically fetch educational content for modules
+        if auto_fetch_content:
+            self._auto_fetch_module_content()
 
         return syllabus
 
@@ -247,8 +255,11 @@ class LearningOrchestrator:
             raise ValueError("No module specified for teaching")
 
         # Initialize RAG instructor if not already done
-        if self.instructor is None and load_documents and self.documents_path:
+        if self.instructor is None and load_documents:
             self._initialize_instructor(module_id)
+
+            # Note: instructor may be None if no documents found, which is OK
+            # Teaching will work without RAG (no citations)
 
         # Generate teaching session ID
         import uuid
@@ -267,7 +278,7 @@ class LearningOrchestrator:
 
         Args:
             question: Learner's question
-            max_tokens: Maximum response length
+            max_tokens: Maximum response length (currently not used by RAG instructor)
 
         Returns:
             Teaching response with content and citations
@@ -276,7 +287,7 @@ class LearningOrchestrator:
             raise ValueError("Teaching session not initialized. Call start_teaching_session() first.")
 
         # Get teaching response from RAG instructor
-        response = self.instructor.teach(question=question, max_tokens=max_tokens)
+        response = self.instructor.teach(question=question)
 
         # Store citations for session tracking
         citations_list = [asdict(c) for c in response.citations]
@@ -291,6 +302,101 @@ class LearningOrchestrator:
             "response": response.answer,
             "citations": citations_list,
             "cited_sources": self._last_citations,  # Simplified source list
+            "teaching_session_id": self.current_teaching_session_id,
+        }
+
+    def teach_module_content(self) -> Dict[str, Any]:
+        """
+        Proactively teach all topics in the current module sequentially.
+
+        This provides a structured lesson covering all module topics,
+        with optional Q&A afterwards.
+
+        Returns:
+            Dict with lessons for each topic and citations
+        """
+        if not self.current_module_id:
+            raise ValueError("No module enrolled. Call enroll_learner() first.")
+
+        # Get module details
+        module = self._find_module(self.current_module_id)
+        if not module:
+            raise ValueError(f"Module {self.current_module_id} not found in syllabus")
+
+        topics = module.get("topics", [])
+        outcomes = module.get("outcomes", [])
+
+        if not topics:
+            return {
+                "module_id": self.current_module_id,
+                "module_title": module.get("title"),
+                "lessons": [],
+                "message": "No topics defined for this module"
+            }
+
+        lessons = []
+        all_citations = []
+
+        # Teach each topic sequentially
+        for i, topic in enumerate(topics, 1):
+            # Generate teaching content for this topic
+            question = f"Teach me about {topic}. Explain the key concepts, provide examples, and cover the essential points."
+
+            if self.instructor:
+                # Use RAG-based teaching with citations
+                response = self.instructor.teach(question=question)
+
+                lesson = {
+                    "topic_number": i,
+                    "topic": topic,
+                    "content": response.answer,
+                    "citations": [asdict(c) for c in response.citations],
+                    "confidence": response.confidence,
+                }
+
+                all_citations.extend([asdict(c) for c in response.citations])
+            else:
+                # Fallback: Generate content without RAG
+                from langchain_openai import ChatOpenAI
+                llm = ChatOpenAI(
+                    model=config.model.model_name,
+                    temperature=0.7,
+                    api_key=config.model.api_key,
+                )
+
+                prompt = f"""You are teaching a module on {module.get('title')}.
+
+Topic: {topic}
+
+Learning Outcomes for this module:
+{chr(10).join(f"- {outcome}" for outcome in outcomes)}
+
+Provide a comprehensive lesson on {topic}. Include:
+1. Clear explanations of key concepts
+2. Practical examples
+3. How it relates to the learning outcomes
+4. Important points to remember
+
+Length: 300-500 words."""
+
+                response = llm.invoke(prompt)
+
+                lesson = {
+                    "topic_number": i,
+                    "topic": topic,
+                    "content": response.content,
+                    "citations": [],
+                    "confidence": 0.5,  # Lower confidence without citations
+                }
+
+            lessons.append(lesson)
+
+        return {
+            "module_id": self.current_module_id,
+            "module_title": module.get("title"),
+            "total_topics": len(topics),
+            "lessons": lessons,
+            "all_citations": all_citations,
             "teaching_session_id": self.current_teaching_session_id,
         }
 
@@ -736,17 +842,44 @@ class LearningOrchestrator:
 
     def _initialize_instructor(self, module_id: str) -> None:
         """Initialize RAG instructor with documents."""
-        if not self.documents_path or not self.documents_path.exists():
+        # Try multiple document locations
+        search_paths = []
+
+        if self.documents_path:
+            search_paths.append(self.documents_path)
+
+        # Default locations to search
+        search_paths.extend([
+            Path("data/documents") / module_id,  # Module-specific folder
+            Path("data/documents"),  # General documents folder
+            Path("documents") / module_id,
+            Path("documents"),
+        ])
+
+        # Find first path with documents (PDF or Markdown)
+        doc_files = []
+        for path in search_paths:
+            if path.exists():
+                pdfs = list(path.glob("*.pdf"))
+                mds = list(path.glob("*.md"))
+                all_docs = pdfs + mds
+
+                if all_docs:
+                    doc_files = all_docs
+                    print(f"📚 Found {len(doc_files)} documents in: {path} ({len(pdfs)} PDFs, {len(mds)} Markdown)")
+                    break
+
+        if not doc_files:
+            print(f"⚠️  No documents found for RAG. Searched: {[str(p) for p in search_paths[:3]]}")
+            print(f"    Teaching will work without citations. To enable RAG, add documents to: data/documents/")
             return
 
-        # Find documents for this module
-        doc_files = list(self.documents_path.glob("*.pdf"))
-        if not doc_files:
-            return
+        # Use the directory that contains the documents
+        documents_dir = doc_files[0].parent
 
         self.instructor = create_instructor_from_documents(
-            file_paths=doc_files,
-            module_id=module_id,
+            documents_dir=documents_dir,
+            collection_name=f"module_{module_id}",
         )
 
         # Share vector store with assessment generator
@@ -841,6 +974,43 @@ class LearningOrchestrator:
         except Exception as e:
             print(f"Warning: Failed to load session state: {e}")
             return None
+
+    def _auto_fetch_module_content(self) -> None:
+        """
+        Automatically fetch educational content for all modules in the syllabus.
+        Uses Wikipedia and synthetic generation to populate document store.
+        """
+        if not self.syllabus or "modules" not in self.syllabus:
+            return
+
+        print("\n📚 Auto-fetching educational content for modules...")
+        print("=" * 60)
+
+        for module in self.syllabus["modules"]:
+            module_id = module.get("id")
+            if not module_id:
+                continue
+
+            print(f"\n📖 Module: {module.get('title')} ({module_id})")
+
+            # Fetch content for this module from multiple OER sources
+            created_files = auto_fetch_module_content(
+                module=module,
+                module_id=module_id,
+                output_dir=self.persist_dir.parent / "documents",  # data/documents
+                use_wikipedia=True,
+                use_arxiv=True,  # Fetch research papers
+                use_youtube=False,  # Disabled (requires transcript availability)
+                use_synthetic=True,  # Fallback to synthetic if no OER content
+            )
+
+            if created_files:
+                print(f"   ✅ Created {len(created_files)} document(s)")
+            else:
+                print(f"   ⚠️  No content created (may need manual documents)")
+
+        print("\n" + "=" * 60)
+        print("✅ Content fetching complete!\n")
 
     def get_learner_summary(self) -> Dict[str, Any]:
         """Get comprehensive learner summary."""

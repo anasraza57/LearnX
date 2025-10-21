@@ -1,3 +1,6 @@
+# Core dependencies
+numpy<2.0.0  # Required for compatibility with older modules
+
 # Core LLM framework
 langchain>=0.1.0
 langchain-openai>=0.3.35
@@ -22,6 +25,14 @@ faiss-cpu>=1.7.4
 # Document processing
 pypdf>=3.17.0
 pypdf2>=3.0.0
+
+# OER content fetching
+wikipedia>=1.4.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+feedparser>=6.0.10
+youtube-search-python>=1.6.6
+youtube-transcript-api>=0.6.0
 
 # Testing and development
 pytest>=7.4.0

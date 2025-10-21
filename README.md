@@ -32,8 +32,11 @@ cd EduGPT-PersonalisedLearning
 
 ### 2. Set up a virtual environment
 ```bash
-make venv
-source venv/bin/activate
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
@@ -43,10 +46,17 @@ Create a `.env` file in the root directory and add:
 OPENAI_API_KEY=your_key_here
 ```
 
-### 4. Run the baseline demo
+### 4. Run the interactive demo
 ```bash
 python src/run.py
 ```
+
+This launches a Gradio web interface at `http://127.0.0.1:7860` with 5 tabs:
+- **Tab 1**: Create learner profile
+- **Tab 2**: Generate personalized syllabus
+- **Tab 3**: Interactive teaching with RAG
+- **Tab 4**: Adaptive assessment
+- **Tab 5**: Progress tracking & analytics
 
 
 ## 📖 Background
@@ -69,10 +79,16 @@ python src/run.py
 - **Tests**: 35+ tests for profile validation and analytics
 
 ### ✅ Phase 3: RAG Instructor
-- Document ingestion with vector embeddings (FAISS)
+- **Automatic Multi-Source OER Content Fetching**:
+  - Wikipedia articles for general knowledge
+  - arXiv research papers for technical/scientific topics
+  - YouTube video transcripts (optional)
+  - AI-generated synthetic content as fallback
+- Document ingestion with vector embeddings (ChromaDB)
 - Context-aware lesson delivery with source citations
 - Session persistence and teaching state management
-- **Tests**: 40+ tests for retrieval, citation tracking, and session handling
+- **Tests**: 40+ tests for retrieval, citation tracking, session handling, and OER fetching
+- **See**: [OER Sources Documentation](docs/OER_SOURCES.md) for detailed information
 
 ### ✅ Phase 4: Adaptive Assessment
 - Multi-difficulty question generation aligned with learning objectives
@@ -123,7 +139,7 @@ EduGPT-PersonalisedLearning/
 ├── data/                     # Runtime data storage
 │   ├── sessions/             # Session state persistence
 │   └── learner_profiles/     # Learner profile storage
-├── examples/                 # Example usage and demos
+├── schemas/                  # JSON Schema definitions
 ├── requirements.txt
 └── README.md
 ```
