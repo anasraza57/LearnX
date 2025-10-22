@@ -7,6 +7,7 @@ This Gradio interface demonstrates all 5 phases with a beautiful landing page.
 import os
 import sys
 import json
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -143,23 +144,43 @@ def create_learner_profile(name, email, goals, interests, prior_topic1, prior_le
 # ==================== Phase 5: Generate Syllabus ====================
 
 def generate_syllabus_ui(topic: str, duration_weeks: int, weekly_hours: float):
-    """Generate personalized syllabus."""
+    """Generate personalized syllabus with visible loading states."""
     global current_orchestrator, current_learner
-    
+
+    # Immediately show a loading message and disable the button
+    yield (
+        "⏳ Preparing to generate your personalized syllabus…\n\n",
+        gr.update(choices=["Checking prerequisites…"], value=None, interactive=False),
+        gr.update(value="Generating…", interactive=False)
+    )
+
     try:
         if not current_learner:
-            return "❌ Error: Please create a learner profile first", ""
-        
+            yield ("❌ Error: Please create a learner profile first", gr.update(), gr.update(value="Generate Syllabus", interactive=True))
+            return
         if not topic:
-            return "❌ Error: Please enter a topic", ""
-        
-        # Create orchestrator
+            yield ("❌ Error: Please enter a topic", gr.update(), gr.update(value="Generate Syllabus", interactive=True))
+            return
+
+        # Step 1: create orchestrator
+        yield (
+            "🔧 Setting up the learning orchestrator…\n\n",
+            gr.update(choices=["Setting up…"], value=None, interactive=False),
+            gr.update(value="Generating…", interactive=False)
+        )
         current_orchestrator = LearningOrchestrator(
             learner=current_learner,
             persist_dir=persist_dir,
         )
-        
-        # Generate syllabus
+
+        # Step 2: kick off generation
+        yield (
+            "📚 Generating syllabus (fetching OER, structuring modules, mapping prerequisites)…\n\n",
+            gr.update(choices=["Generating syllabus…"], value=None, interactive=False),
+            gr.update(value="Generating…", interactive=False)
+        )
+
+        # Generate syllabus (long-running)
         syllabus = current_orchestrator.generate_syllabus(
             topic=topic,
             duration_weeks=duration_weeks,
@@ -167,7 +188,15 @@ def generate_syllabus_ui(topic: str, duration_weeks: int, weekly_hours: float):
             save_to_disk=True,
             auto_fetch_content=True,
         )
-        
+
+        # Step 3: finishing touches
+        yield (
+            "✅ Finalizing and saving syllabus…\n\n",
+            gr.update(choices=["Finalizing…"], value=None, interactive=False),
+            gr.update(value="Generating…", interactive=False)
+        )
+
+        # Build output
         output = f"""
 ✅ **Syllabus Generated Successfully!**
 
@@ -183,49 +212,135 @@ def generate_syllabus_ui(topic: str, duration_weeks: int, weekly_hours: float):
 ## 📋 Course Modules
 """
 
+        module_id_to_title = {m.get('id'): m.get('title') for m in syllabus.get('modules', [])}
         for i, module in enumerate(syllabus.get('modules', []), 1):
             prereqs = module.get('prerequisites', [])
-            prereq_str = f"\n   - Prerequisites: {', '.join(prereqs)}" if prereqs else ""
-
+            prereq_names = [module_id_to_title.get(pr_id, pr_id) for pr_id in prereqs]
+            prereq_str = f"\n   - Prerequisites: {', '.join(prereq_names)}" if prereq_names else ""
             output += f"\n### Module {i}: {module.get('title')}"
-            output += f"\n   - **Module ID**: `{module.get('id')}` (use this to enroll)"
             output += f"\n   - Estimated Time: {module.get('estimated_hours')} hours"
             output += f"\n   - Topics: {', '.join(module.get('topics', []))}"
-            output += prereq_str
-            output += "\n"
+            output += prereq_str + "\n"
 
         output += "\n---\n\n✅ Syllabus saved! Proceed to **Tab 3** to enroll in a module and start learning."
 
-        return output
+        dropdown_update = update_module_dropdown()
+
+        # Final yield: show result, update dropdown, and keep button disabled
+        yield (
+            output,
+            dropdown_update,
+            gr.update(value="Generated ✓", interactive=False)
+        )
 
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        # Show error and re-enable the button
+        yield (f"❌ Error: {str(e)}", gr.update(), gr.update(value="Generate Syllabus", interactive=True))
 
 
 # ==================== Phase 5: Learning Session ====================
 
-def enroll_module_ui(module_id: str):
-    """Enroll learner in a module."""
+def get_available_modules():
+    """
+    Get list of available modules (only modules user can enroll in).
+    Returns a list of available module names with checkmark indicator.
+    """
+    global current_orchestrator, current_learner
+
+    if not current_orchestrator or not current_orchestrator.syllabus:
+        return []
+
+    modules = current_orchestrator.syllabus.get('modules', [])
+    if not modules:
+        return []
+
+    available_modules = []
+    learner_data = current_learner.to_dict() if current_learner else {}
+    module_progress = learner_data.get('progress', {}).get('module_progress', {})
+
+    for module in modules:
+        module_title = module.get('title', 'Untitled Module')
+
+        # Check if prerequisites are met
+        prerequisites = module.get('prerequisites', [])
+        is_available = True
+
+        if prerequisites:
+            for prereq_id in prerequisites:
+                prereq_status = module_progress.get(prereq_id, {})
+                prereq_score = prereq_status.get('best_score', 0.0)
+
+                # Require at least 70% mastery on prerequisites
+                if prereq_score < 70.0:
+                    is_available = False
+                    break
+
+        # Only add available modules to the list
+        if is_available:
+            available_modules.append(module_title)
+
+    return available_modules
+
+
+def update_module_dropdown():
+    """Update the module dropdown after syllabus generation or enrollment."""
+    available_modules = get_available_modules()
+
+    if not available_modules:
+        return gr.update(choices=["No modules available"], value=None, interactive=False)
+
+    # Return dropdown with only available modules
+    return gr.update(choices=available_modules, value=None, interactive=True)
+
+
+def get_module_id_from_name(module_name: str) -> Optional[str]:
+    """Convert module name to module ID."""
     global current_orchestrator
-    
+
+    if not current_orchestrator or not current_orchestrator.syllabus:
+        return None
+
+    modules = current_orchestrator.syllabus.get('modules', [])
+    for module in modules:
+        if module.get('title') == module_name:
+            return module.get('id')
+
+    return None
+
+
+def enroll_module_ui(module_name: str):
+    """Enroll learner in a module by name."""
+    global current_orchestrator
+
     try:
         if not current_orchestrator or not current_orchestrator.syllabus:
-            return "❌ Error: Please generate a syllabus first"
-        
+            return "❌ Error: Please generate a syllabus first", gr.update(), gr.update(interactive=False)
+
+        if not module_name or module_name == "No modules available":
+            return "❌ Error: Please select a module", gr.update(), gr.update(interactive=False)
+
+        # Convert module name to module ID
+        module_id = get_module_id_from_name(module_name)
+        if not module_id:
+            return f"❌ Error: Module '{module_name}' not found", gr.update(), gr.update(interactive=False)
+
         result = current_orchestrator.enroll_learner(module_id)
-        
-        return f"""
+
+        # Update dropdown to reflect any changes in module availability
+        dropdown_update = update_module_dropdown()
+
+        output = f"""
 ✅ **Enrolled Successfully!**
 
-**Module ID**: {result['module_id']}
-**Title**: {result['title']}
-**Session ID**: {result['session_id']}
+**Module**: {result['title']}
 
-You can now start teaching or take an assessment.
+You can now start learning by clicking "Start Module Lessons" below.
 """
-    
+        # Enable the Start Module Lessons button
+        return output, dropdown_update, gr.update(interactive=True)
+
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {str(e)}", gr.update(), gr.update(interactive=False)
 
 
 def start_teaching_ui():
@@ -237,15 +352,18 @@ def start_teaching_ui():
             return "❌ Error: Please enroll in a module first"
         
         result = current_orchestrator.start_teaching_session(load_documents=True)
-        
+
+        # Get module name instead of ID
+        module = current_orchestrator._find_module(result['module_id'])
+        module_name = module.get('title', 'Unknown Module') if module else 'Unknown Module'
+
         return f"""
 ✅ **Teaching Session Started!**
 
-**Session ID**: {result['teaching_session_id']}
-**Module**: {result['module_id']}
+**Module**: {module_name}
 **RAG Enabled**: {result.get('rag_enabled', False)}
 
-Teaching session is ready!
+Teaching session is ready! You can now ask questions or start lessons.
 """
     
     except Exception as e:
@@ -253,15 +371,42 @@ Teaching session is ready!
 
 
 def start_module_lessons_ui():
-    """Start proactive teaching."""
+    """Start teaching session and display module lessons with visible loading states."""
     global current_orchestrator
-    
+
+    # Immediately show loading message and disable button
+    yield (
+        "⏳ Preparing to load module lessons…\n\n",
+        gr.update(value="Loading…", interactive=False)
+    )
+
     try:
         if not current_orchestrator or not current_orchestrator.current_module_id:
-            return "❌ Error: Please enroll in a module first"
-        
+            yield ("❌ Error: Please enroll in a module first", gr.update(value="🚀 Start Module Lessons", interactive=True))
+            return
+
+        # Step 1: Start teaching session
+        yield (
+            "🔧 Starting teaching session and loading documents…\n\n",
+            gr.update(value="Loading…", interactive=False)
+        )
+
+        # Auto-start teaching session if not already started
+        try:
+            current_orchestrator.start_teaching_session(load_documents=True)
+        except Exception as teaching_error:
+            # Teaching session might already be started, continue anyway
+            pass
+
+        # Step 2: Get module lessons
+        yield (
+            "📚 Generating personalized lessons for all topics…\n\n",
+            gr.update(value="Loading…", interactive=False)
+        )
+
+        # Get module lessons
         result = current_orchestrator.teach_module_content()
-        
+
         output = f"""
 ✅ **Module Lessons: {result['module_title']}**
 
@@ -270,7 +415,7 @@ def start_module_lessons_ui():
 ---
 
 """
-        
+
         for lesson in result['lessons']:
             output += f"""
 ## 📖 Topic {lesson['topic_number']}: {lesson['topic']}
@@ -278,30 +423,35 @@ def start_module_lessons_ui():
 {lesson['content']}
 
 """
-            
+
             if lesson.get('citations'):
                 output += "\n**Sources:**\n"
                 for i, citation in enumerate(lesson['citations'][:3], 1):
                     source_name = citation.get('source', 'Unknown')
                     relevance = citation.get('relevance_score', 0.0)
-                    
+
                     source_type = "🔬" if 'arxiv' in source_name.lower() else "📚" if 'wikipedia' in source_name.lower() else "📄"
-                    
+
                     output += f"- {source_type} {source_name} ({relevance:.0%})\n"
-            
+
             output += "\n---\n"
-        
+
         output += """
 
 💬 **Questions?** Use the "Ask a Question" section below.
 
 ✅ **Next Steps**: Take the assessment to test your understanding!
 """
-        
-        return output
-    
+
+        # Final yield: show result and keep button disabled
+        yield (
+            output,
+            gr.update(value="Lessons Loaded ✓", interactive=False)
+        )
+
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        # Show error and re-enable button
+        yield (f"❌ Error: {str(e)}", gr.update(value="🚀 Start Module Lessons", interactive=True))
 
 
 def ask_question_ui(question: str):
@@ -487,7 +637,7 @@ def complete_assessment_ui():
                 output += f"""
 ✅ **Congratulations!** Module completed!
 
-**Next**: Enroll in **{next_module.get('title')}** (ID: `{next_module_id}`)
+**Next**: Enroll in **{next_module.get('title')}** from the Teaching Session tab.
 """
             else:
                 output += "🎊 **Outstanding!** All modules completed!"
@@ -782,39 +932,48 @@ def create_interface():
                     with gr.Column():
                         syllabus_output = gr.Markdown()
 
-                generate_btn.click(
-                    generate_syllabus_ui,
-                    inputs=[topic_input, duration_input, hours_input],
-                    outputs=[syllabus_output]
-                )
-            
             with gr.Tab("3️⃣ Teaching Session"):
                 gr.Markdown("### RAG-Based Interactive Teaching")
-                
+
                 with gr.Column():
-                    enroll_input = gr.Textbox(label="Module ID", placeholder="m01-introduction-to-python")
-                    enroll_btn = gr.Button("Enroll in Module")
+                    gr.Markdown("#### 📚 Select a Module")
+                    module_dropdown = gr.Dropdown(
+                        label="Choose a Module to Enroll",
+                        choices=["Generate a syllabus first"],
+                        interactive=False,
+                        info="Modules with unmet prerequisites are not shown"
+                    )
+                    enroll_btn = gr.Button("Enroll in Module", variant="primary")
                     enroll_output = gr.Markdown()
-                    
+
                     gr.Markdown("---")
-                    
-                    start_teaching_btn = gr.Button("Start Teaching Session")
-                    teaching_output = gr.Markdown()
-                    
-                    gr.Markdown("---")
-                    
-                    start_lessons_btn = gr.Button("🚀 Start Module Lessons", variant="primary", size="lg")
+
+                    start_lessons_btn = gr.Button("🚀 Start Module Lessons", variant="primary", size="lg", interactive=False)
                     lessons_output = gr.Markdown()
-                    
+
                     gr.Markdown("---")
-                    
+
                     question_input = gr.Textbox(label="Ask a Question", placeholder="What is a variable?")
                     ask_btn = gr.Button("Ask Question")
                     answer_output = gr.Markdown()
-                
-                enroll_btn.click(enroll_module_ui, inputs=[enroll_input], outputs=[enroll_output])
-                start_teaching_btn.click(start_teaching_ui, outputs=[teaching_output])
-                start_lessons_btn.click(start_module_lessons_ui, outputs=[lessons_output])
+
+                # Connect syllabus generation button to update dropdown
+                generate_btn.click(
+                    fn=generate_syllabus_ui,
+                    inputs=[topic_input, duration_input, hours_input],
+                    outputs=[syllabus_output, module_dropdown, generate_btn]
+                )
+
+                enroll_btn.click(
+                    fn=enroll_module_ui,
+                    inputs=[module_dropdown],
+                    outputs=[enroll_output, module_dropdown, start_lessons_btn]
+                )
+
+                start_lessons_btn.click(
+                    fn=start_module_lessons_ui,
+                    outputs=[lessons_output, start_lessons_btn]
+                )
                 ask_btn.click(ask_question_ui, inputs=[question_input], outputs=[answer_output])
             
             with gr.Tab("4️⃣ Assessment"):
@@ -895,6 +1054,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     demo = create_interface()
+    demo.queue()  # Enable queue for loading states
     demo.launch(
         server_name="0.0.0.0",
         server_port=7860,
