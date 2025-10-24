@@ -810,7 +810,7 @@ class LearnerModel:
             hints_used=0,  # Quiz-level doesn't track individual hints
         )
 
-        # Also store quiz-specific metadata in assessment history
+        # Store quiz-specific metadata in assessment history
         if self._data["performance_analytics"]["assessment_history"]:
             last_assessment = self._data["performance_analytics"]["assessment_history"][-1]
             last_assessment["quiz_session_id"] = quiz_session_id

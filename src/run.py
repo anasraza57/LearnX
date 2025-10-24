@@ -7,7 +7,6 @@ This Gradio interface demonstrates all 5 phases with a beautiful landing page.
 import os
 import sys
 import json
-import time
 from pathlib import Path
 from typing import Optional
 
@@ -36,23 +35,48 @@ persist_dir.mkdir(exist_ok=True)
 # ==================== UI Helper Functions ====================
 
 def _format_question_display(question: dict, question_num: int, total: int, difficulty: str) -> str:
-    """Format a question for display."""
+    """Format a question for display with progress bar at top."""
     if not question:
         return "No question available"
 
+    # Calculate progress percentage
+    progress_pct = (question_num / total) * 100
+
+    # Handle both dict and object forms
+    if hasattr(question, 'question_text'):
+        question_text = question.question_text
+        question_type = question.question_type
+        options = getattr(question, 'options', None)
+    else:
+        question_text = question.get('question_text', 'Unknown question')
+        question_type = question.get('question_type', 'open_ended')
+        options = question.get('options', None)
+
     output = f"""
-## 📝 Question {question_num} of {total}
+## Progress: {question_num}/{total}
+<div style="background: #f0f0f0; border-radius: 10px; height: 20px; margin: 10px 0;">
+    <div style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); width: {progress_pct:.1f}%; height: 20px; border-radius: 10px; transition: width 0.3s;"></div>
+</div>
+
+---
 
 **Difficulty**: {difficulty.upper()}
 
-**Question**: {question['question_text']}
+**Question**: {question_text}
 
 """
 
-    if question['question_type'] == 'multiple_choice' and question.get('options'):
+    if question_type == 'multiple_choice' and options:
         output += "**Options**:\n"
-        for opt in question['options']:
-            output += f"- **{opt['option_id']}**. {opt['text']}\n"
+        for opt in options:
+            # Handle both dict and object forms for options
+            if hasattr(opt, 'option_id'):
+                opt_id = opt.option_id
+                opt_text = opt.text
+            else:
+                opt_id = opt.get('option_id', '?')
+                opt_text = opt.get('text', '')
+            output += f"- **{opt_id}**. {opt_text}\n"
         output += "\n💡 *Enter the letter of your answer (e.g., A, B, C, D)*"
     else:
         output += "💡 *Type your answer below*"
@@ -149,7 +173,7 @@ def generate_syllabus_ui(topic: str, duration_weeks: int, weekly_hours: float):
 
     # Immediately show a loading message and disable the button
     yield (
-        "⏳ Preparing to generate your personalized syllabus…\n\n",
+        "<div style='margin-top: 40px;'>⏳ Preparing to generate your personalized syllabus…</div>",
         gr.update(choices=["Checking prerequisites…"], value=None, interactive=False),
         gr.update(value="Generating…", interactive=False)
     )
@@ -164,7 +188,7 @@ def generate_syllabus_ui(topic: str, duration_weeks: int, weekly_hours: float):
 
         # Step 1: create orchestrator
         yield (
-            "🔧 Setting up the learning orchestrator…\n\n",
+            "<div style='margin-top: 40px;'>🔧 Setting up the learning orchestrator…</div>",
             gr.update(choices=["Setting up…"], value=None, interactive=False),
             gr.update(value="Generating…", interactive=False)
         )
@@ -175,7 +199,7 @@ def generate_syllabus_ui(topic: str, duration_weeks: int, weekly_hours: float):
 
         # Step 2: kick off generation
         yield (
-            "📚 Generating syllabus (fetching OER, structuring modules, mapping prerequisites)…\n\n",
+            "<div style='margin-top: 40px;'>📚 Generating syllabus (fetching OER, structuring modules, mapping prerequisites)…</div>",
             gr.update(choices=["Generating syllabus…"], value=None, interactive=False),
             gr.update(value="Generating…", interactive=False)
         )
@@ -191,7 +215,7 @@ def generate_syllabus_ui(topic: str, duration_weeks: int, weekly_hours: float):
 
         # Step 3: finishing touches
         yield (
-            "✅ Finalizing and saving syllabus…\n\n",
+            "<div style='margin-top: 40px;'>✅ Finalizing and saving syllabus…</div>",
             gr.update(choices=["Finalizing…"], value=None, interactive=False),
             gr.update(value="Generating…", interactive=False)
         )
@@ -226,11 +250,11 @@ def generate_syllabus_ui(topic: str, duration_weeks: int, weekly_hours: float):
 
         dropdown_update = update_module_dropdown()
 
-        # Final yield: show result, update dropdown, and keep button disabled
+        # Final yield: show result, update dropdown, restore original text and re-enable button
         yield (
             output,
             dropdown_update,
-            gr.update(value="Generated ✓", interactive=False)
+            gr.update(value="Generate Syllabus", interactive=True)
         )
 
     except Exception as e:
@@ -314,15 +338,15 @@ def enroll_module_ui(module_name: str):
 
     try:
         if not current_orchestrator or not current_orchestrator.syllabus:
-            return "❌ Error: Please generate a syllabus first", gr.update(), gr.update(interactive=False)
+            return "❌ Error: Please generate a syllabus first", gr.update(), gr.update(interactive=False), gr.update(interactive=True)
 
         if not module_name or module_name == "No modules available":
-            return "❌ Error: Please select a module", gr.update(), gr.update(interactive=False)
+            return "❌ Error: Please select a module", gr.update(), gr.update(interactive=False), gr.update(interactive=True)
 
         # Convert module name to module ID
         module_id = get_module_id_from_name(module_name)
         if not module_id:
-            return f"❌ Error: Module '{module_name}' not found", gr.update(), gr.update(interactive=False)
+            return f"❌ Error: Module '{module_name}' not found", gr.update(), gr.update(interactive=False), gr.update(interactive=True)
 
         result = current_orchestrator.enroll_learner(module_id)
 
@@ -336,11 +360,11 @@ def enroll_module_ui(module_name: str):
 
 You can now start learning by clicking "Start Module Lessons" below.
 """
-        # Enable the Start Module Lessons button
-        return output, dropdown_update, gr.update(interactive=True)
+        # Enable the Start Module Lessons button and disable the Enroll button
+        return output, dropdown_update, gr.update(interactive=True), gr.update(interactive=False)
 
     except Exception as e:
-        return f"❌ Error: {str(e)}", gr.update(), gr.update(interactive=False)
+        return f"❌ Error: {str(e)}", gr.update(), gr.update(interactive=False), gr.update(interactive=True)
 
 
 def start_teaching_ui():
@@ -376,7 +400,7 @@ def start_module_lessons_ui():
 
     # Immediately show loading message and disable button
     yield (
-        "⏳ Preparing to load module lessons…\n\n",
+        "<div style='margin-top: 40px;'>⏳ Preparing to load module lessons…</div>",
         gr.update(value="Loading…", interactive=False)
     )
 
@@ -387,20 +411,20 @@ def start_module_lessons_ui():
 
         # Step 1: Start teaching session
         yield (
-            "🔧 Starting teaching session and loading documents…\n\n",
+            "<div style='margin-top: 40px;'>🔧 Starting teaching session and loading documents…</div>",
             gr.update(value="Loading…", interactive=False)
         )
 
         # Auto-start teaching session if not already started
         try:
             current_orchestrator.start_teaching_session(load_documents=True)
-        except Exception as teaching_error:
+        except Exception:
             # Teaching session might already be started, continue anyway
             pass
 
         # Step 2: Get module lessons
         yield (
-            "📚 Generating personalized lessons for all topics…\n\n",
+            "<div style='margin-top: 40px;'>📚 Generating personalized lessons for all topics…</div>",
             gr.update(value="Loading…", interactive=False)
         )
 
@@ -443,10 +467,10 @@ def start_module_lessons_ui():
 ✅ **Next Steps**: Take the assessment to test your understanding!
 """
 
-        # Final yield: show result and keep button disabled
+        # Final yield: show result, restore original text and re-enable button
         yield (
             output,
-            gr.update(value="Lessons Loaded ✓", interactive=False)
+            gr.update(value="🚀 Start Module Lessons", interactive=True)
         )
 
     except Exception as e:
@@ -512,22 +536,43 @@ def ask_question_ui(question: str):
 # ==================== Phase 4: Assessment ====================
 
 def start_assessment_ui():
-    """Start adaptive assessment with intelligent defaults."""
+    """Start adaptive assessment with intelligent defaults and visible loading states."""
     global current_orchestrator
-    
+
+    # Immediately show loading message
+    yield (
+        "<div style='margin-top: 40px;'>⏳ Preparing assessment…</div>",
+        "",
+        gr.update(visible=False),
+        gr.update(value="Loading…", interactive=False),
+        gr.update(value="Submit Answer"),
+        "submit"
+    )
+
     try:
         if not current_orchestrator or not current_orchestrator.current_module_id:
-            return "❌ Error: Please enroll and complete teaching first", "", gr.update(visible=False)
-        
+            yield ("❌ Error: Please enroll and complete teaching first", "", gr.update(visible=False), gr.update(value="🚀 Start Assessment", interactive=True), gr.update(value="Submit Answer"), "submit")
+            return
+
+        # Show progress during assessment generation
+        yield (
+            "<div style='margin-top: 40px;'>📝 Generating adaptive questions…</div>",
+            "",
+            gr.update(visible=False),
+            gr.update(value="Loading…", interactive=False),
+            gr.update(value="Submit Answer"),
+            "submit"
+        )
+
         result = current_orchestrator.start_assessment()
-        
+
         question_output = _format_question_display(
             result['current_question'],
             result['current_question_number'],
             result['total_questions'],
             result['starting_difficulty']
         )
-        
+
         info_output = f"""
 ✅ **Assessment Started!**
 
@@ -537,78 +582,104 @@ def start_assessment_ui():
 **Adaptive**: Yes
 
 **Why this difficulty?** {result['difficulty_reason']}
-
----
-
-{question_output}
 """
-        
-        return info_output, "", gr.update(visible=True)
-    
+
+        # Final yield: show info, question, make answer section visible, disable start button, set state to "submit"
+        yield (info_output, question_output, gr.update(visible=True), gr.update(value="🚀 Start Assessment", interactive=False), gr.update(value="Submit Answer", variant="primary"), "submit")
+
     except Exception as e:
-        return f"❌ Error: {str(e)}", "", gr.update(visible=False)
+        yield (f"❌ Error: {str(e)}", "", gr.update(visible=False), gr.update(value="🚀 Start Assessment", interactive=True), gr.update(value="Submit Answer"), "submit")
 
 
-def submit_answer_ui(answer: str):
-    """Submit answer and get next question."""
+def submit_answer_ui(answer: str, current_state: str):
+    """Submit answer and show feedback, or move to next question."""
     global current_orchestrator
-    
+
     try:
         if not current_orchestrator or not current_orchestrator.current_quiz_session:
-            return "❌ Error: No active assessment", "", gr.update(visible=True)
-        
-        if not answer or not answer.strip():
-            return "❌ Error: Please provide an answer", "", gr.update(visible=True)
-        
-        result = current_orchestrator.submit_answer(answer=answer.strip())
-        
-        feedback_output = f"""
+            return "❌ Error: No active assessment", "", gr.update(), gr.update(value="Submit Answer"), "submit", gr.update(visible=False), gr.update(visible=True)
+
+        # State machine: "submit" = waiting for answer, "next" = showing feedback
+        if current_state == "submit":
+            # User is submitting an answer
+            if not answer or not answer.strip():
+                return "❌ Error: Please provide an answer", "", gr.update(), gr.update(value="Submit Answer"), "submit", gr.update(visible=False), gr.update(visible=True)
+
+            result = current_orchestrator.submit_answer(answer=answer.strip())
+
+            feedback_output = f"""
 {"✅ Correct!" if result['is_correct'] else "❌ Incorrect"}
 
 **Your Answer**: {answer}
 **Score**: {result['score']:.1f} points
 **Feedback**: {result['feedback']}
-
-**Progress**: Question {result['question_number']} of {result['total_questions']} completed
-**Current Difficulty**: {result['current_difficulty']}
-**Remaining**: {result['questions_remaining']}
-
----
-
 """
-        
-        if not result['assessment_complete']:
-            next_q = _format_question_display(
-                result['next_question'],
-                result['next_question_number'],
-                result['total_questions'],
-                result['current_difficulty']
-            )
-            feedback_output += next_q
-            return feedback_output, "", gr.update(visible=True)
-        else:
-            feedback_output += f"""
+
+            if not result['assessment_complete']:
+                # Show feedback and change button to "Next Question", keep answer section visible, hide complete button
+                return feedback_output, "", gr.update(value="", interactive=False), gr.update(value="Next Question", variant="secondary"), "next", gr.update(visible=False), gr.update(visible=True)
+            else:
+                feedback_output += f"""
 🎉 **{result.get('message', 'Assessment complete!')}**
 
 Click 'Complete Assessment' below to see your results.
 """
-            return feedback_output, "", gr.update(visible=False)
-    
+                # Show the complete button when assessment is done, hide answer section
+                return feedback_output, "", gr.update(value=""), gr.update(value="Submit Answer"), "submit", gr.update(visible=True), gr.update(visible=False)
+
+        elif current_state == "next":
+            # User is moving to next question after seeing feedback
+            # Get the next question from the orchestrator's current state
+            quiz_session = current_orchestrator.current_quiz_session
+
+            if not quiz_session or quiz_session.status == "completed":
+                return "Assessment complete!", "", gr.update(value=""), gr.update(value="Submit Answer"), "submit", gr.update(visible=True), gr.update(visible=False)
+
+            # Get current question (which is the next one after the last submit)
+            current_q_num = len(quiz_session.responses) + 1
+
+            if current_q_num <= len(quiz_session.questions):
+                current_question = quiz_session.questions[current_q_num - 1]
+                current_difficulty = quiz_session.difficulty_progression[-1] if quiz_session.difficulty_progression else "medium"
+
+                try:
+                    question_output = _format_question_display(
+                        current_question,
+                        current_q_num,
+                        quiz_session.num_questions,
+                        current_difficulty
+                    )
+                except Exception as format_error:
+                    return f"❌ Error formatting question: {str(format_error)}\n\nQuestion type: {type(current_question)}", "", gr.update(), gr.update(value="Submit Answer"), "submit", gr.update(visible=False), gr.update(visible=True)
+
+                # Clear feedback, show new question, change button back to "Submit Answer", enable input and clear it, hide complete button
+                return "", question_output, gr.update(value="", interactive=True), gr.update(value="Submit Answer", variant="primary"), "submit", gr.update(visible=False), gr.update(visible=True)
+            else:
+                return "Assessment complete!", "", gr.update(value=""), gr.update(value="Submit Answer"), "submit", gr.update(visible=True), gr.update(visible=False)
+
     except Exception as e:
-        return f"❌ Error: {str(e)}", "", gr.update(visible=True)
+        import traceback
+        error_details = traceback.format_exc()
+        return f"❌ Error: {str(e)}\n\n```\n{error_details}\n```", "", gr.update(), gr.update(value="Submit Answer"), "submit", gr.update(visible=False), gr.update(visible=True)
 
 
 def complete_assessment_ui():
     """Complete assessment."""
     global current_orchestrator, current_learner
-    
+
     try:
         if not current_orchestrator or not current_orchestrator.current_quiz_session:
-            return "❌ Error: No active assessment", ""
-        
+            return "❌ Error: No active assessment", "", gr.update(interactive=False)
+
         result = current_orchestrator.complete_assessment()
         metrics = result.get('metrics', {})
-        
+
+        # Calculate correct answers from score and total questions
+        total_questions = result.get('total_questions', 0)
+        answered_questions = result.get('answered_questions', total_questions)
+        score_percentage = result.get('score', 0)
+        correct_answers = int((score_percentage / 100) * answered_questions) if answered_questions > 0 else 0
+
         output = f"""
 # 🎉 Assessment Complete!
 
@@ -616,8 +687,9 @@ def complete_assessment_ui():
 
 **Final Score**: {result['score']:.1f}%
 **Status**: {"✅ **PASSED**" if result['passed'] else "❌ **FAILED**"}
-**Questions**: {result['total_questions']}
-**Correct**: {result['correct_answers']}
+**Questions**: {total_questions}
+**Answered**: {answered_questions}
+**Correct (approx)**: {correct_answers}
 **Time**: {metrics.get('time_taken_minutes', 0):.1f} min
 
 ## 📈 Mastery
@@ -629,7 +701,10 @@ def complete_assessment_ui():
 ## 🎯 Next Steps
 
 """
-        
+
+        # Enable enroll button only if assessment is passed
+        enroll_btn_state = gr.update(interactive=True) if result['passed'] else gr.update(interactive=False)
+
         if result['passed']:
             next_module_id = current_orchestrator._get_next_module(current_orchestrator.current_module_id)
             if next_module_id:
@@ -647,14 +722,14 @@ def complete_assessment_ui():
 
 You need {PASS_THRESHOLD * 100:.0f}% to pass. Next attempt will be adapted to your level.
 """
-        
+
         if current_learner:
             current_learner.save(persist_dir / "profiles" / f"{current_learner.learner_id}.json")
-        
-        return output, json.dumps(result, indent=2)
-    
+
+        return output, json.dumps(result, indent=2), enroll_btn_state
+
     except Exception as e:
-        return f"❌ Error: {str(e)}", ""
+        return f"❌ Error: {str(e)}", "", gr.update(interactive=False)
 
 
 def get_learner_progress_ui():
@@ -967,7 +1042,7 @@ def create_interface():
                 enroll_btn.click(
                     fn=enroll_module_ui,
                     inputs=[module_dropdown],
-                    outputs=[enroll_output, module_dropdown, start_lessons_btn]
+                    outputs=[enroll_output, module_dropdown, start_lessons_btn, enroll_btn]
                 )
 
                 start_lessons_btn.click(
@@ -979,20 +1054,21 @@ def create_interface():
             with gr.Tab("4️⃣ Assessment"):
                 gr.Markdown("""
                 ### 🎯 Adaptive Assessment
-                
+
                 **How it works:**
                 - Questions auto-determined based on module topics
                 - Difficulty based on your performance history
                 - Adapts in real-time as you answer
                 - One question at a time for better focus
                 """)
-                
+
                 with gr.Column():
                     start_assessment_btn = gr.Button("🚀 Start Assessment", variant="primary", size="lg")
                     assessment_output = gr.Markdown()
-                    
+                    question_output = gr.Markdown()
+
                     gr.Markdown("---")
-                    
+
                     with gr.Column(visible=False) as answer_section:
                         gr.Markdown("### Your Answer")
                         answer_input = gr.Textbox(
@@ -1001,32 +1077,32 @@ def create_interface():
                             lines=3
                         )
                         submit_btn = gr.Button("Submit Answer", variant="primary")
-                    
+
                     feedback_output = gr.Markdown()
-                    
+
+                    # Hidden state to track submit vs next
+                    button_state = gr.State("submit")
+
                     gr.Markdown("---")
-                    
-                    complete_btn = gr.Button("✅ Complete Assessment & View Results", variant="secondary", size="lg")
+
+                    complete_btn = gr.Button("✅ Complete Assessment & View Results", variant="secondary", size="lg", visible=False)
                     complete_output = gr.Markdown()
                     complete_json = gr.Code(language="json", label="Results", visible=False)
                 
                 start_assessment_btn.click(
                     start_assessment_ui,
-                    outputs=[assessment_output, feedback_output, answer_section]
+                    outputs=[assessment_output, question_output, answer_section, start_assessment_btn, submit_btn, button_state]
                 )
-                
+
                 submit_btn.click(
                     submit_answer_ui,
-                    inputs=[answer_input],
-                    outputs=[feedback_output, answer_input, answer_section]
-                ).then(
-                    lambda: "",
-                    outputs=[answer_input]
+                    inputs=[answer_input, button_state],
+                    outputs=[feedback_output, question_output, answer_input, submit_btn, button_state, complete_btn, answer_section]
                 )
                 
                 complete_btn.click(
                     complete_assessment_ui,
-                    outputs=[complete_output, complete_json]
+                    outputs=[complete_output, complete_json, enroll_btn]
                 )
             
             with gr.Tab("5️⃣ Progress"):

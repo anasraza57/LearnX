@@ -193,6 +193,10 @@ data/embeddings_cache/
 data/logs/
 !data/logs/.gitkeep
 
+#Quiz sessions
+data/quiz_sessions/
+!data/quiz_sessions/.gitkeep
+
 # Uploaded documents (may be copyrighted)
 data/documents/
 !data/documents/.gitkeep

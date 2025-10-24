@@ -694,7 +694,7 @@ Length: 300-500 words."""
             score=result["score"],
             difficulty=self.current_quiz_session.starting_difficulty,
             num_questions=len(self.current_quiz_session.questions),
-            time_taken_minutes=time_delta,
+            time_taken_minutes=int(time_delta),  # Convert to integer for schema compliance
             passed=result["passed"],
         )
 
@@ -1027,9 +1027,13 @@ Length: 300-500 words."""
         return None
 
     def _save_quiz_session(self, quiz: AdaptiveQuiz) -> None:
-        """Save quiz session to disk."""
+        """Save quiz session to disk in quiz_sessions subfolder."""
+        # Create quiz_sessions directory if it doesn't exist
+        quiz_sessions_dir = self.persist_dir / "quiz_sessions"
+        quiz_sessions_dir.mkdir(exist_ok=True)
+
         filename = f"quiz_session_{quiz.session_id}.json"
-        filepath = self.persist_dir / filename
+        filepath = quiz_sessions_dir / filename
 
         # Convert quiz to dict (simplified for now)
         quiz_data = {
@@ -1046,6 +1050,30 @@ Length: 300-500 words."""
 
         with open(filepath, "w") as f:
             json.dump(quiz_data, f, indent=2)
+
+    def _load_quiz_session(self, session_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Load quiz session from disk.
+
+        Args:
+            session_id: Quiz session ID to load
+
+        Returns:
+            Quiz session data dict, or None if not found
+        """
+        quiz_sessions_dir = self.persist_dir / "quiz_sessions"
+        filename = f"quiz_session_{session_id}.json"
+        filepath = quiz_sessions_dir / filename
+
+        if not filepath.exists():
+            return None
+
+        try:
+            with open(filepath, "r") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading quiz session {session_id}: {e}")
+            return None
 
     def _save_session_state(self) -> None:
         """Save SessionState atomically to disk."""

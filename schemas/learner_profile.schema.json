@@ -390,6 +390,20 @@
               "hints_used": {
                 "type": "integer",
                 "minimum": 0
+              },
+              "quiz_session_id": {
+                "type": "string",
+                "pattern": "^qs-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                "description": "Optional reference to quiz session (Phase 4 integration)"
+              },
+              "num_questions": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Number of questions in the assessment"
+              },
+              "passed": {
+                "type": "boolean",
+                "description": "Whether the learner passed the assessment"
               }
             }
           },
