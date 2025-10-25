@@ -187,20 +187,23 @@ class DocumentLoader:
 
         # Extract original URL from markdown (common patterns from OER fetcher)
         original_url = None
-        url_patterns = [
-            r'\*\*Source:\*\*[^(]*?\(?(?:https?://[^\s\)]+)',  # **Source:** ... (URL) or URL
-            r'https?://en\.wikipedia\.org/wiki/[^\s\)]+',       # Wikipedia URLs
-            r'https?://arxiv\.org/[^\s\)]+',                    # arXiv URLs
-            r'https?://[^\s\)]+',                                # Any other URL
-        ]
 
-        for pattern in url_patterns:
-            url_match = re.search(pattern, content[:1000])  # Check first 1000 chars
-            if url_match:
-                original_url = url_match.group(0)
-                # Clean up URL (remove markdown formatting)
-                original_url = original_url.replace('**', '').replace('(', '').replace(')', '').strip()
-                if original_url.startswith('http'):
+        # Try to extract URL from **Source:** line first
+        source_match = re.search(r'\*\*Source:\*\*\s*(?:Wikipedia|arXiv|YouTube)?\s*-?\s*(https?://[^\s\n]+)', content[:1000])
+        if source_match:
+            original_url = source_match.group(1).strip()
+        else:
+            # Fallback: look for any URL in first 1000 chars
+            url_patterns = [
+                r'https?://en\.wikipedia\.org/wiki/[^\s\)\n]+',       # Wikipedia URLs
+                r'https?://arxiv\.org/[^\s\)\n]+',                    # arXiv URLs
+                r'https?://[^\s\)\n]+',                               # Any other URL
+            ]
+
+            for pattern in url_patterns:
+                url_match = re.search(pattern, content[:1000])
+                if url_match:
+                    original_url = url_match.group(0).strip()
                     break
 
         # Determine source type from URL or filename

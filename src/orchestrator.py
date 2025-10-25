@@ -1148,6 +1148,7 @@ Length: 300-500 words."""
         self.instructor = create_instructor_from_documents(
             documents_dir=documents_dir,
             collection_name=f"module_{module_id}",
+            force_reload=True,  # Always reload to pick up latest metadata (URLs, source types)
             learning_style=learning_style,  # Pass learning style to instructor
             interests=interests,  # Pass interests for personalized examples
         )
