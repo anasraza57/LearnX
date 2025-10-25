@@ -154,6 +154,9 @@ class RAGInstructor:
         self.learning_style = learning_style or ["visual"]
         self.interests = interests or []
 
+        # Conversation history for follow-up questions
+        self.conversation_history = []
+
         # Initialize LLM
         self.llm = ChatOpenAI(
             model=self.model_name,
@@ -266,7 +269,15 @@ class RAGInstructor:
         else:
             pk_text = "None specified"
 
-        # Step 3: Generate answer using LLM
+        # Step 3: Add conversation history context for follow-up questions
+        history_context = ""
+        if self.conversation_history:
+            history_context = "\n\n**Recent Conversation:**\n"
+            for i, (q, a) in enumerate(self.conversation_history[-3:], 1):  # Last 3 exchanges
+                history_context += f"Q{i}: {q}\nA{i}: {a[:200]}...\n"
+            history_context += "\n"
+
+        # Step 4: Generate answer using LLM
         prompt = self.prompt_template.format(
             question=question,
             context=context,
@@ -274,7 +285,17 @@ class RAGInstructor:
             prior_knowledge=pk_text
         )
 
+        # Add conversation history if exists
+        if history_context:
+            prompt = history_context + prompt
+
         answer = self.llm.invoke(prompt).content
+
+        # Store in conversation history
+        self.conversation_history.append((question, answer))
+        # Keep only last 10 exchanges
+        if len(self.conversation_history) > 10:
+            self.conversation_history = self.conversation_history[-10:]
 
         # Step 4: Create deduplicated citations with URLs
         citations = []

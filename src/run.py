@@ -142,7 +142,6 @@ def create_learner_profile(name, email, goals, interests, prior_topic1, prior_le
 ## 👤 Personal Information
 - **Name**: {current_learner.name}
 - **Email**: {email if email else 'Not provided'}
-- **ID**: {current_learner.learner_id}
 
 ## 🎯 Learning Preferences
 - **Learning Style**: {', '.join(learning_style) if learning_style else 'visual'}
@@ -524,20 +523,93 @@ def start_module_lessons_ui():
 
 
 def ask_question_ui(question: str):
-    """Ask a question."""
+    """Ask a question - automatically searches current module first, then all modules if needed."""
     global current_orchestrator
-    
+
     try:
         if not current_orchestrator or not current_orchestrator.instructor:
             return "❌ Error: Please start a teaching session first"
-        
+
         if not question:
             return "❌ Error: Please enter a question"
-        
-        result = current_orchestrator.teach(question=question)
-        
-        output = f"""
-**Answer:**
+
+        # Handle greetings and casual conversation
+        question_lower = question.lower().strip()
+        greetings = ['hi', 'hello', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening']
+
+        if question_lower in greetings or len(question_lower.split()) <= 2 and any(g in question_lower for g in greetings):
+            return f"""
+👋 **Hello!**
+
+I'm your AI learning assistant. I'm here to help you understand the material better.
+
+**You can ask me:**
+- Questions about topics in your current module
+- Clarifications on concepts you're learning
+- Examples or explanations in different ways
+- Questions about topics from other modules too!
+
+**Examples:**
+- "What are Python variables?"
+- "Can you explain inheritance with an example?"
+- "What's the difference between lists and tuples?"
+
+What would you like to learn about?
+"""
+
+        # Detect off-topic questions (weather, sports, etc.)
+        off_topic_keywords = ['weather', 'sports', 'news', 'movie', 'recipe', 'game', 'music', 'stock', 'price']
+        if any(keyword in question_lower for keyword in off_topic_keywords) and not any(edu in question_lower for edu in ['learn', 'teach', 'explain', 'course', 'module']):
+            return f"""
+❌ **Off-Topic Question**
+
+I'm a learning assistant focused on helping you with your course material. I can't answer questions about {question_lower.split()[0] if len(question_lower.split()) > 0 else 'that topic'}.
+
+**I can help with:**
+- Topics from your current module
+- Concepts from other modules in your syllabus
+- Examples and explanations
+
+Try asking about something related to your learning goals! 📚
+"""
+
+        # Try current module first
+        result = current_orchestrator.teach(question=question, search_all_modules=False)
+
+        # If no citations found or confidence is low, try searching all modules
+        if not result.get('citations') or len(result['citations']) == 0:
+            result = current_orchestrator.teach(question=question, search_all_modules=True)
+            searched_elsewhere = True
+        else:
+            searched_elsewhere = False
+
+        # Check if still no relevant results
+        if not result.get('citations') or len(result['citations']) == 0:
+            return f"""
+⚠️ **No Relevant Information Found**
+
+I couldn't find information about "{question}" in your course materials.
+
+**Possible reasons:**
+- This topic might not be covered in your syllabus yet
+- The question might be too specific or off-topic
+- Try rephrasing your question
+
+**Suggestions:**
+- Ask about topics from your current module
+- Try broader questions like "What is...?" or "How does...?"
+- Check the module topics to see what's covered
+
+Would you like to ask something else?
+"""
+
+        output = ""
+
+        # Add note if searched across all modules
+        if searched_elsewhere:
+            output += "💡 *Note: Answer found by searching across all modules (not in current module)*\n\n---\n\n"
+
+        output += f"""**Answer:**
 
 {result['response']}
 
@@ -545,7 +617,7 @@ def ask_question_ui(question: str):
 
 **📚 Sources:**
 """
-        
+
         if result.get('citations') and len(result['citations']) > 0:
             for i, citation in enumerate(result['citations'], 1):
                 source_name = citation.get('source', 'Unknown')

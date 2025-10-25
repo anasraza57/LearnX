@@ -181,6 +181,11 @@ data/sessions/
 !data/sessions/.gitkeep
 !data/sessions/example_*.json
 
+# Learner progress tracking (learner session states)
+data/learner_progress/
+!data/learner_progress/.gitkeep
+!data/learner_progress/example_*.json
+
 # Vector database (large binary files)
 data/vectorstore/
 !data/vectorstore/.gitkeep

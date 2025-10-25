@@ -36,7 +36,7 @@ ADVANCE_MASTERY_THRESHOLD = 0.75
 PRACTICE_MASTERY_THRESHOLD = 0.60
 MAX_DIFFICULTY = 2
 MIN_DIFFICULTY = -2
-SESSION_DIR = "data/sessions"
+SESSION_DIR = "data/learner_progress"
 
 
 # ==================== Session State Models ====================
@@ -403,13 +403,14 @@ class LearningOrchestrator:
             "status": "active",
         }
 
-    def teach(self, question: str, max_tokens: int = 500) -> Dict[str, Any]:
+    def teach(self, question: str, max_tokens: int = 500, search_all_modules: bool = False) -> Dict[str, Any]:
         """
         Deliver teaching content in response to learner question.
 
         Args:
             question: Learner's question
             max_tokens: Maximum response length (currently not used by RAG instructor)
+            search_all_modules: If True, search across ALL modules, not just current one
 
         Returns:
             Teaching response with content and citations
@@ -420,10 +421,17 @@ class LearningOrchestrator:
         # Get learner's prior knowledge
         prior_knowledge = self.learner.get_prior_knowledge()
 
+        # Prepare metadata filter (if searching only current module)
+        metadata_filter = None
+        if not search_all_modules and self.current_module_id:
+            # Only search current module's documents
+            metadata_filter = {"module_id": self.current_module_id}
+
         # Get teaching response from RAG instructor with prior knowledge
         response = self.instructor.teach(
             question=question,
-            prior_knowledge=prior_knowledge
+            prior_knowledge=prior_knowledge,
+            metadata_filter=metadata_filter
         )
 
         # Store citations for session tracking
@@ -448,7 +456,44 @@ class LearningOrchestrator:
             "citations": citations_list,
             "cited_sources": self._last_citations,  # Simplified source list
             "teaching_session_id": self.current_teaching_session_id,
+            "searched_all_modules": search_all_modules,
         }
+
+    def ask_general_question(self, question: str) -> Dict[str, Any]:
+        """
+        Ask a general question about ANY topic in the syllabus, not limited to current module.
+
+        This is useful when learners want to:
+        - Ask about topics from other modules
+        - Get broader context
+        - Explore related concepts
+
+        Args:
+            question: Any question about course content
+
+        Returns:
+            Teaching response with citations from across all modules
+        """
+        # Create a general instructor if none exists (searches all documents)
+        if not self.instructor:
+            # Initialize instructor with ALL documents (not just current module)
+            documents_dir = self.persist_dir / "documents"
+            if documents_dir.exists():
+                from src.agents.rag_instructor import create_instructor_from_documents
+
+                # Get learner data for personalization
+                learner_data = self.learner.to_dict()
+                learning_style = learner_data.get("learning_style", "mixed")
+                interests = learner_data.get("personal_info", {}).get("interests", [])
+
+                self.instructor = create_instructor_from_documents(
+                    documents_dir=documents_dir,
+                    learning_style=learning_style,
+                    interests=interests,
+                )
+
+        # Search across ALL modules
+        return self.teach(question=question, search_all_modules=True)
 
     def teach_module_content(self) -> Dict[str, Any]:
         """
