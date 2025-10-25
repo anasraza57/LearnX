@@ -1,5 +1,6 @@
 # Core dependencies
 numpy<2.0.0  # Required for compatibility with older modules
+scipy>=1.14.0  # Required for statistical analysis and evaluation metrics
 
 # Core LLM framework
 langchain>=0.1.0

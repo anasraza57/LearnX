@@ -18,7 +18,9 @@ tests/
 │   ├── test_quiz_session.py                # Adaptive quiz & scoring
 │   ├── test_assessment_schemas.py          # Assessment & quiz schema
 │   ├── test_orchestrator.py                # Complete pipeline orchestration
-│   └── test_syllabus_planner.py            # Multi-agent syllabus generation 
+│   ├── test_syllabus_planner.py            # Multi-agent syllabus generation
+│   ├── test_evaluation_metrics.py          # Evaluation metrics (learning gain, retention, etc.)
+│   └── test_ab_testing.py                  # A/B testing framework
 ```
 
 ## Running Tests
@@ -295,11 +297,59 @@ See `.github/workflows/test.yml` for CI configuration.
   - Schema validation and auto-fixing
   - Workload feasibility calculation
 
+- **test_evaluation_metrics.py** (19 tests) ✅ **Scientific Evaluation Metrics**
+  - Learning gain calculations (8 tests - fast ✅)
+    - Hake's normalized gain formula validation
+    - Edge cases (no room to improve, perfect improvement)
+    - Interpretation (high/medium/low gain)
+    - Analysis of multiple learners
+  - Retention metrics (3 tests - fast ✅)
+    - Retention rate calculation
+    - Forgetting rate calculation
+    - Interpretation (excellent/good/poor retention)
+  - Engagement metrics (1 test - fast ✅)
+    - Completion rate, session time, learning streaks
+  - Statistical comparisons (5 tests - fast ✅)
+    - A/B test comparisons (t-tests, Cohen's d)
+    - Baseline comparisons
+    - No difference detection
+    - Interpretation generation
+  - Data persistence (2 tests - fast ✅)
+    - Metrics saved to disk
+    - Metrics loaded correctly
+
+- **test_ab_testing.py** (21 tests) ✅ **A/B Testing Framework**
+  - Experiment management (4 tests - fast ✅)
+    - Experiment creation with variants
+    - Allocation ratio validation (must sum to 1.0)
+    - Start/stop experiment lifecycle
+  - Learner assignment (6 tests - fast ✅)
+    - Random assignment based on allocation ratio
+    - Sticky assignments (same variant on repeated calls)
+    - Force variant assignment for testing
+    - Allocation distribution verification (50-50 split)
+    - Get variant for assigned learners
+  - Result recording (2 tests - fast ✅)
+    - Record primary and secondary metrics
+    - Error handling for unassigned learners
+  - Statistical analysis (4 tests - fast ✅)
+    - Analyze experiment results with t-tests
+    - Variant statistics (mean, std, median)
+    - Interpretation generation
+    - Recommendations (ship it / don't ship)
+  - Sample size calculation (2 tests - fast ✅)
+    - Calculate required sample size for power analysis
+    - Larger samples for smaller effect sizes
+  - Data persistence (3 tests - fast ✅)
+    - Experiments saved to disk
+    - Assignments persisted
+    - Results saved correctly
+
 ## Test Summary
 
-**Total Tests:** 210+ tests across 11 test files
+**Total Tests:** 250+ tests across 13 test files
 
-**Fast Tests (< 1 second):** 175+ tests
+**Fast Tests (< 1 second):** 215+ tests
 - test_config.py: 18 tests ✅
 - test_validation.py: 18 tests ✅
 - test_learner_profile_validation.py: 16 tests ✅
@@ -310,6 +360,8 @@ See `.github/workflows/test.yml` for CI configuration.
 - test_assessment_schemas.py: 20 tests ✅
 - test_orchestrator.py: 20 tests ✅
 - test_syllabus_planner.py: 15 tests ✅
+- test_evaluation_metrics.py: 19 tests ✅
+- test_ab_testing.py: 21 tests ✅
 
 **Slow Tests (30-60s each):** 35 tests
 - test_learner_model.py: 35 tests ⚠️ (all pass, but slow due to validation)
@@ -328,6 +380,8 @@ See `.github/workflows/test.yml` for CI configuration.
 - ✅ Mastery-Based Adaptation
 - ✅ Session Persistence
 - ✅ Cross-System Integration
+- ✅ Scientific Evaluation Metrics (learning gain, retention, engagement)
+- ✅ A/B Testing Framework (controlled experiments, statistical analysis)
 
 ## Current Coverage
 
