@@ -250,17 +250,29 @@ class LearningOrchestrator:
                     + "\n".join(f"  - {prereq}" for prereq in unmet_prerequisites)
                 )
 
-        # Check prior knowledge for personalized insights
+        # Check prior knowledge for personalized insights and topic acceleration
         module_topics = module.get("topics", [])
         prior_knowledge = self.learner.get_prior_knowledge()
 
         relevant_prior_knowledge = {}
+        skip_suggested = []  # Topics that can be skipped/accelerated
+        acceleration_available = False
+
         for topic, level in prior_knowledge.items():
             # Check if any module topics relate to prior knowledge
             topic_lower = topic.lower()
             for module_topic in module_topics:
                 if topic_lower in module_topic.lower() or module_topic.lower() in topic_lower:
                     relevant_prior_knowledge[topic] = level
+
+                    # Suggest skipping/acceleration for intermediate or advanced knowledge
+                    if level in ["intermediate", "advanced", "expert"]:
+                        skip_suggested.append({
+                            "topic": module_topic,
+                            "prior_level": level,
+                            "reason": f"You have {level} knowledge in this area"
+                        })
+                        acceleration_available = True
                     break
 
         # Start module in learner profile
@@ -268,20 +280,31 @@ class LearningOrchestrator:
 
         self.current_module_id = module_id
 
+        # Adjust initial difficulty based on prior knowledge
+        initial_difficulty_hint = 0  # Neutral by default
+        if relevant_prior_knowledge:
+            # If learner has intermediate/advanced knowledge, start at higher difficulty
+            advanced_count = sum(1 for level in relevant_prior_knowledge.values()
+                                if level in ["intermediate", "advanced", "expert"])
+            if advanced_count >= len(relevant_prior_knowledge) * 0.5:  # 50% or more advanced
+                initial_difficulty_hint = 1  # Start slightly harder
+                print(f"   🚀 Starting at increased difficulty due to prior knowledge in {advanced_count} area(s)")
+
         # Initialize SessionState for this module
         self.session_state = SessionState(
             session_id=f"sess-{uuid.uuid4()}",
             learner_id=self.learner.learner_id,
             module_id=module_id,
             topic_cursor=0,  # Start at first topic
-            difficulty_hint=0,  # Neutral difficulty
+            difficulty_hint=initial_difficulty_hint,  # Adjusted based on prior knowledge
             history=[],
             completed=False,
             created_at=datetime.now(timezone.utc).isoformat(),
             updated_at=datetime.now(timezone.utc).isoformat(),
         )
 
-        return {
+        # Build personalized enrollment response
+        enrollment_response = {
             "module_id": module_id,
             "title": module.get("title"),
             "enrolled": True,
@@ -289,6 +312,56 @@ class LearningOrchestrator:
             "session_id": self.session_state.session_id,
             "prior_knowledge": relevant_prior_knowledge,  # Include prior knowledge insights
             "topics": module_topics,
+            "acceleration_available": acceleration_available,  # Whether topic acceleration is available
+        }
+
+        # Add acceleration info if applicable
+        if acceleration_available and skip_suggested:
+            enrollment_response["skip_suggested"] = skip_suggested
+            enrollment_response["acceleration_message"] = (
+                f"Based on your prior knowledge, you may be able to accelerate through "
+                f"{len(skip_suggested)} topic(s). We'll start at an increased difficulty level."
+            )
+
+        return enrollment_response
+
+    def skip_to_topic(self, topic_index: int) -> Dict[str, Any]:
+        """
+        Skip to a specific topic in the current module based on prior knowledge.
+
+        Args:
+            topic_index: Index of the topic to skip to (0-based)
+
+        Returns:
+            Confirmation with new topic position
+        """
+        if not self.session_state:
+            raise ValueError("No active session. Enroll in a module first.")
+
+        module = self._find_module(self.current_module_id)
+        if not module:
+            raise ValueError(f"Module {self.current_module_id} not found")
+
+        topics = module.get("topics", [])
+        if topic_index < 0 or topic_index >= len(topics):
+            raise ValueError(
+                f"Invalid topic index {topic_index}. Module has {len(topics)} topics."
+            )
+
+        old_cursor = self.session_state.topic_cursor
+        self.session_state.topic_cursor = topic_index
+        self.session_state.updated_at = datetime.now(timezone.utc).isoformat()
+
+        # Save updated state
+        self._save_session_state()
+
+        return {
+            "skipped": True,
+            "previous_topic_index": old_cursor,
+            "current_topic_index": topic_index,
+            "current_topic": topics[topic_index],
+            "topics_skipped": topic_index - old_cursor if topic_index > old_cursor else 0,
+            "message": f"Skipped to topic {topic_index + 1}/{len(topics)}: {topics[topic_index]}"
         }
 
     # ==================== Teaching Session ====================
@@ -1183,12 +1256,19 @@ Length: 300-500 words."""
         """
         Automatically fetch educational content for all modules in the syllabus.
         Uses Wikipedia and synthetic generation to populate document store.
+        Prioritizes content based on learner's interests.
         """
         if not self.syllabus or "modules" not in self.syllabus:
             return
 
+        # Get learner's interests for content prioritization
+        learner_data = self.learner.to_dict()
+        interests = learner_data.get("personal_info", {}).get("interests", [])
+
         print("\n📚 Auto-fetching educational content for modules...")
         print("=" * 60)
+        if interests:
+            print(f"🎯 Learner interests: {', '.join(interests)}")
 
         for module in self.syllabus["modules"]:
             module_id = module.get("id")
@@ -1206,6 +1286,7 @@ Length: 300-500 words."""
                 use_arxiv=True,  # Fetch research papers
                 use_youtube=False,  # Disabled (requires transcript availability)
                 use_synthetic=True,  # Fallback to synthetic if no OER content
+                learner_interests=interests,  # Pass interests for prioritization
             )
 
             if created_files:

@@ -537,6 +537,7 @@ def auto_fetch_module_content(
     use_arxiv: bool = True,
     use_youtube: bool = False,
     use_synthetic: bool = True,
+    learner_interests: Optional[List[str]] = None,
 ) -> List[Path]:
     """
     Automatically fetch educational content for a module from multiple OER sources.
@@ -555,6 +556,7 @@ def auto_fetch_module_content(
         use_arxiv: Whether to fetch from arXiv
         use_youtube: Whether to fetch YouTube transcripts
         use_synthetic: Whether to generate synthetic content as fallback
+        learner_interests: Learner's interests for prioritizing relevant content
 
     Returns:
         List of created file paths
@@ -563,6 +565,72 @@ def auto_fetch_module_content(
     created_files = []
 
     topics = module.get("topics", [])
+
+    # Prioritize topics based on learner interests
+    if learner_interests:
+        prioritized_topics = []
+        remaining_topics = []
+
+        for topic in topics:
+            # Check if topic relates to any learner interest
+            topic_lower = topic.lower()
+            if any(interest.lower() in topic_lower or topic_lower in interest.lower()
+                   for interest in learner_interests):
+                prioritized_topics.append(topic)
+            else:
+                remaining_topics.append(topic)
+
+        # Combine: prioritized first, then remaining
+        topics = prioritized_topics + remaining_topics
+
+        if prioritized_topics:
+            print(f"   🎯 Prioritizing {len(prioritized_topics)} topic(s) matching learner interests: {', '.join(learner_interests[:3])}")
+
+    topics = topics
+
+    # Strategy 0: Fetch recommended resources from syllabus
+    resources = module.get("resources", [])
+    if resources:
+        print(f"   📚 Found {len(resources)} recommended resource(s) in syllabus")
+        for resource in resources:
+            url = resource.get("url")
+            title = resource.get("title")
+            resource_type = resource.get("type", "unknown")
+
+            # Try to fetch content from URL if provided
+            if url and url.startswith("http"):
+                print(f"   📥 Fetching: {title} ({resource_type})")
+                file_path = fetcher.fetch_content_from_url(
+                    url=url,
+                    module_id=module_id,
+                    title=title
+                )
+                if file_path:
+                    created_files.append(file_path)
+            else:
+                # No URL but we have resource name - create a reference document
+                print(f"   📝 Creating reference for: {title} ({resource_type})")
+                module_dir = (output_dir or Path("data/documents")) / module_id
+                module_dir.mkdir(parents=True, exist_ok=True)
+
+                safe_filename = fetcher._sanitize_filename(title)
+                filepath = module_dir / f"resource_{safe_filename}.md"
+
+                content = f"# {title}\n\n"
+                content += f"**Type:** {resource_type}\n"
+                content += f"**Recommended for:** {module.get('title', module_id)}\n"
+                if url:
+                    content += f"**Source:** {url}\n"
+                content += f"\n**Description:** {resource.get('description', 'Recommended learning resource')}\n\n"
+                content += "---\n\n"
+                content += f"This is a recommended resource for this module. "
+                if not url:
+                    content += f"Please find '{title}' through your library or online bookstore.\n"
+
+                with open(filepath, "w", encoding="utf-8") as f:
+                    f.write(content)
+
+                created_files.append(filepath)
 
     # Strategy 1: Multiple OER sources
     if topics:

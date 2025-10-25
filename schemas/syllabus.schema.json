@@ -162,7 +162,7 @@
           },
           "resources": {
             "type": "array",
-            "description": "Recommended learning resources",
+            "description": "Recommended learning resources from agent negotiation",
             "maxItems": 15,
             "items": {
               "type": "object",
@@ -171,40 +171,46 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "enum": ["textbook", "article", "video", "exercise", "project", "other"]
+                  "enum": ["textbook", "book", "article", "video", "exercise", "project", "website", "course", "tutorial", "paper", "other"],
+                  "description": "Type of educational resource"
                 },
                 "title": {
                   "type": "string",
                   "minLength": 1,
-                  "maxLength": 300
+                  "maxLength": 300,
+                  "description": "Title or name of the resource"
                 },
                 "url": {
                   "type": "string",
-                  "format": "uri"
+                  "format": "uri",
+                  "description": "URL to access the resource (optional for physical books)"
+                },
+                "description": {
+                  "type": "string",
+                  "maxLength": 500,
+                  "description": "Brief description of the resource and its relevance"
                 },
                 "author": {
                   "type": "string",
-                  "maxLength": 200
+                  "maxLength": 200,
+                  "description": "Author or creator of the resource"
+                },
+                "source": {
+                  "type": "string",
+                  "maxLength": 200,
+                  "description": "Source platform or publisher (e.g., Khan Academy, MIT OCW, Wikipedia)"
                 },
                 "license": {
                   "$ref": "#/$defs/license"
                 }
-              },
-              "allOf": [
-                {
-                  "if": {
-                    "properties": {
-                      "type": {
-                        "enum": ["article", "video", "exercise", "project"]
-                      }
-                    }
-                  },
-                  "then": {
-                    "required": ["url"]
-                  }
-                }
-              ]
+              }
             }
+          },
+          "difficulty": {
+            "type": "string",
+            "description": "Difficulty level of this module",
+            "enum": ["easy", "medium", "hard", "very_hard"],
+            "default": "medium"
           },
           "assessment": {
             "type": "object",

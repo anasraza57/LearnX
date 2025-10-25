@@ -218,7 +218,13 @@ Format your proposals clearly with:
 - Specific topics covered
 - Estimated hours
 - Prerequisites (if any)
-- Brief resource suggestions
+- **Recommended resources with specific names and URLs** (e.g., "Python Crash Course by Eric Matthes", "Khan Academy - Introduction to Algorithms (khanacademy.org)", "MIT OpenCourseWare 6.006")
+
+IMPORTANT: For resources, provide:
+1. Specific titles/names (not generic descriptions)
+2. Source/platform (book publisher, website, course provider)
+3. URLs when available (Wikipedia, Khan Academy, Coursera, etc.)
+4. Type (book, article, video series, interactive tutorial, course)
 
 Respond with "READY" when your proposal is complete and awaiting feedback."""
 
@@ -235,8 +241,17 @@ Please design an initial syllabus with specific modules. For each module provide
 - Topics covered (4-6 specific topics)
 - Estimated hours
 - Prerequisites (if applicable)
+- **Recommended resources** (2-3 specific resources with names and URLs where possible)
 
 Design 5-7 modules that comprehensively cover {self.topic} while respecting the time constraints.
+
+For resources, suggest freely available materials like:
+- Wikipedia articles with topics
+- Khan Academy courses with URLs
+- MIT OpenCourseWare materials
+- YouTube educational channels
+- Free online textbooks (openstax.org, etc.)
+- arXiv papers for technical topics
 
 READY"""
 
@@ -362,12 +377,22 @@ class SyllabusPlanner:
         total_hours = sum(m.get('estimated_hours', 0) for m in structured_syllabus.get('modules', []))
         expected_hours = duration_weeks * weekly_hours
 
+        # Validate total hours
         if total_hours < expected_hours * 0.8:  # Less than 80% of expected
             print(f"⚠️ Warning: Total hours ({total_hours}) is significantly less than expected ({expected_hours})")
             print(f"   Adjusting module estimates to better utilize available time...")
             structured_syllabus = self._adjust_module_hours(structured_syllabus, expected_hours)
             total_hours = sum(m.get('estimated_hours', 0) for m in structured_syllabus.get('modules', []))
             print(f"   Adjusted total: {total_hours} hours")
+        elif total_hours > expected_hours * 1.1:  # More than 110% of expected
+            print(f"⚠️ Warning: Total hours ({total_hours}) exceeds available time ({expected_hours})")
+            print(f"   Adjusting module estimates to fit within time constraints...")
+            structured_syllabus = self._adjust_module_hours(structured_syllabus, expected_hours)
+            total_hours = sum(m.get('estimated_hours', 0) for m in structured_syllabus.get('modules', []))
+            print(f"   Adjusted total: {total_hours} hours")
+
+        # Validate per-module hours justify content
+        structured_syllabus = self._validate_module_hours_justify_content(structured_syllabus)
 
         print(f"📊 Final syllabus: {len(structured_syllabus.get('modules', []))} modules, {total_hours} hours total")
         print("✅ Syllabus generation complete!\n")
@@ -421,6 +446,14 @@ Extract a structured JSON syllabus with this exact format:
       "topics": ["topic1", "topic2", "topic3"],
       "prerequisites": [],
       "estimated_hours": 8.0,
+      "resources": [
+        {{
+          "title": "Resource name",
+          "type": "book|article|video|website|course",
+          "url": "https://example.com (if available)",
+          "description": "Brief description of resource"
+        }}
+      ],
       "assessment": {{
         "type": "quiz",
         "passing_threshold": 70,
@@ -436,7 +469,8 @@ CRITICAL REQUIREMENTS:
 3. Include specific learning outcomes and topics from the conversation
 4. Use realistic time estimates mentioned by designer
 5. Set prior_knowledge based on learner's difficulty preference
-6. Return ONLY the JSON, no additional text
+6. Extract recommended resources mentioned in the negotiation (books, articles, websites, etc.)
+7. Return ONLY the JSON, no additional text
 
 JSON:"""
 
@@ -565,6 +599,55 @@ JSON:"""
         # Ensure required fields have defaults
         syllabus.setdefault("duration_weeks", 8)
         syllabus.setdefault("weekly_time_hours", 5.0)
+
+        return syllabus
+
+    def _validate_module_hours_justify_content(self, syllabus: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate that each module's estimated hours make sense given its content.
+
+        Rules:
+        - Minimum hours based on topic count (1-2 hours per topic)
+        - Adjust for difficulty (easy: 0.8x, medium: 1x, hard: 1.3x)
+        - Account for number of learning outcomes
+        """
+        modules = syllabus.get("modules", [])
+        adjustments_made = 0
+
+        for module in modules:
+            topics = module.get("topics", [])
+            outcomes = module.get("outcomes", [])
+            difficulty = module.get("difficulty", "medium")
+            current_hours = module.get("estimated_hours", 0)
+
+            # Calculate minimum reasonable hours
+            # Base: 1.5 hours per topic (study + practice)
+            base_hours = len(topics) * 1.5
+
+            # Adjust for difficulty
+            difficulty_multiplier = {
+                "easy": 0.8,
+                "medium": 1.0,
+                "hard": 1.3,
+                "very_hard": 1.5
+            }.get(difficulty, 1.0)
+
+            # Add time for outcomes (0.5 hour per outcome for assessment prep)
+            outcome_hours = len(outcomes) * 0.5
+
+            # Calculate suggested minimum
+            suggested_min = (base_hours * difficulty_multiplier) + outcome_hours
+
+            # If current hours are too low, adjust
+            if current_hours < suggested_min * 0.7:  # Less than 70% of minimum
+                old_hours = current_hours
+                module['estimated_hours'] = round(suggested_min, 1)
+                print(f"   ⚙️  Adjusted '{module.get('title')}': {old_hours}h → {module['estimated_hours']}h "
+                      f"(justified by {len(topics)} topics, {difficulty} difficulty)")
+                adjustments_made += 1
+
+        if adjustments_made > 0:
+            print(f"   ✅ Adjusted {adjustments_made} module(s) to justify hours with content")
 
         return syllabus
 
