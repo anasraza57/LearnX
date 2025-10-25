@@ -103,6 +103,8 @@ class RAGInstructor:
         temperature: float = 0.7,
         top_k_retrieval: int = None,
         min_similarity: float = 0.35,
+        learning_style: Optional[List[str]] = None,
+        interests: Optional[List[str]] = None,
     ):
         """
         Initialize RAG instructor.
@@ -113,11 +115,15 @@ class RAGInstructor:
             temperature: LLM temperature (0=deterministic, 1=creative)
             top_k_retrieval: Number of documents to retrieve (default from config)
             min_similarity: Minimum similarity threshold for citations (0-1)
+            learning_style: Learner's preferred learning styles (visual, auditory, kinesthetic, reading_writing)
+            interests: Learner's interests for generating relevant examples
         """
         self.vector_store = vector_store
         self.top_k = top_k_retrieval or config.rag.top_k
         self.min_similarity = min_similarity
         self.model_name = model_name or config.model.model_name
+        self.learning_style = learning_style or ["visual"]
+        self.interests = interests or []
 
         # Initialize LLM
         self.llm = ChatOpenAI(
@@ -126,34 +132,65 @@ class RAGInstructor:
             api_key=config.model.api_key,
         )
 
-        # Teaching prompt template
+        # Build learning style guidance
+        style_guidance = self._get_learning_style_guidance()
+
+        # Build interests context
+        interests_text = f"Learner is interested in: {', '.join(self.interests)}" if self.interests else "No specific interests provided"
+
+        # Teaching prompt template with learning style, prior knowledge, and interests
         self.prompt_template = PromptTemplate(
-            input_variables=["question", "context", "learner_level"],
-            template="""You are an expert educational instructor. Your task is to explain concepts clearly and accurately using the provided context.
+            input_variables=["question", "context", "learner_level", "prior_knowledge"],
+            template=f"""You are an expert educational instructor. Your task is to explain concepts clearly and accurately using the provided context.
 
-**Learner Level:** {learner_level}
+**Learner Level:** {{learner_level}}
+**Learning Style Preferences:** {', '.join(self.learning_style)}
+**Learner's Prior Knowledge:** {{prior_knowledge}}
+**Learner's Interests:** {interests_text}
 
-**Question:** {question}
+**Question:** {{question}}
 
 **Context from educational materials:**
-{context}
+{{context}}
 
 **Instructions:**
 1. Answer the question using ONLY information from the provided context
 2. Adapt your explanation complexity to the learner's level (novice/beginner/intermediate/advanced/expert)
-3. Be clear, accurate, and pedagogical
-4. If the context doesn't contain enough information, say so honestly
-5. Use examples when helpful
-6. Break down complex concepts into understandable parts
+3. Build on the learner's prior knowledge when relevant - connect new concepts to what they already know
+4. When appropriate, use examples or analogies from the learner's interests to make concepts more relatable
+5. Format your response according to the learner's learning style preferences:
+{style_guidance}
+6. Be clear, accurate, and pedagogical
+7. If the context doesn't contain enough information, say so honestly
+8. Break down complex concepts into understandable parts
 
 **Answer:**"""
         )
+
+    def _get_learning_style_guidance(self) -> str:
+        """Generate formatting guidance based on learning style preferences."""
+        guidance_parts = []
+
+        if "visual" in self.learning_style:
+            guidance_parts.append("   - VISUAL learners: Use analogies, describe visual patterns, suggest diagrams/charts, use formatting (lists, tables, bullet points)")
+
+        if "auditory" in self.learning_style:
+            guidance_parts.append("   - AUDITORY learners: Use conversational tone, explain step-by-step verbally, include discussion points")
+
+        if "kinesthetic" in self.learning_style:
+            guidance_parts.append("   - KINESTHETIC learners: Include hands-on examples, practical exercises, real-world applications, actionable steps")
+
+        if "reading_writing" in self.learning_style:
+            guidance_parts.append("   - READING/WRITING learners: Provide detailed text explanations, written summaries, definitions, note-taking suggestions")
+
+        return "\n".join(guidance_parts) if guidance_parts else "   - Use clear, balanced explanations"
 
     def teach(
         self,
         question: str,
         learner_level: str = "intermediate",
         metadata_filter: Optional[Dict[str, Any]] = None,
+        prior_knowledge: Optional[Dict[str, str]] = None,
     ) -> TeachingResponse:
         """
         Answer a question using RAG with citations.
@@ -162,6 +199,7 @@ class RAGInstructor:
             question: Student's question
             learner_level: Learner's mastery level (novice/beginner/intermediate/advanced/expert)
             metadata_filter: Filter documents by metadata (e.g., {"topic": "machine learning"})
+            prior_knowledge: Learner's prior knowledge topics and levels
 
         Returns:
             TeachingResponse with answer and citations
@@ -193,11 +231,18 @@ class RAGInstructor:
 
         context = "\n---\n".join(context_parts)
 
+        # Format prior knowledge for prompt
+        if prior_knowledge:
+            pk_text = ", ".join([f"{topic} ({level})" for topic, level in prior_knowledge.items()])
+        else:
+            pk_text = "None specified"
+
         # Step 3: Generate answer using LLM
         prompt = self.prompt_template.format(
             question=question,
             context=context,
-            learner_level=learner_level
+            learner_level=learner_level,
+            prior_knowledge=pk_text
         )
 
         answer = self.llm.invoke(prompt).content
@@ -416,6 +461,8 @@ def create_instructor_from_documents(
     documents_dir: str | Path,
     collection_name: str = "teaching_materials",
     force_reload: bool = False,
+    learning_style: Optional[List[str]] = None,
+    interests: Optional[List[str]] = None,
 ) -> RAGInstructor:
     """
     Create RAG instructor from a directory of teaching materials.
@@ -424,12 +471,18 @@ def create_instructor_from_documents(
         documents_dir: Directory containing teaching documents
         collection_name: Name for the vector store collection
         force_reload: Whether to reload documents even if collection exists
+        learning_style: Learner's preferred learning styles
+        interests: Learner's interests for personalized examples
 
     Returns:
         Initialized RAGInstructor
 
     Example:
-        >>> instructor = create_instructor_from_documents("data/documents")
+        >>> instructor = create_instructor_from_documents(
+        ...     "data/documents",
+        ...     learning_style=["visual", "kinesthetic"],
+        ...     interests=["sports", "music"]
+        ... )
         >>> response = instructor.teach("What is machine learning?")
         >>> print(response.format_with_citations())
     """
@@ -441,4 +494,8 @@ def create_instructor_from_documents(
         force_reload=force_reload,
     )
 
-    return RAGInstructor(vector_store=vector_store)
+    return RAGInstructor(
+        vector_store=vector_store,
+        learning_style=learning_style,
+        interests=interests
+    )

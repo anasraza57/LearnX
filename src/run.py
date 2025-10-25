@@ -357,9 +357,20 @@ def enroll_module_ui(module_name: str):
 ✅ **Enrolled Successfully!**
 
 **Module**: {result['title']}
-
-You can now start learning by clicking "Start Module Lessons" below.
 """
+
+        # Add prior knowledge insights if any
+        prior_knowledge = result.get('prior_knowledge', {})
+        if prior_knowledge:
+            output += "\n\n### 🎓 Your Prior Knowledge\n"
+            output += "Great! You already have experience in:\n"
+            for topic, level in prior_knowledge.items():
+                level_emoji = {"beginner": "🌱", "intermediate": "🌿", "advanced": "🌳", "expert": "🏆"}.get(level, "📚")
+                output += f"- **{topic}** ({level_emoji} {level.capitalize()})\n"
+            output += "\n*This will help you learn faster in related topics!*\n"
+
+        output += "\nYou can now start learning by clicking \"Start Module Lessons\" below."
+
         # Enable the Start Module Lessons button and disable the Enroll button
         return output, dropdown_update, gr.update(interactive=True), gr.update(interactive=False)
 

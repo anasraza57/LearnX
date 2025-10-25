@@ -250,6 +250,19 @@ class LearningOrchestrator:
                     + "\n".join(f"  - {prereq}" for prereq in unmet_prerequisites)
                 )
 
+        # Check prior knowledge for personalized insights
+        module_topics = module.get("topics", [])
+        prior_knowledge = self.learner.get_prior_knowledge()
+
+        relevant_prior_knowledge = {}
+        for topic, level in prior_knowledge.items():
+            # Check if any module topics relate to prior knowledge
+            topic_lower = topic.lower()
+            for module_topic in module_topics:
+                if topic_lower in module_topic.lower() or module_topic.lower() in topic_lower:
+                    relevant_prior_knowledge[topic] = level
+                    break
+
         # Start module in learner profile
         self.learner.start_module(module_id=module_id)
 
@@ -274,6 +287,8 @@ class LearningOrchestrator:
             "enrolled": True,
             "learner_id": self.learner.learner_id,
             "session_id": self.session_state.session_id,
+            "prior_knowledge": relevant_prior_knowledge,  # Include prior knowledge insights
+            "topics": module_topics,
         }
 
     # ==================== Teaching Session ====================
@@ -329,8 +344,14 @@ class LearningOrchestrator:
         if not self.instructor:
             raise ValueError("Teaching session not initialized. Call start_teaching_session() first.")
 
-        # Get teaching response from RAG instructor
-        response = self.instructor.teach(question=question)
+        # Get learner's prior knowledge
+        prior_knowledge = self.learner.get_prior_knowledge()
+
+        # Get teaching response from RAG instructor with prior knowledge
+        response = self.instructor.teach(
+            question=question,
+            prior_knowledge=prior_knowledge
+        )
 
         # Store citations for session tracking
         citations_list = [asdict(c) for c in response.citations]
@@ -957,7 +978,7 @@ Length: 300-500 words."""
     # ==================== Helper Methods ====================
 
     def _initialize_instructor(self, module_id: str) -> None:
-        """Initialize RAG instructor with documents."""
+        """Initialize RAG instructor with documents and learner preferences."""
         # Try multiple document locations
         search_paths = []
 
@@ -993,9 +1014,16 @@ Length: 300-500 words."""
         # Use the directory that contains the documents
         documents_dir = doc_files[0].parent
 
+        # Get learner's learning style and interests
+        learner_data = self.learner.to_dict()
+        learning_style = learner_data.get("cognitive_profile", {}).get("learning_style", ["visual"])
+        interests = learner_data.get("personal_info", {}).get("interests", [])
+
         self.instructor = create_instructor_from_documents(
             documents_dir=documents_dir,
             collection_name=f"module_{module_id}",
+            learning_style=learning_style,  # Pass learning style to instructor
+            interests=interests,  # Pass interests for personalized examples
         )
 
         # Share vector store with assessment generator
