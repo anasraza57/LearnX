@@ -21,13 +21,23 @@
     "citation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source", "content", "relevance_score"],
+      "required": ["source", "content"],
       "properties": {
         "source": {
           "type": "string",
           "minLength": 1,
           "maxLength": 500,
-          "description": "Source document name"
+          "description": "Source document name or title"
+        },
+        "url": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "description": "Original URL to the source (if available)"
+        },
+        "source_type": {
+          "type": ["string", "null"],
+          "enum": ["wikipedia", "book", "article", "video", "website", "course", "tutorial", "paper", "document", null],
+          "description": "Type of source for proper formatting"
         },
         "page": {
           "type": ["integer", "null"],
@@ -36,18 +46,12 @@
         },
         "filepath": {
           "type": ["string", "null"],
-          "description": "Full path to source file"
+          "description": "Internal file path (not shown to user)"
         },
         "content": {
           "type": "string",
           "minLength": 1,
-          "description": "Excerpt from source"
-        },
-        "relevance_score": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1,
-          "description": "Relevance score from vector search"
+          "description": "Brief excerpt from source"
         }
       }
     }

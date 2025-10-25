@@ -36,14 +36,17 @@ class Citation:
     Citation for a piece of information.
 
     Attributes:
-        source: Source document name
+        source: Source document name/title
+        content: Brief excerpt from the source
+        url: Original URL to the source (if available)
+        source_type: Type of source (wikipedia, book, website, article, video, course)
         page: Page number (if applicable)
-        content: Exact content cited
-        relevance_score: How relevant this source is (0-1)
+        filepath: Internal file path (not shown to user)
     """
     source: str
     content: str
-    relevance_score: float
+    url: Optional[str] = None
+    source_type: Optional[str] = None
     page: Optional[int] = None
     filepath: Optional[str] = None
 
@@ -52,9 +55,35 @@ class Citation:
         return f"[{self.source}{page_info}]"
 
     def to_markdown(self) -> str:
-        """Format citation as markdown."""
-        page_info = f", page {self.page}" if self.page else ""
-        return f"**Source:** {self.source}{page_info}\n> {self.content[:200]}..."
+        """Format citation as user-friendly markdown with clickable URL."""
+        # Add source type emoji
+        type_emoji = {
+            "wikipedia": "📖",
+            "book": "📚",
+            "website": "🌐",
+            "article": "📄",
+            "video": "🎥",
+            "course": "🎓",
+            "tutorial": "💡",
+            "paper": "📜"
+        }.get(self.source_type, "📑")
+
+        citation_text = self.source
+
+        # Add page number if available
+        if self.page:
+            citation_text += f", page {self.page}"
+
+        # Make clickable if URL available
+        if self.url:
+            result = f"{type_emoji} [{citation_text}]({self.url})\n"
+        else:
+            result = f"{type_emoji} **{citation_text}**\n"
+
+        # Add brief excerpt
+        result += f"> {self.content[:150]}...\n"
+
+        return result
 
 
 @dataclass
@@ -247,19 +276,39 @@ class RAGInstructor:
 
         answer = self.llm.invoke(prompt).content
 
-        # Step 4: Create citations (only from high-quality docs)
-        # Limit to top N citations with best scores
-        max_citations = min(5, len(retrieved_docs))
+        # Step 4: Create deduplicated citations with URLs
         citations = []
-        for doc, score in retrieved_docs[:max_citations]:
+        seen_sources = set()  # Track unique sources to avoid duplicates
+
+        for doc, score in retrieved_docs:
+            # Create unique key based on source and URL (not chunk)
+            source_name = doc.metadata.get("source", "Unknown")
+            original_url = doc.metadata.get("original_url")
+            source_key = (source_name, original_url)  # Both must match for duplicate
+
+            # Skip if we already cited this source
+            if source_key in seen_sources:
+                continue
+
+            seen_sources.add(source_key)
+
+            # Get source type from metadata
+            source_type = doc.metadata.get("source_type", "document")
+
+            # Create citation with URL and type
             citation = Citation(
-                source=doc.metadata.get("source", "Unknown"),
+                source=source_name,
+                content=doc.content[:200],  # Brief excerpt for display
+                url=original_url,
+                source_type=source_type,
                 page=doc.metadata.get("page"),
                 filepath=doc.metadata.get("filepath"),
-                content=doc.content,
-                relevance_score=score,
             )
             citations.append(citation)
+
+            # Limit to 5 unique sources max
+            if len(citations) >= 5:
+                break
 
         # Step 5: Estimate confidence based on retrieval scores
         if retrieved_docs:
@@ -325,10 +374,11 @@ class RAGInstructor:
             "citations": [
                 {
                     "source": c.source,
+                    "url": c.url,
+                    "source_type": c.source_type,
                     "page": c.page,
                     "filepath": c.filepath,
                     "content": c.content,
-                    "relevance_score": c.relevance_score,
                 }
                 for c in response.citations
             ],

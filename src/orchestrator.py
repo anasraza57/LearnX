@@ -428,10 +428,18 @@ class LearningOrchestrator:
 
         # Store citations for session tracking
         citations_list = [asdict(c) for c in response.citations]
-        self._last_citations = [
-            f"{c.get('source', 'unknown')} (p.{c.get('page', '?')})"
-            for c in citations_list
-        ]
+
+        # Create simplified citation strings for tracking
+        self._last_citations = []
+        for c in citations_list:
+            source = c.get('source', 'unknown')
+            url = c.get('url')
+            if url:
+                self._last_citations.append(f"{source} ({url})")
+            elif c.get('page'):
+                self._last_citations.append(f"{source} (p.{c.get('page')})")
+            else:
+                self._last_citations.append(source)
 
         # Teaching session tracked in orchestrator's session_state
 

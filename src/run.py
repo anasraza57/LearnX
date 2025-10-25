@@ -369,6 +369,19 @@ def enroll_module_ui(module_name: str):
                 output += f"- **{topic}** ({level_emoji} {level.capitalize()})\n"
             output += "\n*This will help you learn faster in related topics!*\n"
 
+        # Show acceleration opportunities
+        if result.get('acceleration_available'):
+            skip_suggested = result.get('skip_suggested', [])
+            output += "\n\n### 🚀 Acceleration Available!\n"
+            output += result.get('acceleration_message', 'You can skip some topics based on your prior knowledge.')
+            output += "\n\n**Topics you may skip:**\n"
+            for item in skip_suggested:
+                topic = item.get('topic', 'Unknown')
+                level = item.get('prior_level', 'intermediate')
+                reason = item.get('reason', '')
+                output += f"- **{topic}** - {reason}\n"
+            output += "\n*We'll start at an increased difficulty to match your level.*\n"
+
         output += "\nYou can now start learning by clicking \"Start Module Lessons\" below."
 
         # Enable the Start Module Lessons button and disable the Enroll button
@@ -463,11 +476,32 @@ def start_module_lessons_ui():
                 output += "\n**Sources:**\n"
                 for i, citation in enumerate(lesson['citations'][:3], 1):
                     source_name = citation.get('source', 'Unknown')
-                    relevance = citation.get('relevance_score', 0.0)
+                    url = citation.get('url')
+                    source_type_str = citation.get('source_type', 'document')
+                    page = citation.get('page')
 
-                    source_type = "🔬" if 'arxiv' in source_name.lower() else "📚" if 'wikipedia' in source_name.lower() else "📄"
+                    # Get emoji for source type
+                    type_emoji = {
+                        "wikipedia": "📖",
+                        "book": "📚",
+                        "website": "🌐",
+                        "article": "📄",
+                        "video": "🎥",
+                        "course": "🎓",
+                        "tutorial": "💡",
+                        "paper": "📜"
+                    }.get(source_type_str, "📑")
 
-                    output += f"- {source_type} {source_name} ({relevance:.0%})\n"
+                    # Format citation
+                    if url:
+                        citation_text = f"[{source_name}]({url})"
+                    else:
+                        citation_text = source_name
+
+                    if page:
+                        citation_text += f", page {page}"
+
+                    output += f"- {type_emoji} {citation_text}\n"
 
             output += "\n---\n"
 
@@ -515,25 +549,38 @@ def ask_question_ui(question: str):
         if result.get('citations') and len(result['citations']) > 0:
             for i, citation in enumerate(result['citations'], 1):
                 source_name = citation.get('source', 'Unknown')
+                url = citation.get('url')
+                source_type_str = citation.get('source_type', 'document')
                 page_info = citation.get('page')
                 content_excerpt = citation.get('content', '')
-                relevance = citation.get('relevance_score', 0.0)
-                
-                source_type = "🔬 arXiv" if 'arxiv' in source_name.lower() else "📚 Wikipedia" if 'wikipedia' in source_name.lower() or source_name.endswith('.md') else "🤖 AI-Generated" if 'synthetic' in source_name.lower() else "📄 Document"
-                
-                output += f"\n**{i}. {source_type}: {source_name}**"
-                
+
+                # Get emoji for source type
+                type_emoji = {
+                    "wikipedia": "📖",
+                    "book": "📚",
+                    "website": "🌐",
+                    "article": "📄",
+                    "video": "🎥",
+                    "course": "🎓",
+                    "tutorial": "💡",
+                    "paper": "📜"
+                }.get(source_type_str, "📑")
+
+                # Format citation with URL
+                if url:
+                    output += f"\n**{i}. {type_emoji} [{source_name}]({url})**"
+                else:
+                    output += f"\n**{i}. {type_emoji} {source_name}**"
+
                 if page_info:
                     output += f" (Page {page_info})"
-                
-                output += f"\n   *Relevance: {relevance:.0%}*"
-                
+
                 if content_excerpt:
-                    excerpt = content_excerpt[:200].strip()
-                    if len(content_excerpt) > 200:
+                    excerpt = content_excerpt[:150].strip()
+                    if len(content_excerpt) > 150:
                         excerpt += "..."
                     output += f"\n   > {excerpt}"
-                
+
                 output += "\n"
         else:
             output += "\n*No citations available*"

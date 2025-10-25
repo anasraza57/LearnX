@@ -177,13 +177,53 @@ class DocumentLoader:
         return documents
 
     def _load_markdown(self, filepath: Path) -> List[Document]:
-        """Load markdown file (treat as text with metadata)."""
+        """Load markdown file and extract metadata including original URLs."""
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             content = f.read()
 
         # Extract title from first heading if exists
         title_match = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
         title = title_match.group(1) if title_match else filepath.stem
+
+        # Extract original URL from markdown (common patterns from OER fetcher)
+        original_url = None
+        url_patterns = [
+            r'\*\*Source:\*\*[^(]*?\(?(?:https?://[^\s\)]+)',  # **Source:** ... (URL) or URL
+            r'https?://en\.wikipedia\.org/wiki/[^\s\)]+',       # Wikipedia URLs
+            r'https?://arxiv\.org/[^\s\)]+',                    # arXiv URLs
+            r'https?://[^\s\)]+',                                # Any other URL
+        ]
+
+        for pattern in url_patterns:
+            url_match = re.search(pattern, content[:1000])  # Check first 1000 chars
+            if url_match:
+                original_url = url_match.group(0)
+                # Clean up URL (remove markdown formatting)
+                original_url = original_url.replace('**', '').replace('(', '').replace(')', '').strip()
+                if original_url.startswith('http'):
+                    break
+
+        # Determine source type from URL or filename
+        source_type = "document"
+        if original_url:
+            if "wikipedia.org" in original_url:
+                source_type = "wikipedia"
+            elif "arxiv.org" in original_url:
+                source_type = "paper"
+            elif "khanacademy.org" in original_url:
+                source_type = "course"
+            elif "youtube.com" in original_url or "youtu.be" in original_url:
+                source_type = "video"
+            elif any(domain in original_url for domain in ["realpython.com", "w3schools.com", "tutorialspoint.com"]):
+                source_type = "tutorial"
+            else:
+                source_type = "website"
+        elif "arxiv_" in filepath.name:
+            source_type = "paper"
+        elif "youtube_" in filepath.name:
+            source_type = "video"
+        elif "resource_" in filepath.name:
+            source_type = "book"  # Resources from agent recommendations
 
         chunks = self._chunk_text(content)
 
@@ -192,12 +232,14 @@ class DocumentLoader:
             doc = Document(
                 content=chunk,
                 metadata={
-                    "source": str(filepath.name),
+                    "source": title,  # Use title as source name instead of filename
                     "filepath": str(filepath),
                     "title": title,
                     "chunk_index": i,
                     "total_chunks": len(chunks),
                     "type": "markdown",
+                    "original_url": original_url,  # Store original URL
+                    "source_type": source_type,    # Store source type
                 }
             )
             documents.append(doc)
