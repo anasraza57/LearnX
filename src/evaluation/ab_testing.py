@@ -339,8 +339,12 @@ class ABTestFramework:
             t_stat, p_value = stats.ttest_ind(exp_values, control_values)
 
             # Calculate effect size (Cohen's d)
-            pooled_std = np.sqrt((np.std(exp_values, ddof=1)**2 +
-                                  np.std(control_values, ddof=1)**2) / 2)
+            # Using weighted pooled standard deviation (Cohen, 1988)
+            n_exp = len(exp_values)
+            n_ctrl = len(control_values)
+            sd_exp = np.std(exp_values, ddof=1)
+            sd_ctrl = np.std(control_values, ddof=1)
+            pooled_std = np.sqrt(((n_exp - 1) * sd_exp**2 + (n_ctrl - 1) * sd_ctrl**2) / (n_exp + n_ctrl - 2))
             cohens_d = (np.mean(exp_values) - np.mean(control_values)) / pooled_std if pooled_std > 0 else 0.0
 
             # Calculate improvement

@@ -472,8 +472,12 @@ class EvaluationFramework:
         t_stat, p_value = stats.ttest_ind(experimental_group, control_group)
 
         # Calculate Cohen's d (effect size)
-        pooled_std = np.sqrt((np.std(experimental_group, ddof=1)**2 +
-                              np.std(control_group, ddof=1)**2) / 2)
+        # Using weighted pooled standard deviation (Cohen, 1988)
+        n_exp = len(experimental_group)
+        n_ctrl = len(control_group)
+        sd_exp = np.std(experimental_group, ddof=1)
+        sd_ctrl = np.std(control_group, ddof=1)
+        pooled_std = np.sqrt(((n_exp - 1) * sd_exp**2 + (n_ctrl - 1) * sd_ctrl**2) / (n_exp + n_ctrl - 2))
         cohens_d = (exp_mean - ctrl_mean) / pooled_std if pooled_std > 0 else 0.0
 
         # Calculate 95% confidence interval for difference
@@ -612,9 +616,12 @@ class EvaluationFramework:
 
         improvement = (system_mean - baseline_mean) / baseline_mean * 100 if baseline_mean > 0 else 0.0
 
-        # Effect size
-        pooled_std = np.sqrt((np.std(system_scores, ddof=1)**2 +
-                              np.std(baseline_scores, ddof=1)**2) / 2)
+        # Effect size (Cohen's d with weighted pooled standard deviation)
+        n_sys = len(system_scores)
+        n_base = len(baseline_scores)
+        sd_sys = np.std(system_scores, ddof=1)
+        sd_base = np.std(baseline_scores, ddof=1)
+        pooled_std = np.sqrt(((n_sys - 1) * sd_sys**2 + (n_base - 1) * sd_base**2) / (n_sys + n_base - 2))
         cohens_d = (system_mean - baseline_mean) / pooled_std if pooled_std > 0 else 0.0
 
         return {

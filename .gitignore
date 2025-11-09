@@ -207,6 +207,10 @@ data/documents/
 !data/documents/.gitkeep
 !data/documents/README.md
 
+#Quiz sessions
+data/evaluation_results/
+!data/evaluation_results/.gitkeep
+
 # Temporary files
 *.tmp
 *.bak
