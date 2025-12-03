@@ -10,6 +10,7 @@ seaborn>=0.13.0
 # Core LLM framework
 langchain>=0.1.0
 langchain-openai>=0.3.35
+langchain-ollama>=0.1.0  # For local open-source LLMs
 openai>=1.0.0
 tiktoken>=0.7.0
 

@@ -1,0 +1,101 @@
+{
+  "generated_at": "2025-12-03T14:21:38.287109",
+  "experiment_type": "multi_model_comparison",
+  "models_tested": [
+    "mistral:7b",
+    "gpt-4o-mini"
+  ],
+  "opensource_models": [
+    "mistral:7b"
+  ],
+  "gpt_models": [
+    "gpt-4o-mini"
+  ],
+  "num_students_per_model": 30,
+  "total_students": 60,
+  "topic": "Python Programming Fundamentals",
+  "duration_weeks": 4,
+  "weekly_hours": 5.0,
+  "model_results": {
+    "mistral:7b": {
+      "model_name": "mistral:7b",
+      "average_score": 64.743046345015,
+      "learning_gain_normalized": 0.47135165356785663,
+      "completion_rate": 100.0,
+      "avg_citation_count": 2.9,
+      "avg_source_diversity": 2.0,
+      "avg_confidence": 0.7379253796387818,
+      "avg_response_time_ms": 566.1723963835753,
+      "total_cost_usd": 0.0,
+      "cost_per_student": 0.0,
+      "total_input_tokens": 145848,
+      "total_output_tokens": 87317,
+      "num_students": 30,
+      "num_sessions": 600,
+      "timestamp": "2025-12-03T14:21:38.249821"
+    },
+    "gpt-4o-mini": {
+      "model_name": "gpt-4o-mini",
+      "average_score": 74.85306087861505,
+      "learning_gain_normalized": 0.6307135502610364,
+      "completion_rate": 100.0,
+      "avg_citation_count": 5.866666666666666,
+      "avg_source_diversity": 4.433333333333334,
+      "avg_confidence": 0.9069957445317562,
+      "avg_response_time_ms": 405.59306152287087,
+      "total_cost_usd": 0.10062345,
+      "cost_per_student": 0.003354115,
+      "total_input_tokens": 192587,
+      "total_output_tokens": 119559,
+      "num_students": 30,
+      "num_sessions": 600,
+      "timestamp": "2025-12-03T14:21:38.287081"
+    }
+  },
+  "rankings": {
+    "by_performance": [
+      {
+        "rank": 1,
+        "model": "gpt-4o-mini",
+        "score": 74.85306087861505
+      },
+      {
+        "rank": 2,
+        "model": "mistral:7b",
+        "score": 64.743046345015
+      }
+    ],
+    "by_cost_effectiveness": [
+      {
+        "rank": 1,
+        "model": "mistral:7b",
+        "score": 64.743046345015,
+        "cost": 0.0,
+        "value": "FREE"
+      },
+      {
+        "rank": 2,
+        "model": "gpt-4o-mini",
+        "score": 74.85306087861505,
+        "cost": 0.003354115,
+        "value": "22316.78"
+      }
+    ]
+  },
+  "summary": {
+    "best_performance": "gpt-4o-mini",
+    "best_performance_score": 74.85306087861505,
+    "best_opensource": "mistral:7b",
+    "best_opensource_score": 64.743046345015,
+    "best_value": "mistral:7b",
+    "total_cost_saved_vs_gpt": {
+      "vs_gpt-4o-mini": 0.10062345
+    }
+  },
+  "recommendation": {
+    "best_overall": "gpt-4o-mini",
+    "best_opensource": "mistral:7b",
+    "opensource_quality_vs_gpt": "86.5%",
+    "recommendation": "For maximum performance: Use gpt-4o-mini (74.85%). For cost-free deployment: Use mistral:7b (64.74%, 86.5% of best GPT performance)."
+  }
+}
