@@ -1,6 +1,11 @@
 # Core dependencies
 numpy<2.0.0  # Required for compatibility with older modules
 scipy>=1.14.0  # Required for statistical analysis and evaluation metrics
+pandas>=2.0.0  # Data manipulation and analysis
+
+# Visualization
+matplotlib>=3.8.0
+seaborn>=0.13.0
 
 # Core LLM framework
 langchain>=0.1.0

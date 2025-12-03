@@ -171,45 +171,7 @@ cython_debug/
 secrets/
 credentials.json
 
-# User data and profiles (contains personal information)
-data/profiles/
-!data/profiles/.gitkeep
-!data/profiles/example_*.json
-
-# Teaching sessions (Phase 3 - contains user Q&A data)
-data/sessions/
-!data/sessions/.gitkeep
-!data/sessions/example_*.json
-
-# Learner progress tracking (learner session states)
-data/learner_progress/
-!data/learner_progress/.gitkeep
-!data/learner_progress/example_*.json
-
-# Vector database (large binary files)
-data/vectorstore/
-!data/vectorstore/.gitkeep
-
-# Embedding cache (Phase 3 - cached embeddings)
-data/embeddings_cache/
-!data/embeddings_cache/.gitkeep
-
-# Logs and metrics (can be large, may contain sensitive info)
-data/logs/
-!data/logs/.gitkeep
-
-#Quiz sessions
-data/quiz_sessions/
-!data/quiz_sessions/.gitkeep
-
-# Uploaded documents (may be copyrighted)
-data/documents/
-!data/documents/.gitkeep
-!data/documents/README.md
-
-#Quiz sessions
-data/evaluation_results/
-!data/evaluation_results/.gitkeep
+data/
 
 # Temporary files
 *.tmp

@@ -35,6 +35,10 @@ class ModelConfig:
     model_name: str = field(
         default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
     )
+    # Alternative model for A/B testing and comparison
+    alternative_model: str = field(
+        default_factory=lambda: os.getenv("OPENAI_ALTERNATIVE_MODEL", "gpt-4o-mini")
+    )
     base_url: Optional[str] = field(
         default_factory=lambda: os.getenv("OPENAI_BASE_URL")
     )
@@ -209,11 +213,19 @@ class LoggingConfig:
     log_costs: bool = True
 
     # Cost estimation (env-driven for easy model switching)
+    # Default costs for gpt-3.5-turbo
     cost_per_1k_input: float = field(
         default_factory=lambda: float(os.getenv("COST_PER_1K_INPUT", "0.0015"))
     )
     cost_per_1k_output: float = field(
         default_factory=lambda: float(os.getenv("COST_PER_1K_OUTPUT", "0.0020"))
+    )
+    # Costs for alternative model (gpt-4o-mini: $0.00015 input, $0.0006 output per 1K tokens)
+    alt_cost_per_1k_input: float = field(
+        default_factory=lambda: float(os.getenv("ALT_COST_PER_1K_INPUT", "0.00015"))
+    )
+    alt_cost_per_1k_output: float = field(
+        default_factory=lambda: float(os.getenv("ALT_COST_PER_1K_OUTPUT", "0.0006"))
     )
 
 

@@ -1,0 +1,71 @@
+================================================================================
+MODEL COMPARISON REPORT: GPT-3.5-Turbo vs GPT-4o-Mini
+================================================================================
+Generated: 2025-12-01T11:46:16.571241
+Experiment ID: exp_gpt-4o-mini_vs_gpt-3.5-turbo_-_python_programming_fundamentals_20251201_114616
+
+PERFORMANCE COMPARISON
+--------------------------------------------------------------------------------
+
+1. Average Score (Learning Outcomes)
+   GPT-3.5-Turbo: 69.04%
+   GPT-4o-Mini:   72.79%
+   Improvement:   +5.43%
+   Winner:        gpt-4o-mini
+
+2. Learning Gain (Normalized)
+   GPT-3.5-Turbo: 0.553
+   GPT-4o-Mini:   0.613
+   Improvement:   +10.99%
+   Winner:        gpt-4o-mini
+
+3. Cost per Student
+   GPT-3.5-Turbo: $0.0157
+   GPT-4o-Mini:   $0.0034
+   Change:        -78.64%
+   Winner:        gpt-4o-mini
+
+4. Cost-Effectiveness (Performance per Dollar)
+   GPT-3.5-Turbo: 4387.85
+   GPT-4o-Mini:   21654.09
+   Improvement:   +393.50%
+   Winner:        gpt-4o-mini
+
+5. Citation Quality
+   GPT-3.5-Turbo: 4.0 citations/session
+   GPT-4o-Mini:   5.1 citations/session
+   Winner:        gpt-4o-mini
+
+================================================================================
+STATISTICAL ANALYSIS
+--------------------------------------------------------------------------------
+
+Primary Metric: average_score
+Sample Size: 60 total participants
+
+Statistical Test: Independent t-test
+  p-value:              0.2807
+  Significant (p<0.05): False
+  Effect Size (Cohen's d): 0.281
+  95% CI: [-3.00, 10.50]
+
+  Interpretation: ❌ No significant difference - cannot conclude benefit
+
+================================================================================
+RECOMMENDATION
+--------------------------------------------------------------------------------
+
+Decision: RECOMMEND_GPT4O
+
+Rationale:
+  Performance is similar but GPT-4o-mini is 78.6% cheaper
+
+Action:
+  Switch to GPT-4o-mini for cost savings
+
+Key Facts:
+  Performance Improvement: 5.4%
+  Cost Change: -78.6%
+  Statistically Significant: No
+
+================================================================================
