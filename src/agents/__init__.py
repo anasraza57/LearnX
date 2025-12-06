@@ -1,5 +1,5 @@
 """
-AI agents for personalized learning.
+AI agents for personalised learning.
 
 This module contains LangChain-based agents (AI/LLM-powered decision makers):
 - Syllabus planning (curriculum design, learner advocacy)

@@ -1,5 +1,5 @@
 """
-EduGPT-PersonalisedLearning: Complete Learning System with Landing Page
+LearnX: Complete Learning System with Landing Page
 
 This Gradio interface demonstrates all 5 phases with a beautiful landing page.
 """
@@ -155,7 +155,7 @@ def create_learner_profile(name, email, goals, interests, prior_topic1, prior_le
 
 ---
 
-✅ Profile saved! Proceed to **Tab 2** to generate your personalized syllabus.
+✅ Profile saved! Proceed to **Tab 2** to generate your personalised syllabus.
 """
 
         return profile_summary, json.dumps(learner_data, indent=2), gr.update(interactive=False)
@@ -167,12 +167,12 @@ def create_learner_profile(name, email, goals, interests, prior_topic1, prior_le
 # ==================== Phase 5: Generate Syllabus ====================
 
 def generate_syllabus_ui(topic: str, duration_weeks: int, weekly_hours: float):
-    """Generate personalized syllabus with visible loading states."""
+    """Generate personalised syllabus with visible loading states."""
     global current_orchestrator, current_learner
 
     # Immediately show a loading message and disable the button
     yield (
-        "<div style='margin-top: 40px;'>⏳ Preparing to generate your personalized syllabus…</div>",
+        "<div style='margin-top: 40px;'>⏳ Preparing to generate your personalised syllabus…</div>",
         gr.update(choices=["Checking prerequisites…"], value=None, interactive=False),
         gr.update(value="Generating…", interactive=False)
     )
@@ -447,7 +447,7 @@ def start_module_lessons_ui():
 
         # Step 2: Get module lessons
         yield (
-            "<div style='margin-top: 40px;'>📚 Generating personalized lessons for all topics…</div>",
+            "<div style='margin-top: 40px;'>📚 Generating personalised lessons for all topics…</div>",
             gr.update(value="Loading…", interactive=False)
         )
 
@@ -976,22 +976,22 @@ def create_interface():
     """
     
     with gr.Blocks(
-        title="EduGPT - Personalized AI Learning",
+        title="LearnX - Personalised AI Learning",
         theme=gr.themes.Soft(primary_hue="purple", secondary_hue="blue"),
         css=custom_css
     ) as demo:
-        
+
         # Landing Page
         with gr.Column(visible=True) as landing_page:
-            gr.HTML('<h1 class="landing-title">🎓 EduGPT</h1>')
+            gr.HTML('<h1 class="landing-title">🎓 LearnX</h1>')
             gr.Markdown("""
             <div style="text-align: center; font-size: 1.2em; color: #666; margin-bottom: 30px;">
-            AI-Powered Personalized Learning Platform
+            AI-Powered Personalised Learning Platform
             </div>
             
             ## Transform Your Learning Journey with AI
             
-            Experience revolutionary AI-powered education with multi-agent teaching, adaptive assessments, and personalized learning pathways.
+            Experience revolutionary AI-powered education with multi-agent teaching, adaptive assessments, and personalised learning pathways.
             """)
             
             with gr.Row():
@@ -1039,8 +1039,8 @@ def create_interface():
         with gr.Column(visible=False) as main_app:
             gr.HTML("""
             <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; margin-bottom: 20px;">
-                <h1 style="margin: 0;">🎓 EduGPT Learning Platform</h1>
-                <p style="margin: 5px 0 0 0;">Your Personalized AI-Powered Learning Journey</p>
+                <h1 style="margin: 0;">🎓 LearnX Learning Platform</h1>
+                <p style="margin: 5px 0 0 0;">Your Personalised AI-Powered Learning Journey</p>
             </div>
             """)
             
@@ -1122,7 +1122,7 @@ def create_interface():
                 )
             
             with gr.Tab("2️⃣ Generate Syllabus"):
-                gr.Markdown("### Generate Personalized Syllabus")
+                gr.Markdown("### Generate Personalised Syllabus")
 
                 with gr.Row():
                     with gr.Column():

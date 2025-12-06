@@ -314,7 +314,7 @@ class SyllabusPlanner:
 
         # Start negotiation
         print(f"\n{'='*70}")
-        print(f"Generating Personalized Syllabus: {topic}")
+        print(f"Generating Personalised Syllabus: {topic}")
         print(f"Learner: {self.learner.name}")
         print(f"Duration: {duration_weeks} weeks × {weekly_hours} hrs/week = {duration_weeks * weekly_hours} hours total")
         print(f"{'='*70}\n")
@@ -424,7 +424,7 @@ Extract a structured JSON syllabus with this exact format:
   "meta": {{
     "schema_version": 1,
     "created_at": "{datetime.now(timezone.utc).isoformat()}",
-    "generated_by": "EduGPT-MultiAgent-v2"
+    "generated_by": "LearnX-MultiAgent-v2"
   }},
   "topic": "{topic}",
   "duration_weeks": {duration_weeks},
@@ -517,7 +517,7 @@ JSON:"""
             "meta": {
                 "schema_version": 1,
                 "created_at": datetime.now(timezone.utc).isoformat(),
-                "generated_by": "EduGPT-MultiAgent-v2-Fallback",
+                "generated_by": "LearnX-MultiAgent-v2-Fallback",
             },
             "topic": topic,
             "duration_weeks": duration_weeks,
@@ -594,7 +594,7 @@ JSON:"""
             syllabus["meta"] = {}
         syllabus["meta"].setdefault("schema_version", 1)
         syllabus["meta"].setdefault("created_at", datetime.now(timezone.utc).isoformat())
-        syllabus["meta"].setdefault("generated_by", "EduGPT-MultiAgent-v2")
+        syllabus["meta"].setdefault("generated_by", "LearnX-MultiAgent-v2")
 
         # Ensure required fields have defaults
         syllabus.setdefault("duration_weeks", 8)
@@ -694,7 +694,7 @@ JSON:"""
 # Legacy function for backward compatibility
 def generate_syllabus(topic: str, task: str) -> str:
     """
-    Legacy syllabus generation function (original EduGPT implementation).
+    Legacy syllabus generation function (based on EduGPT framework).
 
     NOTE: This uses the old role-playing approach without structured output.
     For new code, use SyllabusPlanner class instead.

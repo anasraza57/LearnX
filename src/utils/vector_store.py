@@ -86,7 +86,7 @@ class VectorStore:
             except:
                 self._collection = client.create_collection(
                     name=self.collection_name,
-                    metadata={"description": "EduGPT RAG document store"}
+                    metadata={"description": "LearnX RAG document store"}
                 )
 
         return self._collection

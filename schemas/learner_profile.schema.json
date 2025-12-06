@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://edugpt.example.com/schemas/learner_profile.schema.json",
+  "$id": "https://learnx.example.com/schemas/learner_profile.schema.json",
   "title": "Learner Profile Schema",
   "description": "Comprehensive learner profile with cognitive traits, preferences, progress tracking, and performance analytics",
   "type": "object",

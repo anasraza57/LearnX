@@ -1,6 +1,6 @@
 # Tests
 
-Comprehensive test suite for EduGPT-PersonalisedLearning following pytest conventions.
+Comprehensive test suite for LearnX following pytest conventions.
 
 ## Structure
 

@@ -296,7 +296,7 @@ def test_baseline_comparison():
     # Simulate data
     np.random.seed(42)
 
-    # Your personalized system: mean 83, std 9
+    # Your personalised system: mean 83, std 9
     your_system_scores = list(np.random.normal(83, 9, 30))
     your_system_scores = [max(0, min(100, s)) for s in your_system_scores]
 

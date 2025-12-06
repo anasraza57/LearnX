@@ -9,7 +9,7 @@ Orchestrates the complete learning pipeline:
 5. Mastery-based pathway adaptation
 6. Session persistence
 
-This is the main entry point for the complete personalized learning system.
+This is the main entry point for the complete personalised learning system.
 """
 
 from dataclasses import dataclass, asdict, field
@@ -87,7 +87,7 @@ class SessionState:
 
 class LearningOrchestrator:
     """
-    Main orchestrator for the personalized learning system.
+    Main orchestrator for the personalised learning system.
 
     Manages the complete learning cycle:
     - Learner enrollment and profile management
@@ -152,7 +152,7 @@ class LearningOrchestrator:
         auto_fetch_content: bool = True,
     ) -> Dict[str, Any]:
         """
-        Generate personalized syllabus using multi-agent negotiation.
+        Generate personalised syllabus using multi-agent negotiation.
 
         Args:
             topic: Main subject/topic for the course
@@ -250,7 +250,7 @@ class LearningOrchestrator:
                     + "\n".join(f"  - {prereq}" for prereq in unmet_prerequisites)
                 )
 
-        # Check prior knowledge for personalized insights and topic acceleration
+        # Check prior knowledge for personalised insights and topic acceleration
         module_topics = module.get("topics", [])
         prior_knowledge = self.learner.get_prior_knowledge()
 
@@ -303,7 +303,7 @@ class LearningOrchestrator:
             updated_at=datetime.now(timezone.utc).isoformat(),
         )
 
-        # Build personalized enrollment response
+        # Build personalised enrollment response
         enrollment_response = {
             "module_id": module_id,
             "title": module.get("title"),
@@ -1150,7 +1150,7 @@ Length: 300-500 words."""
             collection_name=f"module_{module_id}",
             force_reload=True,  # Always reload to pick up latest metadata (URLs, source types)
             learning_style=learning_style,  # Pass learning style to instructor
-            interests=interests,  # Pass interests for personalized examples
+            interests=interests,  # Pass interests for personalised examples
         )
 
         # Share vector store with assessment generator

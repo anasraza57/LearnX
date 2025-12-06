@@ -1,5 +1,5 @@
 """
-Shared pytest fixtures and configuration for EduGPT tests.
+Shared pytest fixtures and configuration for LearnX tests.
 
 This file is automatically discovered by pytest and provides
 fixtures available to all tests.

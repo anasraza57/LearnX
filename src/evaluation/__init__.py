@@ -1,5 +1,5 @@
 """
-Evaluation Module for EduGPT Personalized Learning System
+Evaluation Module for LearnX Personalized Learning System
 
 This module provides comprehensive evaluation tools to scientifically assess
 the effectiveness of the personalized learning system.

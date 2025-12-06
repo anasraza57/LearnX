@@ -1,5 +1,5 @@
 """
-Utility modules for EduGPT-PersonalisedLearning.
+Utility modules for LearnX.
 
 This module contains utility functions:
 - validation: JSON Schema validation with auto-repair

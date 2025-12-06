@@ -1,5 +1,5 @@
 """
-Configuration management for EduGPT-PersonalisedLearning.
+Configuration management for LearnX.
 
 This module centralizes all configuration settings following 12-factor app principles:
 - Secrets loaded from environment variables

@@ -42,7 +42,7 @@ class TestLearningOrchestrator(unittest.TestCase):
             "meta": {
                 "schema_version": 1,
                 "created_at": "2024-01-15T10:00:00Z",
-                "generated_by": "EduGPT-Test",
+                "generated_by": "LearnX-Test",
             },
             "topic": "Python Programming",
             "duration_weeks": 4,

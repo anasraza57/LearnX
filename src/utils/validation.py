@@ -1,5 +1,5 @@
 """
-Schema validation utilities for EduGPT-PersonalisedLearning.
+Schema validation utilities for LearnX.
 
 Provides robust JSON Schema validation with clear error messages and
 automatic repair suggestions for common validation failures.

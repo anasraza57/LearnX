@@ -1,7 +1,7 @@
-# EduGPT-PersonalisedLearning  
-**MSc Project: Designing and Delivering Personalised Learning Pathways using Role-Playing AI Agents**  
+# LearnX
+**MSc Project: Designing and Delivering Personalised Learning Pathways using Role-Playing AI Agents**
 
-This project extends the [EduGPT](https://github.com/hqanhh/EduGPT) framework to design and evaluate an AI-powered personalised learning system. The aim is to create a multi-agent “AI Educator” that can:  
+LearnX is a multi-LLM personalized learning platform built using components from the [EduGPT](https://github.com/hqanhh/EduGPT) framework. The system creates a multi-agent "AI Educator" that can:  
 1. Generate a personalised syllabus from learner goals using role-playing agents.  
 2. Deliver lessons through an instructor agent with **retrieval-augmented generation (RAG)** for grounded, source-based teaching.  
 3. Provide **adaptive assessment** that adjusts difficulty and pacing based on learner performance.  
@@ -24,10 +24,10 @@ The diagram below shows the overall workflow of the AI Educator system, from lea
 
 ## 🚀 Getting Started  
 
-### 1. Clone the repository  
+### 1. Clone the repository
 ```bash
-git clone https://github.com/anasraza57/EduGPT-PersonalisedLearning.git
-cd EduGPT-PersonalisedLearning
+git clone https://github.com/anasraza57/LearnX.git
+cd LearnX
 ```
 
 ### 2. Set up a virtual environment
@@ -62,7 +62,7 @@ This launches a Gradio web interface at `http://127.0.0.1:7860` with 5 tabs:
 ## 📖 Background
 - **EduGPT**: A LangChain-based project where a learner and instructor agent role-play to generate a syllabus and deliver lessons.
 
-- **EduGPT-PersonalisedLearning**: This fork extends EduGPT with retrieval grounding, adaptive assessment, and learner modelling to deliver a production-ready personalised learning experience.
+- **LearnX**: Built using components from EduGPT, this platform extends the framework with retrieval grounding, adaptive assessment, and learner modelling to deliver a production-ready personalised learning experience.
 
 ## 🏗️ Implementation Status
 
@@ -110,7 +110,7 @@ This launches a Gradio web interface at `http://127.0.0.1:7860` with 5 tabs:
 ## 📂 Project Structure
 
 ```
-EduGPT-PersonalisedLearning/
+LearnX/
 ├── src/
 │   ├── agents/               # AI agents for teaching & assessment
 │   │   ├── syllabus_planner.py     # Multi-agent syllabus generation

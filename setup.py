@@ -9,12 +9,12 @@ with open(Path(BASE_DIR, "requirements.txt")) as file:
 
 # Define our package
 setup(
-    name="EduGPT",
+    name="LearnX",
     version=0.1,
-    description="AI instructor using LLMs and Langchain",
+    description="Multi-LLM personalised learning platform with RAG and adaptive assessment",
     author="hqanhh",
     author_email="huynhquynhanh2003@gmail.com",
-    url="https://github.com/hqanhh/EduGPT",
+    url="https://github.com/anasraza57/LearnX",
     python_requires=">=3.10",
     packages=find_namespace_packages(),
     install_requires=[required_packages],

@@ -543,7 +543,7 @@ def create_instructor_from_documents(
         collection_name: Name for the vector store collection
         force_reload: Whether to reload documents even if collection exists
         learning_style: Learner's preferred learning styles
-        interests: Learner's interests for personalized examples
+        interests: Learner's interests for personalised examples
 
     Returns:
         Initialized RAGInstructor

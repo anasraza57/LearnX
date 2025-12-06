@@ -162,7 +162,7 @@ cython_debug/
 .gradio
 
 # ===================================
-# EduGPT-PersonalisedLearning specific
+# LearnX specific
 # ===================================
 
 # Sensitive data - NEVER commit (*.key, *.pem, secrets/, credentials.json)

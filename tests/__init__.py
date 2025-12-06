@@ -1,1 +1,1 @@
-"""Test suite for EduGPT-PersonalisedLearning."""
+"""Test suite for LearnX."""

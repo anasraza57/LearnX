@@ -690,7 +690,7 @@ class ModelComparison:
 
 def main():
     """Run model comparison experiment."""
-    print("EduGPT Model Comparison: GPT-3.5-Turbo vs GPT-4o-Mini")
+    print("LearnX Model Comparison: GPT-3.5-Turbo vs GPT-4o-Mini")
     print("="*80)
 
     # Initialize comparison framework

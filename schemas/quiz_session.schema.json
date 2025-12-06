@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://edugpt.example.com/schemas/quiz_session.schema.json",
+  "$id": "https://learnx.example.com/schemas/quiz_session.schema.json",
   "title": "Quiz Session Schema",
   "description": "Schema for quiz/assessment sessions with learner responses",
   "type": "object",

@@ -1,1 +1,1 @@
-"""Integration tests for EduGPT-PersonalisedLearning."""
+"""Integration tests for LearnX."""

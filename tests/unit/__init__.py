@@ -1,1 +1,1 @@
-"""Unit tests for EduGPT-PersonalisedLearning."""
+"""Unit tests for LearnX."""

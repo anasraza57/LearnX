@@ -1,5 +1,5 @@
 """
-Synthetic Evaluation Data Generator for EduGPT Framework Validation
+Synthetic Evaluation Data Generator for LearnX Framework Validation
 
 This script generates synthetic learner data to validate the mathematical correctness
 of the evaluation framework. This is NOT real learner data, but rather demonstrates

@@ -1,5 +1,5 @@
 """
-Visualize EduGPT performance against literature benchmarks
+Visualize LearnX performance against literature benchmarks
 """
 
 import matplotlib.pyplot as plt
@@ -21,14 +21,14 @@ systems = [
     'Traditional ITS\n(Ma et al., 2014)\nvs Teacher',
     'Traditional ITS\n(Ma et al., 2014)\nvs Computer',
     'Best ITS\n(Kulik & Fletcher, 2016)\nMedian',
-    'EduGPT\n(Mistral 7B)\nOPEN-SOURCE',
-    'EduGPT\n(GPT-3.5-Turbo)\nCOMMERCIAL',
-    'EduGPT\n(GPT-4o-mini)\nCOMMERCIAL'
+    'LearnX\n(Mistral 7B)\nOPEN-SOURCE',
+    'LearnX\n(GPT-3.5-Turbo)\nCOMMERCIAL',
+    'LearnX\n(GPT-4o-mini)\nCOMMERCIAL'
 ]
 
 effect_sizes = [0.42, 0.57, 0.66, 0.47, 0.55, 0.63]
 colors = ['#95A5A6', '#95A5A6', '#7F8C8D', '#95E1D3', '#FF6B6B', '#4ECDC4']
-types = ['Literature', 'Literature', 'Literature', 'EduGPT', 'EduGPT', 'EduGPT']
+types = ['Literature', 'Literature', 'Literature', 'LearnX', 'LearnX', 'LearnX']
 
 print("Creating literature comparison visualizations...")
 
@@ -46,7 +46,7 @@ for i, (bar, es) in enumerate(zip(bars, effect_sizes)):
     ax.text(label_x, bar.get_y() + bar.get_height()/2, f'{es:.2f}',
             ha='left', va='center', fontweight='bold', fontsize=11)
 
-    # Highlight EduGPT results
+    # Highlight LearnX results
     if i >= 3:
         bar.set_edgecolor('red')
         bar.set_linewidth(2.5)
@@ -60,7 +60,7 @@ ax.axvspan(0.2, 0.5, alpha=0.1, color='yellow', label='Medium Effect')
 ax.axvspan(0.5, 1.0, alpha=0.1, color='green', label='Large Effect')
 
 ax.set_xlabel('Effect Size (Cohen\'s g)', fontweight='bold', fontsize=12)
-ax.set_title('EduGPT Performance vs Literature Benchmarks\n' +
+ax.set_title('LearnX Performance vs Literature Benchmarks\n' +
              'Effect Sizes in Educational Technology',
              fontweight='bold', fontsize=14, pad=20)
 ax.set_xlim(0, 0.8)
@@ -98,7 +98,7 @@ for i, (system, lg) in enumerate(zip(systems, learning_gains)):
                 fontweight='bold' if i >= 3 else 'normal')
 
 ax.set_ylabel('Learning Gain / Effect Size', fontweight='bold', fontsize=12)
-ax.set_title('Learning Outcomes: EduGPT vs Traditional ITS\n' +
+ax.set_title('Learning Outcomes: LearnX vs Traditional ITS\n' +
              '(Bubble size = study sample size, log scale)',
              fontweight='bold', fontsize=13, pad=20)
 ax.set_xticks(range(len(systems)))
@@ -108,7 +108,7 @@ ax.grid(axis='y', alpha=0.3)
 # Add legend for sample sizes
 from matplotlib.patches import Circle
 legend_elements = [
-    Circle((0, 0), radius=np.log10(30)*50/100, facecolor='gray', edgecolor='black', label='N=30 (EduGPT)'),
+    Circle((0, 0), radius=np.log10(30)*50/100, facecolor='gray', edgecolor='black', label='N=30 (LearnX)'),
     Circle((0, 0), radius=np.log10(5000)*50/100, facecolor='gray', edgecolor='black', label='N≈5,000 (ITS Meta)'),
     Circle((0, 0), radius=np.log10(14321)*50/100, facecolor='gray', edgecolor='black', label='N≈14,000 (ITS Meta)')
 ]
@@ -153,7 +153,7 @@ LITERATURE BENCHMARKS:
 • Traditional ITS vs Computer: g = 0.57
 • Best ITS (Median): g = 0.66
 
-YOUR EDUGPT RESULTS:
+YOUR LEARNX RESULTS:
 • GPT-4o-mini: g ≈ 0.63 ✓ EXCEEDS traditional ITS
 • GPT-3.5-Turbo: g ≈ 0.55 ✓ COMPARABLE to ITS
 • Mistral 7B: g ≈ 0.47 ✓ MODERATE effect, FREE
@@ -174,20 +174,20 @@ ax2.text(0.05, 0.85, findings_text, ha='left', va='top',
          fontsize=9, family='monospace',
          bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.3))
 
-fig.suptitle('EduGPT Literature Comparison Summary',
+fig.suptitle('LearnX Literature Comparison Summary',
              fontweight='bold', fontsize=16, y=0.98)
 
 plt.tight_layout()
 plt.savefig(output_dir / 'comprehensive_literature_comparison.png', bbox_inches='tight')
 plt.close()
 
-# 4. Cost vs Performance Trade-off (EduGPT vs Khanmigo)
+# 4. Cost vs Performance Trade-off (LearnX vs Khanmigo)
 fig, ax = plt.subplots(figsize=(10, 8))
 
 # Systems for cost comparison
-systems_cost = ['Traditional ITS', 'Khanmigo\n(GPT-4)', 'EduGPT\n(GPT-4o-mini)', 'EduGPT\n(Mistral 7B)']
+systems_cost = ['Traditional ITS', 'Khanmigo\n(GPT-4)', 'LearnX\n(GPT-4o-mini)', 'LearnX\n(Mistral 7B)']
 performance = [0.5, 0.65, 0.63, 0.47]  # Approximate/estimated for comparison
-costs = [None, None, 0.0034, 0.0]  # Only EduGPT has published costs
+costs = [None, None, 0.0034, 0.0]  # Only LearnX has published costs
 colors_cost = ['gray', 'orange', '#4ECDC4', '#95E1D3']
 
 # Plot with different markers for known vs unknown costs
@@ -206,7 +206,7 @@ for i, (sys, perf, cost, col) in enumerate(zip(systems_cost, performance, costs,
 
 ax.set_ylabel('Learning Effectiveness (Effect Size)', fontweight='bold', fontsize=12)
 ax.set_xlabel('System', fontweight='bold', fontsize=12)
-ax.set_title('Cost Transparency: EduGPT vs Other Systems\n' +
+ax.set_title('Cost Transparency: LearnX vs Other Systems\n' +
              '(○ = published cost, × = unpublished cost)',
              fontweight='bold', fontsize=13, pad=20)
 ax.set_xticks(range(len(systems_cost)))
@@ -215,7 +215,7 @@ ax.set_ylim(0, 0.8)
 ax.grid(axis='y', alpha=0.3)
 
 # Add annotation
-ax.text(0.98, 0.02, 'Note: EduGPT provides full cost transparency\nunlike commercial platforms',
+ax.text(0.98, 0.02, 'Note: LearnX provides full cost transparency\nunlike commercial platforms',
         transform=ax.transAxes, ha='right', va='bottom',
         fontsize=9, style='italic',
         bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.6))
