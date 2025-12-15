@@ -33,11 +33,11 @@ class ModelConfig:
     # OpenAI settings (env-driven for flexibility)
     api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     model_name: str = field(
-        default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
+        default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-4o-mini")
     )
     # Alternative model for A/B testing and comparison
     alternative_model: str = field(
-        default_factory=lambda: os.getenv("OPENAI_ALTERNATIVE_MODEL", "gpt-4o-mini")
+        default_factory=lambda: os.getenv("OPENAI_ALTERNATIVE_MODEL", "gpt-3.5-turbo")
     )
     base_url: Optional[str] = field(
         default_factory=lambda: os.getenv("OPENAI_BASE_URL")

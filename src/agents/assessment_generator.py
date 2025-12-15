@@ -10,7 +10,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any
 
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 
 try:

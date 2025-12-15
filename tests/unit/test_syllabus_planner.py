@@ -21,7 +21,7 @@ from src.agents.syllabus_planner import (
     CurriculumDesignerAgent,
 )
 from src.models.learner_profile import LearnerModel
-from langchain.schema import AIMessage
+from langchain_core.messages import AIMessage
 
 
 class TestLearnerAdvocateAgent(unittest.TestCase):

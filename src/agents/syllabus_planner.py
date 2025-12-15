@@ -8,19 +8,18 @@ Uses role-playing agents to negotiate and generate personalized syllabus:
 - Outputs validated JSON conforming to syllabus.schema.json
 """
 
-import os
 import json
 import uuid
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 from datetime import datetime, timezone
 
-from langchain.chat_models import ChatOpenAI
-from langchain.prompts.chat import (
+from langchain_community.chat_models import ChatOpenAI
+from langchain_core.prompts import (
     HumanMessagePromptTemplate,
     SystemMessagePromptTemplate,
 )
-from langchain.schema import (
+from langchain_core.messages import (
     AIMessage,
     BaseMessage,
     HumanMessage,

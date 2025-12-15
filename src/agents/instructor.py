@@ -1,10 +1,11 @@
 import os
 from typing import Any, Dict, List
 
-from langchain import LLMChain, PromptTemplate
+from langchain.chains import LLMChain
+from langchain_core.prompts import PromptTemplate
 from langchain.chains.base import Chain
-from langchain.chat_models import ChatOpenAI
-from langchain.llms import BaseLLM
+from langchain_community.chat_models import ChatOpenAI
+from langchain_community.llms import BaseLLM
 from pydantic import BaseModel, Field
 
 # import your OpenAI key (put in your .env file)
