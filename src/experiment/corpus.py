@@ -340,6 +340,8 @@ def load_corpus_store():
     store = VectorStore(collection_name=COLLECTION_NAME)
     if store.get_count() == 0:
         raise RuntimeError(f"Collection '{COLLECTION_NAME}' is empty. Run: python -m src.experiment.corpus index")
+    # Load the embedding model now, before any worker threads need it
+    store.embedding_generator.embed_text("warm up")
     return store
 
 

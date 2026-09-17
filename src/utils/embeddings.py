@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import pickle
+import threading
 from pathlib import Path
 from typing import List, Optional, Literal
 
@@ -56,9 +57,18 @@ class EmbeddingGenerator:
 
         self._model = None
         self._client = None
+        # Neither loading nor running a sentence-transformers model is
+        # thread-safe: concurrent first calls leave the weights on the meta
+        # device, and concurrent encode() calls can crash the interpreter.
+        # One lock serialises both; encoding a query takes milliseconds.
+        self._load_lock = threading.RLock()
 
     def _load_model(self):
-        """Lazy load the embedding model."""
+        """Lazy load the embedding model (thread-safe)."""
+        with self._load_lock:
+            self._load_model_locked()
+
+    def _load_model_locked(self):
         if self._model is not None or self._client is not None:
             return
 
@@ -104,7 +114,8 @@ class EmbeddingGenerator:
 
         # Generate embedding
         if self.model_type == "sentence-transformers":
-            embedding = self._model.encode(text, convert_to_numpy=True)
+            with self._load_lock:
+                embedding = self._model.encode(text, convert_to_numpy=True)
             embedding = embedding.tolist()
 
         elif self.model_type == "openai":
@@ -192,12 +203,13 @@ class EmbeddingGenerator:
 
         if self.model_type == "sentence-transformers":
             # Sentence transformers handles batching internally
-            embeddings = self._model.encode(
-                texts,
-                batch_size=batch_size,
-                show_progress_bar=show_progress,
-                convert_to_numpy=True,
-            )
+            with self._load_lock:
+                embeddings = self._model.encode(
+                    texts,
+                    batch_size=batch_size,
+                    show_progress_bar=show_progress,
+                    convert_to_numpy=True,
+                )
             return [emb.tolist() for emb in embeddings]
 
         elif self.model_type == "openai":

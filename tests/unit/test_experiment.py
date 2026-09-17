@@ -255,6 +255,23 @@ class TestRunnerRecords:
         assert failed_path(tmp_path / "S01.json").name == "S01.failed.json"
 
 
+class TestEmbeddingConcurrency:
+    """The runner shares one embedding model across worker threads."""
+
+    def test_parallel_embedding_is_safe(self):
+        from concurrent.futures import ThreadPoolExecutor
+
+        from src.utils.embeddings import EmbeddingGenerator
+
+        generator = EmbeddingGenerator()
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            vectors = list(pool.map(
+                lambda i: generator.embed_text(f"parallel embedding test {i}", use_cache=False),
+                range(4),
+            ))
+        assert all(len(v) == config.rag.embedding_dimension for v in vectors)
+
+
 class TestCost:
     def test_cached_tokens_billed_at_cached_rate(self):
         calls = [{"input_tokens": 1_000_000, "cached_input_tokens": 500_000, "output_tokens": 1_000_000}]
