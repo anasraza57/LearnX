@@ -51,6 +51,14 @@ RETRYABLE_ERRORS = (
     openai.InternalServerError,
 )
 
+# A tokens-per-minute limit clears in minutes, not seconds, so rate limits get
+# their own budget: the server's Retry-After when it sends one, else a wait that
+# grows to a minute. Without this, a few parallel runs against a per-minute quota
+# exhaust the ordinary retries and lose the whole run's work.
+RATE_LIMIT_ATTEMPTS = 6
+RATE_LIMIT_WAIT_S = 20.0
+RATE_LIMIT_MAX_WAIT_S = 60.0
+
 
 class UsageLog:
     """Thread-safe store of per-call LLM usage records."""
@@ -271,22 +279,48 @@ def make_chat_model(
     return chat
 
 
+def retry_after_seconds(error: Exception) -> Optional[float]:
+    """The server's own Retry-After, if it sent one."""
+    headers = getattr(getattr(error, "response", None), "headers", None) or {}
+    for name, scale in (("retry-after-ms", 0.001), ("retry-after", 1.0)):
+        value = headers.get(name)
+        if value:
+            try:
+                return float(value) * scale
+            except (TypeError, ValueError):
+                continue
+    return None
+
+
 def tracked_invoke(llm, messages) -> Tuple[Any, str]:
     """
     Invoke a model and return (reply, call_id). Every usage record of this call,
-    including failed attempts, carries the same call_id. Transient API errors are
-    retried with exponential backoff up to config.model.max_retries times.
+    including failed attempts, carries the same call_id.
+
+    Transient API errors are retried with exponential backoff up to
+    config.model.max_retries times. Rate limits are retried separately and for
+    longer, because a per-minute quota does not clear in seconds.
     """
     call_id = str(uuid.uuid4())
     token = current_call.set(call_id)
+    rate_limited = transient = 0
     try:
-        for attempt in range(config.model.max_retries + 1):
+        while True:
             try:
                 return llm.invoke(messages), call_id
-            except RETRYABLE_ERRORS:
-                if attempt == config.model.max_retries:
+            except openai.RateLimitError as error:
+                rate_limited += 1
+                if rate_limited > RATE_LIMIT_ATTEMPTS:
                     raise
-                time.sleep(config.model.retry_delay * config.model.retry_backoff ** attempt)
+                wait = retry_after_seconds(error) or min(
+                    RATE_LIMIT_MAX_WAIT_S, RATE_LIMIT_WAIT_S * rate_limited
+                )
+                time.sleep(wait)
+            except RETRYABLE_ERRORS:
+                transient += 1
+                if transient > config.model.max_retries:
+                    raise
+                time.sleep(config.model.retry_delay * config.model.retry_backoff ** (transient - 1))
     finally:
         current_call.reset(token)
 

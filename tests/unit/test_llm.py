@@ -136,6 +136,44 @@ class TestTrackedInvoke:
         assert seen == [call_id, call_id]
         assert current_call.get() is None
 
+    def test_rate_limits_are_retried_for_longer_and_honour_retry_after(self, model_config, monkeypatch):
+        import src.llm as llm_module
+        model_config.max_retries = 1          # the ordinary budget is small
+        waits = []
+        monkeypatch.setattr(llm_module.time, "sleep", waits.append)
+
+        response = httpx.Response(429, headers={"retry-after": "12"}, request=httpx.Request("POST", "http://x"))
+        error = openai.RateLimitError("rate limited", response=response, body=None)
+        llm = MagicMock()
+        llm.invoke.side_effect = [error, error, AIMessage(content="ok")]
+
+        reply, _ = tracked_invoke(llm, "hi")
+        assert reply.content == "ok"
+        assert llm.invoke.call_count == 3      # more attempts than max_retries allows
+        assert waits == [12.0, 12.0]           # the server's Retry-After, not the short backoff
+
+    def test_rate_limit_without_retry_after_waits_in_tens_of_seconds(self, model_config, monkeypatch):
+        import src.llm as llm_module
+        waits = []
+        monkeypatch.setattr(llm_module.time, "sleep", waits.append)
+        error = openai.RateLimitError(
+            "rate limited", response=httpx.Response(429, request=httpx.Request("POST", "http://x")), body=None)
+        llm = MagicMock()
+        llm.invoke.side_effect = [error, AIMessage(content="ok")]
+        tracked_invoke(llm, "hi")
+        assert waits == [llm_module.RATE_LIMIT_WAIT_S]
+
+    def test_rate_limit_gives_up_eventually(self, model_config, monkeypatch):
+        import src.llm as llm_module
+        monkeypatch.setattr(llm_module.time, "sleep", lambda _: None)
+        error = openai.RateLimitError(
+            "rate limited", response=httpx.Response(429, request=httpx.Request("POST", "http://x")), body=None)
+        llm = MagicMock()
+        llm.invoke.side_effect = error
+        with pytest.raises(openai.RateLimitError):
+            tracked_invoke(llm, "hi")
+        assert llm.invoke.call_count == llm_module.RATE_LIMIT_ATTEMPTS + 1
+
     def test_non_transient_errors_are_not_retried(self, model_config):
         llm = MagicMock()
         llm.invoke.side_effect = ValueError("bad request")
