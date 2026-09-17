@@ -180,7 +180,8 @@ class VectorStore:
             List of (Document, similarity_score) tuples, sorted by relevance
         """
         top_k = top_k or config.rag.top_k
-        min_similarity = min_similarity or config.rag.similarity_threshold
+        if min_similarity is None:
+            min_similarity = config.rag.similarity_threshold
 
         collection = self._get_collection()
 

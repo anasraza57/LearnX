@@ -180,7 +180,10 @@ class SchemaValidator:
         # Calculate total_estimated_hours if missing
         if "modules" in repaired and "total_estimated_hours" not in repaired:
             total_hours = sum(
-                module.get("estimated_hours", 0) for module in repaired["modules"]
+                module.get("estimated_hours", 0)
+                for module in repaired["modules"]
+                if isinstance(module, dict)
+                and isinstance(module.get("estimated_hours", 0), (int, float))
             )
             repaired["total_estimated_hours"] = total_hours
             repairs.append(f"Calculated total_estimated_hours = {total_hours}")

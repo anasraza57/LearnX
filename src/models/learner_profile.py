@@ -46,7 +46,7 @@ class LearnerModel:
     Thread-safe for concurrent access. All mutations acquire a lock.
     """
 
-    _lock = threading.Lock()
+    _lock = threading.RLock()  # re-entrant: complete_module() calls start_module()
     _validator: Optional[LearnerProfileValidator] = None
 
     def __init__(

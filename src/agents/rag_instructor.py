@@ -10,21 +10,25 @@ This agent teaches using retrieval-augmented generation:
 
 from __future__ import annotations
 
+import re
+import time
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import List, Optional, Dict, Any, Tuple
 
 from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
 
 try:
     from ..config import config
+    from ..llm import make_chat_model, tracked_invoke
     from ..utils.vector_store import VectorStore
     from ..utils.document_loader import Document
     from ..utils.persistence import save_teaching_session
 except ImportError:
     from src.config import config
+    from src.llm import make_chat_model, tracked_invoke
     from src.utils.vector_store import VectorStore
     from src.utils.document_loader import Document
     from src.utils.persistence import save_teaching_session
@@ -86,6 +90,130 @@ class Citation:
         return result
 
 
+NO_CONTEXT_ANSWER = (
+    "I don't have enough information in my knowledge base to answer this question "
+    "accurately. Please provide relevant teaching materials."
+)
+
+# Inline citation markers the instructor is asked to emit: [1], [2, 3], [1-3], [1; 2],
+# [Source 2], [Source 2: title]
+INLINE_CITATION_PATTERN = re.compile(
+    r"\[(?:Sources?\s+)?(\d+(?:\s*[-–,;]\s*(?:Sources?\s+)?\d+)*)(?:\s*:[^\]\n]*)?\]"
+)
+# Code is masked before matching so list literals such as [1, 2, 3] are not read as citations
+CODE_SPAN_PATTERN = re.compile(r"```.*?(?:```|\Z)|~~~.*?(?:~~~|\Z)|`[^`\n]*`", re.DOTALL)
+
+
+def _mask_code(text: str) -> str:
+    """Blank out fenced and inline code, preserving character offsets."""
+    return CODE_SPAN_PATTERN.sub(lambda m: re.sub(r"[^\n]", " ", m.group(0)), text)
+
+CITATION_INSTRUCTION = """**Citation requirements:**
+- Every factual statement that relies on the context must end with the number of the source that supports it, in square brackets, e.g. [1] or [2, 3]. The numbers refer to the [Source N] labels above.
+- Only cite a source if that source actually supports the statement.
+- Do not attach citations to your own examples, analogies or exercises unless a source supports them.
+- Do not invent source numbers that do not appear in the context."""
+
+
+def learning_style_guidance(learning_style: List[str]) -> str:
+    """Formatting guidance for the learner's learning style preferences."""
+    guidance_parts = []
+
+    if "visual" in learning_style:
+        guidance_parts.append("   - VISUAL learners: Use analogies, describe visual patterns, suggest diagrams/charts, use formatting (lists, tables, bullet points)")
+
+    if "auditory" in learning_style:
+        guidance_parts.append("   - AUDITORY learners: Use conversational tone, explain step-by-step verbally, include discussion points")
+
+    if "kinesthetic" in learning_style:
+        guidance_parts.append("   - KINESTHETIC learners: Include hands-on examples, practical exercises, real-world applications, actionable steps")
+
+    if "reading_writing" in learning_style:
+        guidance_parts.append("   - READING/WRITING learners: Provide detailed text explanations, written summaries, definitions, note-taking suggestions")
+
+    return "\n".join(guidance_parts) if guidance_parts else "   - Use clear, balanced explanations"
+
+
+def format_context(retrieved_docs: List[Tuple[Document, float]]) -> str:
+    """Format retrieved passages as the numbered [Source N] context block."""
+    context_parts = []
+    for i, (doc, score) in enumerate(retrieved_docs, 1):
+        source = doc.metadata.get("source", "Unknown")
+        page = doc.metadata.get("page", "")
+        page_info = f" (Page {page})" if page else ""
+
+        context_parts.append(
+            f"[Source {i}: {source}{page_info}]\n{doc.content}\n"
+        )
+
+    context = "\n---\n".join(context_parts)
+    return context
+
+
+def build_citations(retrieved_docs: List[Tuple[Document, float]], limit: int = 5) -> List[Citation]:
+    """Deduplicate retrieved passages into a source list (one entry per source, at most `limit`)."""
+    citations = []
+    seen_sources = set()  # Track unique sources to avoid duplicates
+
+    for doc, score in retrieved_docs:
+        # Create unique key based on source and URL (not chunk)
+        source_name = doc.metadata.get("source", "Unknown")
+        original_url = doc.metadata.get("original_url")
+        source_key = (source_name, original_url)  # Both must match for duplicate
+
+        # Skip if we already cited this source
+        if source_key in seen_sources:
+            continue
+
+        seen_sources.add(source_key)
+
+        # Get source type from metadata
+        source_type = doc.metadata.get("source_type", "document")
+
+        # Create citation with URL and type
+        citation = Citation(
+            source=source_name,
+            content=doc.content[:200],  # Brief excerpt for display
+            url=original_url,
+            source_type=source_type,
+            page=doc.metadata.get("page"),
+            filepath=doc.metadata.get("filepath"),
+        )
+        citations.append(citation)
+
+        # Limit unique sources
+        if len(citations) >= limit:
+            break
+    return citations
+
+
+def extract_inline_citations(answer: str, num_passages: int) -> List[Dict[str, Any]]:
+    """
+    Find inline citation markers in an answer and check them against the
+    passages that were supplied.
+
+    Returns one entry per cited number, with its character offset and whether
+    it refers to a passage that exists (1..num_passages).
+    """
+    found = []
+    for match in INLINE_CITATION_PATTERN.finditer(_mask_code(answer)):
+        numbers: List[int] = []
+        for part in re.split(r"\s*[,;]\s*", match.group(1)):
+            bounds = [int(n) for n in re.findall(r"\d+", part)]
+            if len(bounds) == 2 and bounds[0] < bounds[1] <= bounds[0] + 20:
+                numbers.extend(range(bounds[0], bounds[1] + 1))  # a range such as 1-3
+            else:
+                numbers.extend(bounds)
+        for index in numbers:
+            found.append({
+                "marker": match.group(0),
+                "offset": match.start(),
+                "passage_index": index,
+                "valid": 1 <= index <= num_passages,
+            })
+    return found
+
+
 @dataclass
 class TeachingResponse:
     """
@@ -95,12 +223,25 @@ class TeachingResponse:
         answer: The teaching explanation
         citations: List of citations used
         retrieved_docs: Original documents retrieved
-        confidence: Confidence in the answer (0-1)
+        confidence: Retrieval confidence (0-1), derived from the mean similarity
+            of the retrieved passages. It is not reported by the model
+        mode: "grounded" or "ungrounded"
+        refused: True when the canned no-context answer was returned
+        inline_citations: Inline citation markers found in the answer
+        prompt: The exact prompt sent to the model (None if no call was made)
+        call_id: Joins this response to its usage record (None if no call was made)
+        retrieval_s: Time spent in retrieval
     """
     answer: str
     citations: List[Citation] = field(default_factory=list)
     retrieved_docs: List[Tuple[Document, float]] = field(default_factory=list)
     confidence: float = 1.0
+    mode: str = "grounded"
+    refused: bool = False
+    inline_citations: List[Dict[str, Any]] = field(default_factory=list)
+    prompt: Optional[str] = None
+    call_id: Optional[str] = None
+    retrieval_s: Optional[float] = None
 
     def format_with_citations(self) -> str:
         """Format answer with inline citations."""
@@ -127,13 +268,15 @@ class RAGInstructor:
 
     def __init__(
         self,
-        vector_store: VectorStore,
+        vector_store: Optional[VectorStore],
         model_name: Optional[str] = None,
         temperature: float = 0.7,
         top_k_retrieval: int = None,
-        min_similarity: float = 0.35,
+        min_similarity: Optional[float] = None,
         learning_style: Optional[List[str]] = None,
         interests: Optional[List[str]] = None,
+        grounded: bool = True,
+        citation_instruction: bool = True,
     ):
         """
         Initialize RAG instructor.
@@ -143,32 +286,41 @@ class RAGInstructor:
             model_name: LLM model name (default from config)
             temperature: LLM temperature (0=deterministic, 1=creative)
             top_k_retrieval: Number of documents to retrieve (default from config)
-            min_similarity: Minimum similarity threshold for citations (0-1)
+            min_similarity: Minimum similarity threshold (default from config)
             learning_style: Learner's preferred learning styles (visual, auditory, kinesthetic, reading_writing)
             interests: Learner's interests for generating relevant examples
+            grounded: If False, never retrieve and answer from the model's own
+                knowledge (the no-retrieval ablation)
+            citation_instruction: If True, instruct the model to cite sources
+                inline by passage number
         """
+        if grounded and vector_store is None:
+            raise ValueError("A grounded instructor needs a vector store")
+
         self.vector_store = vector_store
         self.top_k = top_k_retrieval or config.rag.top_k
-        self.min_similarity = min_similarity
+        self.min_similarity = (
+            config.rag.similarity_threshold if min_similarity is None else min_similarity
+        )
         self.model_name = model_name or config.model.model_name
         self.learning_style = learning_style or ["visual"]
         self.interests = interests or []
+        self.grounded = grounded
+        self.citation_instruction = citation_instruction and grounded
 
         # Conversation history for follow-up questions
         self.conversation_history = []
 
         # Initialize LLM
-        self.llm = ChatOpenAI(
-            model=self.model_name,
-            temperature=temperature,
-            api_key=config.model.api_key,
-        )
+        self.llm = make_chat_model("instructor", temperature=temperature, model_name=self.model_name)
 
         # Build learning style guidance
         style_guidance = self._get_learning_style_guidance()
 
         # Build interests context
         interests_text = f"Learner is interested in: {', '.join(self.interests)}" if self.interests else "No specific interests provided"
+
+        citation_block = CITATION_INSTRUCTION.strip() + "\n\n" if self.citation_instruction else ""
 
         # Teaching prompt template with learning style, prior knowledge, and interests
         self.prompt_template = PromptTemplate(
@@ -196,26 +348,37 @@ class RAGInstructor:
 7. If the context doesn't contain enough information, say so honestly
 8. Break down complex concepts into understandable parts
 
+{citation_block}**Answer:**"""
+        )
+
+        # Ungrounded prompt: same persona and personalisation, no context block
+        self.ungrounded_prompt_template = PromptTemplate(
+            input_variables=["question", "learner_level", "prior_knowledge"],
+            template=f"""You are an expert educational instructor. Your task is to explain concepts clearly and accurately.
+
+**Learner Level:** {{learner_level}}
+**Learning Style Preferences:** {', '.join(self.learning_style)}
+**Learner's Prior Knowledge:** {{prior_knowledge}}
+**Learner's Interests:** {interests_text}
+
+**Question:** {{question}}
+
+**Instructions:**
+1. Answer the question from your own knowledge
+2. Adapt your explanation complexity to the learner's level (novice/beginner/intermediate/advanced/expert)
+3. Build on the learner's prior knowledge when relevant - connect new concepts to what they already know
+4. When appropriate, use examples or analogies from the learner's interests to make concepts more relatable
+5. Format your response according to the learner's learning style preferences:
+{style_guidance}
+6. Be clear, accurate, and pedagogical
+7. Break down complex concepts into understandable parts
+
 **Answer:**"""
         )
 
     def _get_learning_style_guidance(self) -> str:
         """Generate formatting guidance based on learning style preferences."""
-        guidance_parts = []
-
-        if "visual" in self.learning_style:
-            guidance_parts.append("   - VISUAL learners: Use analogies, describe visual patterns, suggest diagrams/charts, use formatting (lists, tables, bullet points)")
-
-        if "auditory" in self.learning_style:
-            guidance_parts.append("   - AUDITORY learners: Use conversational tone, explain step-by-step verbally, include discussion points")
-
-        if "kinesthetic" in self.learning_style:
-            guidance_parts.append("   - KINESTHETIC learners: Include hands-on examples, practical exercises, real-world applications, actionable steps")
-
-        if "reading_writing" in self.learning_style:
-            guidance_parts.append("   - READING/WRITING learners: Provide detailed text explanations, written summaries, definitions, note-taking suggestions")
-
-        return "\n".join(guidance_parts) if guidance_parts else "   - Use clear, balanced explanations"
+        return learning_style_guidance(self.learning_style)
 
     def teach(
         self,
@@ -236,100 +399,41 @@ class RAGInstructor:
         Returns:
             TeachingResponse with answer and citations
         """
+        if not self.grounded:
+            return self._teach_ungrounded(question, learner_level, prior_knowledge)
+
         # Step 1: Retrieve relevant documents with min_similarity filter
+        started = time.perf_counter()
         retrieved_docs = self.vector_store.search(
             query=question,
             top_k=self.top_k,
             metadata_filter=metadata_filter,
             min_similarity=self.min_similarity,
         )
+        retrieval_s = time.perf_counter() - started
 
         if not retrieved_docs:
             return TeachingResponse(
-                answer="I don't have enough information in my knowledge base to answer this question accurately. Please provide relevant teaching materials.",
-                confidence=0.0
+                answer=NO_CONTEXT_ANSWER,
+                confidence=0.0,
+                refused=True,
+                retrieval_s=retrieval_s,
             )
 
         # Step 2: Prepare context from retrieved documents
-        context_parts = []
-        for i, (doc, score) in enumerate(retrieved_docs, 1):
-            source = doc.metadata.get("source", "Unknown")
-            page = doc.metadata.get("page", "")
-            page_info = f" (Page {page})" if page else ""
+        context = format_context(retrieved_docs)
 
-            context_parts.append(
-                f"[Source {i}: {source}{page_info}]\n{doc.content}\n"
-            )
-
-        context = "\n---\n".join(context_parts)
-
-        # Format prior knowledge for prompt
-        if prior_knowledge:
-            pk_text = ", ".join([f"{topic} ({level})" for topic, level in prior_knowledge.items()])
-        else:
-            pk_text = "None specified"
-
-        # Step 3: Add conversation history context for follow-up questions
-        history_context = ""
-        if self.conversation_history:
-            history_context = "\n\n**Recent Conversation:**\n"
-            for i, (q, a) in enumerate(self.conversation_history[-3:], 1):  # Last 3 exchanges
-                history_context += f"Q{i}: {q}\nA{i}: {a[:200]}...\n"
-            history_context += "\n"
-
-        # Step 4: Generate answer using LLM
-        prompt = self.prompt_template.format(
+        # Step 3-4: Generate answer using LLM
+        prompt = self._with_history(self.prompt_template.format(
             question=question,
             context=context,
             learner_level=learner_level,
-            prior_knowledge=pk_text
-        )
-
-        # Add conversation history if exists
-        if history_context:
-            prompt = history_context + prompt
-
-        answer = self.llm.invoke(prompt).content
-
-        # Store in conversation history
-        self.conversation_history.append((question, answer))
-        # Keep only last 10 exchanges
-        if len(self.conversation_history) > 10:
-            self.conversation_history = self.conversation_history[-10:]
+            prior_knowledge=self._prior_knowledge_text(prior_knowledge),
+        ))
+        answer, call_id = self._generate(question, prompt)
 
         # Step 4: Create deduplicated citations with URLs
-        citations = []
-        seen_sources = set()  # Track unique sources to avoid duplicates
-
-        for doc, score in retrieved_docs:
-            # Create unique key based on source and URL (not chunk)
-            source_name = doc.metadata.get("source", "Unknown")
-            original_url = doc.metadata.get("original_url")
-            source_key = (source_name, original_url)  # Both must match for duplicate
-
-            # Skip if we already cited this source
-            if source_key in seen_sources:
-                continue
-
-            seen_sources.add(source_key)
-
-            # Get source type from metadata
-            source_type = doc.metadata.get("source_type", "document")
-
-            # Create citation with URL and type
-            citation = Citation(
-                source=source_name,
-                content=doc.content[:200],  # Brief excerpt for display
-                url=original_url,
-                source_type=source_type,
-                page=doc.metadata.get("page"),
-                filepath=doc.metadata.get("filepath"),
-            )
-            citations.append(citation)
-
-            # Limit to 5 unique sources max
-            if len(citations) >= 5:
-                break
+        citations = build_citations(retrieved_docs)
 
         # Step 5: Estimate confidence based on retrieval scores
         if retrieved_docs:
@@ -343,7 +447,57 @@ class RAGInstructor:
             citations=citations,
             retrieved_docs=retrieved_docs,
             confidence=confidence,
+            mode="grounded",
+            inline_citations=extract_inline_citations(answer, len(retrieved_docs)),
+            prompt=prompt,
+            call_id=call_id,
+            retrieval_s=retrieval_s,
         )
+
+    def _teach_ungrounded(
+        self,
+        question: str,
+        learner_level: str,
+        prior_knowledge: Optional[Dict[str, str]],
+    ) -> TeachingResponse:
+        """Answer from the model's own knowledge, with no retrieval."""
+        prompt = self._with_history(self.ungrounded_prompt_template.format(
+            question=question,
+            learner_level=learner_level,
+            prior_knowledge=self._prior_knowledge_text(prior_knowledge),
+        ))
+        answer, call_id = self._generate(question, prompt)
+        return TeachingResponse(
+            answer=answer,
+            confidence=0.0,
+            mode="ungrounded",
+            prompt=prompt,
+            call_id=call_id,
+        )
+
+    @staticmethod
+    def _prior_knowledge_text(prior_knowledge: Optional[Dict[str, str]]) -> str:
+        if prior_knowledge:
+            return ", ".join([f"{topic} ({level})" for topic, level in prior_knowledge.items()])
+        return "None specified"
+
+    def _with_history(self, prompt: str) -> str:
+        """Prepend the last three exchanges so follow-up questions have context."""
+        if not self.conversation_history:
+            return prompt
+        history_context = "\n\n**Recent Conversation:**\n"
+        for i, (q, a) in enumerate(self.conversation_history[-3:], 1):
+            history_context += f"Q{i}: {q}\nA{i}: {a[:200]}...\n"
+        return history_context + "\n" + prompt
+
+    def _generate(self, question: str, prompt: str) -> Tuple[str, str]:
+        reply, call_id = tracked_invoke(self.llm, prompt)
+        answer = reply.content
+        self.conversation_history.append((question, answer))
+        # Keep only last 10 exchanges
+        if len(self.conversation_history) > 10:
+            self.conversation_history = self.conversation_history[-10:]
+        return answer, call_id
 
     def teach_and_save(
         self,
@@ -481,7 +635,7 @@ class RAGInstructor:
 
 **Evaluation:**"""
 
-        evaluation = self.llm.predict(verification_prompt)
+        evaluation = tracked_invoke(self.llm, verification_prompt)[0].content
 
         return {
             "evaluation": evaluation,
@@ -534,6 +688,7 @@ def create_instructor_from_documents(
     force_reload: bool = False,
     learning_style: Optional[List[str]] = None,
     interests: Optional[List[str]] = None,
+    **instructor_kwargs: Any,
 ) -> RAGInstructor:
     """
     Create RAG instructor from a directory of teaching materials.
@@ -544,6 +699,7 @@ def create_instructor_from_documents(
         force_reload: Whether to reload documents even if collection exists
         learning_style: Learner's preferred learning styles
         interests: Learner's interests for personalised examples
+        **instructor_kwargs: Passed through to RAGInstructor
 
     Returns:
         Initialized RAGInstructor
@@ -568,5 +724,6 @@ def create_instructor_from_documents(
     return RAGInstructor(
         vector_store=vector_store,
         learning_style=learning_style,
-        interests=interests
+        interests=interests,
+        **instructor_kwargs,
     )

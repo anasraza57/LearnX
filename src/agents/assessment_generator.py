@@ -6,18 +6,21 @@ Uses RAG + LLM to generate contextually relevant questions aligned with learning
 
 from __future__ import annotations
 
+import json
+import time
 import uuid
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any
 
 from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
 
 try:
     from ..config import config
+    from ..llm import make_chat_model, parse_json_response, tracked_invoke
     from ..utils.vector_store import VectorStore
 except ImportError:
     from src.config import config
+    from src.llm import make_chat_model, parse_json_response, tracked_invoke
     from src.utils.vector_store import VectorStore
 
 
@@ -59,6 +62,9 @@ class AssessmentQuestion:
     points: float = 1.0
     time_limit_seconds: Optional[int] = None
     source_material: Optional[Dict[str, Any]] = None
+    # How the item was produced (retrieval outcome, prompt, parse fallback).
+    # Diagnostic only; not part of the persisted assessment schema.
+    generation_meta: Dict[str, Any] = field(default_factory=dict, repr=False)
 
     @staticmethod
     def normalize_page_number(page: int, zero_indexed: bool = True) -> int:
@@ -172,11 +178,7 @@ class AssessmentGenerator:
         self.model_name = model_name or config.model.model_name
 
         # Initialize LLM
-        self.llm = ChatOpenAI(
-            model=self.model_name,
-            temperature=temperature,
-            api_key=config.model.api_key,
-        )
+        self.llm = make_chat_model("assessment", temperature=temperature, model_name=self.model_name)
 
         # Question generation prompts
         self.mcq_prompt = PromptTemplate(
@@ -277,14 +279,20 @@ class AssessmentGenerator:
         # Get context from RAG if available and requested
         context = ""
         source_material = None
-        if use_rag and self.vector_store:
+        retrieved_docs = []
+        retrieval_s = None
+        rag_attempted = bool(use_rag and self.vector_store)
+        if rag_attempted:
+            # Same pinned retrieval parameters as the instructor
+            started = time.perf_counter()
             retrieved_docs = self.vector_store.search(
                 query=topic,
-                top_k=3,
-                min_similarity=0.3,
+                top_k=config.rag.top_k,
+                min_similarity=config.rag.similarity_threshold,
             )
+            retrieval_s = time.perf_counter() - started
             if retrieved_docs:
-                context = "\n\n".join([doc.content for doc, _ in retrieved_docs[:2]])
+                context = "\n\n".join([doc.content for doc, _ in retrieved_docs])
                 # Store source reference
                 doc, score = retrieved_docs[0]
                 source_material = {
@@ -312,6 +320,10 @@ class AssessmentGenerator:
             )
         else:
             raise ValueError(f"Unsupported question type: {question_type}")
+        parse_fallback = question_data.pop("_parse_fallback", False)
+        raw_response = question_data.pop("_raw_response", None)
+        prompt = question_data.pop("_prompt", None)
+        call_id = question_data.pop("_call_id", None)
 
         # Create AssessmentQuestion object
         question_id = f"q-{uuid.uuid4()}"
@@ -330,6 +342,27 @@ class AssessmentGenerator:
             learning_objectives=[learning_objective] if learning_objective else [],
             answer_rubric=question_data.get("answer_rubric"),
             source_material=source_material,
+            generation_meta={
+                "rag_attempted": rag_attempted,
+                "retrieval_hits": len(retrieved_docs),
+                "retrieval_failed": rag_attempted and not retrieved_docs,
+                "retrieved": [
+                    {
+                        "chunk_id": doc.metadata.get("chunk_id"),
+                        "source": doc.metadata.get("source"),
+                        "doc_id": doc.metadata.get("doc_id"),
+                        "strand": doc.metadata.get("strand"),
+                        "similarity": score,
+                        "content": doc.content,
+                    }
+                    for doc, score in retrieved_docs
+                ],
+                "retrieval_s": retrieval_s,
+                "parse_fallback": parse_fallback,
+                "raw_response": raw_response,
+                "prompt": prompt,
+                "call_id": call_id,
+            },
         )
 
     def generate_quiz(
@@ -391,7 +424,6 @@ class AssessmentGenerator:
         learning_objective: str,
     ) -> Dict[str, Any]:
         """Generate a multiple-choice question."""
-        import json
 
         prompt = self.mcq_prompt.format(
             context=context,
@@ -401,21 +433,22 @@ class AssessmentGenerator:
             learning_objective=learning_objective,
         )
 
-        response = self.llm.invoke(prompt).content
+        reply, call_id = tracked_invoke(self.llm, prompt)
+        raw = reply.content
+        meta = {"_raw_response": raw, "_prompt": prompt, "_call_id": call_id}
 
-        # Parse JSON response
+        # Parse JSON response (fences inside the question text are fine)
         try:
-            # Extract JSON from markdown code blocks if present
-            if "```json" in response:
-                response = response.split("```json")[1].split("```")[0].strip()
-            elif "```" in response:
-                response = response.split("```")[1].split("```")[0].strip()
-
-            question_data = json.loads(response)
+            question_data = parse_json_response(raw)
+            if not isinstance(question_data, dict) or "question_text" not in question_data:
+                raise json.JSONDecodeError("reply is not a question object", raw, 0)
+            question_data.update(meta)
             return question_data
         except json.JSONDecodeError:
-            # Fallback: create a simple question
+            # Fallback: a placeholder question, flagged as such
             return {
+                "_parse_fallback": True,
+                **meta,
                 "question_text": f"What is {topic}?",
                 "options": [
                     {"option_id": "A", "text": "Option A", "is_correct": True},
@@ -436,7 +469,6 @@ class AssessmentGenerator:
         learning_objective: str,
     ) -> Dict[str, Any]:
         """Generate a short-answer question."""
-        import json
 
         prompt = self.short_answer_prompt.format(
             context=context,
@@ -446,19 +478,22 @@ class AssessmentGenerator:
             learning_objective=learning_objective,
         )
 
-        response = self.llm.invoke(prompt).content
+        reply, call_id = tracked_invoke(self.llm, prompt)
+        raw = reply.content
+        meta = {"_raw_response": raw, "_prompt": prompt, "_call_id": call_id}
 
-        # Parse JSON response
+        # Parse JSON response (fences inside the question text are fine)
         try:
-            if "```json" in response:
-                response = response.split("```json")[1].split("```")[0].strip()
-            elif "```" in response:
-                response = response.split("```")[1].split("```")[0].strip()
-
-            question_data = json.loads(response)
+            question_data = parse_json_response(raw)
+            if not isinstance(question_data, dict) or "question_text" not in question_data:
+                raise json.JSONDecodeError("reply is not a question object", raw, 0)
+            question_data.update(meta)
             return question_data
         except json.JSONDecodeError:
+            # Fallback: a placeholder question, flagged as such
             return {
+                "_parse_fallback": True,
+                **meta,
                 "question_text": f"Explain {topic}.",
                 "correct_answer": f"A brief explanation of {topic}.",
                 "answer_rubric": "Should include key concepts and clear explanation.",

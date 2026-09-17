@@ -77,7 +77,7 @@ class TestRAGInstructorBasics:
 class TestRAGRetrieval:
     """Test RAG retrieval and citation generation."""
 
-    @patch("src.agents.rag_instructor.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_retrieval_returns_documents(self, mock_llm):
         """Test that retrieval returns at least 1 document with similarity ≥ threshold."""
         from src.agents.rag_instructor import RAGInstructor
@@ -116,7 +116,7 @@ class TestRAGRetrieval:
         assert response.citations[0].relevance_score >= 0.35
         assert response.confidence > 0
 
-    @patch("src.agents.rag_instructor.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_zero_hit_behavior(self, mock_llm):
         """Test behavior when no documents match (0-hit)."""
         from src.agents.rag_instructor import RAGInstructor
@@ -134,7 +134,7 @@ class TestRAGRetrieval:
         assert "don't have enough information" in response.answer.lower()
         assert len(response.citations) == 0
 
-    @patch("src.agents.rag_instructor.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_citations_limited_to_top_n(self, mock_llm):
         """Test that citations are limited to top N high-quality results."""
         from src.agents.rag_instructor import RAGInstructor
@@ -258,7 +258,7 @@ class TestTeachingSessionPersistence:
 class TestTeachAndSave:
     """Test teach_and_save integration method."""
 
-    @patch("src.agents.rag_instructor.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_teach_and_save_persists_session(self, mock_llm):
         """Test that teach_and_save creates and persists session."""
         from src.agents.rag_instructor import RAGInstructor
@@ -364,7 +364,7 @@ class TestPhase2Integration:
 class TestRAGConfig:
     """Test RAG configuration persistence."""
 
-    @patch("src.agents.rag_instructor.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_rag_config_saved_in_session(self, mock_llm):
         """Test that RAG config (top_k, min_similarity) is saved in session."""
         from src.agents.rag_instructor import RAGInstructor
@@ -404,7 +404,7 @@ class TestRAGConfig:
 class TestGoNoGoChecklist:
     """Critical go/no-go validation tests for Phase 3 production readiness."""
 
-    @patch("src.agents.rag_instructor.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_end_to_end_session_validates_against_schema(self, mock_llm):
         """GO/NO-GO: Real session via teach() → save() validates against schema."""
         import jsonschema
@@ -459,7 +459,7 @@ class TestGoNoGoChecklist:
         assert session["answer"]
         assert session["learner_level"] == "beginner"
 
-    @patch("src.agents.rag_instructor.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_id_patterns_match_schema_regex(self, mock_llm):
         """GO/NO-GO: session_id and learner_id match schema patterns."""
         from src.agents.rag_instructor import RAGInstructor
@@ -498,7 +498,7 @@ class TestGoNoGoChecklist:
             if session and session.get("module_id"):
                 assert re.match(module_pattern, session["module_id"])
 
-    @patch("src.agents.rag_instructor.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_zero_hit_retrieval_validates_with_empty_citations(self, mock_llm):
         """GO/NO-GO: 0-hit retrieval returns valid session with empty citations."""
         from src.agents.rag_instructor import RAGInstructor
@@ -551,7 +551,7 @@ class TestGoNoGoChecklist:
         assert entry["confidence"] == 0.88
         assert "timestamp" in entry
 
-    @patch("src.agents.rag_instructor.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_model_and_rag_config_populated(self, mock_llm):
         """GO/NO-GO: Saved session includes model and rag_config for reproducibility."""
         from src.agents.rag_instructor import RAGInstructor

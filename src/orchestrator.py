@@ -27,6 +27,7 @@ from .agents.assessment_generator import AssessmentGenerator, AssessmentQuestion
 from .agents.grading_agent import GradingAgent
 from .models.quiz_session import AdaptiveQuiz
 from .utils.oer_fetcher import auto_fetch_module_content
+from .utils.vector_store import VectorStore
 from .config import config
 
 
@@ -37,6 +38,15 @@ PRACTICE_MASTERY_THRESHOLD = 0.60
 MAX_DIFFICULTY = 2
 MIN_DIFFICULTY = -2
 SESSION_DIR = "data/learner_progress"
+LEVEL_ORDER = ["novice", "beginner", "intermediate", "advanced", "expert"]
+
+
+def learner_level_for(learner: LearnerModel) -> str:
+    """The highest prior-knowledge level the learner has declared, or "novice" if none."""
+    levels = [lvl for lvl in learner.get_prior_knowledge().values() if lvl in LEVEL_ORDER]
+    if not levels:
+        return "novice"
+    return max(levels, key=LEVEL_ORDER.index)
 
 
 # ==================== Session State Models ====================
@@ -103,6 +113,10 @@ class LearningOrchestrator:
         syllabus: Optional[Dict[str, Any]] = None,
         documents_path: Optional[Path] = None,
         persist_dir: Optional[Path] = None,
+        model_name: Optional[str] = None,
+        vector_store: Optional[VectorStore] = None,
+        retrieval: bool = True,
+        citation_instruction: bool = True,
     ):
         """
         Initialize the learning orchestrator.
@@ -112,16 +126,28 @@ class LearningOrchestrator:
             syllabus: Optional syllabus dict (if None, will need to generate)
             documents_path: Path to teaching documents for RAG
             persist_dir: Directory for saving sessions
+            model_name: Model used by every agent (default: config.model.model_name)
+            vector_store: Prebuilt vector store to teach from. If given, no
+                documents are loaded or re-indexed
+            retrieval: If False, instruction and assessment are generated
+                without retrieval (the no-retrieval ablation)
+            citation_instruction: Whether the instructor is told to cite
+                sources inline
         """
         self.learner = learner
         self.syllabus = syllabus
         self.documents_path = documents_path
         self.persist_dir = persist_dir or Path("data/sessions")
+        self.model_name = model_name
+        self.vector_store = vector_store
+        self.retrieval = retrieval
+        self.citation_instruction = citation_instruction
 
         # Initialize components
         self.instructor: Optional[RAGInstructor] = None
         self.assessment_generator: Optional[AssessmentGenerator] = None
-        self.grading_agent = GradingAgent()
+        self.grading_agent = GradingAgent(model_name=model_name)
+        self.last_planner_run: Dict[str, Any] = {}
 
         # Track current session state
         self.current_module_id: Optional[str] = None
@@ -165,7 +191,7 @@ class LearningOrchestrator:
         Returns:
             Generated syllabus dictionary
         """
-        planner = SyllabusPlanner(learner=self.learner)
+        planner = SyllabusPlanner(learner=self.learner, model_name=self.model_name)
 
         syllabus = planner.generate_syllabus(
             topic=topic,
@@ -173,6 +199,7 @@ class LearningOrchestrator:
             weekly_hours=weekly_hours,
             max_negotiation_rounds=max_negotiation_rounds,
         )
+        self.last_planner_run = planner.last_run
 
         # Store syllabus in orchestrator
         self.syllabus = syllabus
@@ -430,6 +457,7 @@ class LearningOrchestrator:
         # Get teaching response from RAG instructor with prior knowledge
         response = self.instructor.teach(
             question=question,
+            learner_level=self.learner_level(),
             prior_knowledge=prior_knowledge,
             metadata_filter=metadata_filter
         )
@@ -483,7 +511,7 @@ class LearningOrchestrator:
 
                 # Get learner data for personalization
                 learner_data = self.learner.to_dict()
-                learning_style = learner_data.get("learning_style", "mixed")
+                learning_style = learner_data.get("cognitive_profile", {}).get("learning_style", ["visual"])
                 interests = learner_data.get("personal_info", {}).get("interests", [])
 
                 self.instructor = create_instructor_from_documents(
@@ -526,6 +554,8 @@ class LearningOrchestrator:
 
         lessons = []
         all_citations = []
+        prior_knowledge = self.learner.get_prior_knowledge()
+        learner_level = self.learner_level()
 
         # Teach each topic sequentially
         for i, topic in enumerate(topics, 1):
@@ -534,25 +564,45 @@ class LearningOrchestrator:
 
             if self.instructor:
                 # Use RAG-based teaching with citations
-                response = self.instructor.teach(question=question)
+                response = self.instructor.teach(
+                    question=question,
+                    learner_level=learner_level,
+                    prior_knowledge=prior_knowledge,
+                )
 
                 lesson = {
                     "topic_number": i,
                     "topic": topic,
+                    "question": question,
                     "content": response.answer,
                     "citations": [asdict(c) for c in response.citations],
                     "confidence": response.confidence,
+                    "mode": response.mode,
+                    "refused": response.refused,
+                    "inline_citations": response.inline_citations,
+                    "retrieved": [
+                        {
+                            "passage_index": rank,
+                            "chunk_id": doc.metadata.get("chunk_id"),
+                            "source": doc.metadata.get("source"),
+                            "url": doc.metadata.get("original_url"),
+                            "doc_id": doc.metadata.get("doc_id"),
+                            "strand": doc.metadata.get("strand"),
+                            "similarity": score,
+                            "content": doc.content,
+                        }
+                        for rank, (doc, score) in enumerate(response.retrieved_docs, 1)
+                    ],
+                    "prompt": response.prompt,
+                    "call_id": response.call_id,
+                    "retrieval_s": response.retrieval_s,
                 }
 
                 all_citations.extend([asdict(c) for c in response.citations])
             else:
                 # Fallback: Generate content without RAG
-                from langchain_openai import ChatOpenAI
-                llm = ChatOpenAI(
-                    model=config.model.model_name,
-                    temperature=0.7,
-                    api_key=config.model.api_key,
-                )
+                from .llm import make_chat_model, tracked_invoke
+                llm = make_chat_model("instructor", temperature=0.7, model_name=self.model_name)
 
                 prompt = f"""You are teaching a module on {module.get('title')}.
 
@@ -569,7 +619,7 @@ Provide a comprehensive lesson on {topic}. Include:
 
 Length: 300-500 words."""
 
-                response = llm.invoke(prompt)
+                response, _ = tracked_invoke(llm, prompt)
 
                 lesson = {
                     "topic_number": i,
@@ -622,8 +672,10 @@ Length: 300-500 words."""
 
         # Initialize assessment generator if needed
         if self.assessment_generator is None:
-            vector_store = self.instructor.vector_store if self.instructor else None
-            self.assessment_generator = AssessmentGenerator(vector_store=vector_store)
+            vector_store = self.instructor.vector_store if self._rag_active() else None
+            self.assessment_generator = AssessmentGenerator(
+                vector_store=vector_store, model_name=self.model_name
+            )
 
         # Auto-determine number of questions based on module topics
         if num_questions is None:
@@ -722,7 +774,7 @@ Length: 300-500 words."""
             topic=topic,
             question_type=question_type,
             difficulty=difficulty,
-            use_rag=self.instructor is not None,
+            use_rag=self._rag_active(),
         )
 
         # Validate and add to quiz
@@ -1103,8 +1155,37 @@ Length: 300-500 words."""
 
     # ==================== Helper Methods ====================
 
+    def learner_level(self) -> str:
+        """Learner level passed to the instructor."""
+        return learner_level_for(self.learner)
+
+    def _rag_active(self) -> bool:
+        return self.instructor is not None and self.instructor.grounded
+
     def _initialize_instructor(self, module_id: str) -> None:
         """Initialize RAG instructor with documents and learner preferences."""
+        learner_data = self.learner.to_dict()
+        learning_style = learner_data.get("cognitive_profile", {}).get("learning_style", ["visual"])
+        interests = learner_data.get("personal_info", {}).get("interests", [])
+        instructor_kwargs = {
+            "model_name": self.model_name,
+            "learning_style": learning_style,
+            "interests": interests,
+            "citation_instruction": self.citation_instruction,
+        }
+
+        if not self.retrieval:
+            self.instructor = RAGInstructor(vector_store=None, grounded=False, **instructor_kwargs)
+            self.assessment_generator = AssessmentGenerator(vector_store=None, model_name=self.model_name)
+            return
+
+        if self.vector_store is not None:
+            self.instructor = RAGInstructor(vector_store=self.vector_store, **instructor_kwargs)
+            self.assessment_generator = AssessmentGenerator(
+                vector_store=self.vector_store, model_name=self.model_name
+            )
+            return
+
         # Try multiple document locations
         search_paths = []
 
@@ -1140,23 +1221,17 @@ Length: 300-500 words."""
         # Use the directory that contains the documents
         documents_dir = doc_files[0].parent
 
-        # Get learner's learning style and interests
-        learner_data = self.learner.to_dict()
-        learning_style = learner_data.get("cognitive_profile", {}).get("learning_style", ["visual"])
-        interests = learner_data.get("personal_info", {}).get("interests", [])
-
         self.instructor = create_instructor_from_documents(
             documents_dir=documents_dir,
             collection_name=f"module_{module_id}",
             force_reload=True,  # Always reload to pick up latest metadata (URLs, source types)
-            learning_style=learning_style,  # Pass learning style to instructor
-            interests=interests,  # Pass interests for personalised examples
+            **instructor_kwargs,
         )
 
         # Share vector store with assessment generator
         if self.instructor and self.instructor.vector_store:
             self.assessment_generator = AssessmentGenerator(
-                vector_store=self.instructor.vector_store
+                vector_store=self.instructor.vector_store, model_name=self.model_name
             )
 
     def _find_module(self, module_id: str) -> Optional[Dict[str, Any]]:

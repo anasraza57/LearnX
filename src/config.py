@@ -50,10 +50,14 @@ class ModelConfig:
     temperature: float = 0.7
     max_tokens: int = 2000
 
-    # Agent-specific temperatures
-    planner_temperature: float = 0.9
-    instructor_temperature: float = 0.7
-    assessment_temperature: float = 0.5
+    # Backend capabilities. Some models reject any non-default temperature;
+    # set LLM_SUPPORTS_TEMPERATURE=false for those so the parameter is omitted.
+    supports_temperature: bool = field(
+        default_factory=lambda: os.getenv("LLM_SUPPORTS_TEMPERATURE", "true").lower() != "false"
+    )
+    reasoning_effort: Optional[str] = field(
+        default_factory=lambda: os.getenv("LLM_REASONING_EFFORT") or None
+    )
 
     # Guardrails
     max_turns: int = 10
@@ -68,18 +72,18 @@ class ModelConfig:
         default_factory=lambda: float(os.getenv("RETRY_BACKOFF", "2.0"))
     )
 
-    # Reproducibility
-    deterministic: bool = False  # Set to True for reproducible outputs (temp=0)
+    # Reproducibility. When True, every LLM call site uses temperature 0 and a
+    # fixed seed (applied in src/llm.py). Agents otherwise keep their own
+    # deployment temperatures.
+    deterministic: bool = field(
+        default_factory=lambda: os.getenv("LEARNX_DETERMINISTIC", "false").lower() == "true"
+    )
     random_seed: int = 42  # Used in deterministic mode
 
     def __post_init__(self):
         """Apply deterministic mode if enabled with full seed locking."""
         if self.deterministic:
-            # Zero all temperatures
             self.temperature = 0.0
-            self.planner_temperature = 0.0
-            self.instructor_temperature = 0.0
-            self.assessment_temperature = 0.0
 
             # Set global random seeds for reproducibility
             try:
@@ -109,11 +113,12 @@ class RAGConfig:
     chunk_size: int = 800
     chunk_overlap: int = 150
 
-    # Retrieval
+    # Retrieval. These are the single pinned values used by every retrieval
+    # call site (instructor, assessment generator, single-agent baseline).
+    # Similarity is cosine similarity on normalised embeddings.
     top_k: int = 5
-    top_k_fallback: int = 8  # Retry with more docs if first attempt fails
     min_citations: int = 1
-    similarity_threshold: float = 0.5  # Minimum similarity score (0, 1]
+    similarity_threshold: float = 0.35  # Minimum similarity score (0, 1]
 
     # Embeddings cache
     persist_embeddings: bool = True  # Cache embeddings by file hash

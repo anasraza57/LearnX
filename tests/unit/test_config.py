@@ -76,7 +76,11 @@ class TestConfig:
         assert any("top_k" in err.lower() for err in errors)
 
     def test_deterministic_mode(self):
-        """Test that deterministic mode sets all temperatures to 0."""
+        """Test that deterministic mode sets the default temperature to 0.
+
+        Per-call-site temperatures are zeroed by src/llm.make_chat_model and
+        are tested in test_llm.py.
+        """
         from config import ModelConfig
 
         model = ModelConfig()
@@ -84,9 +88,6 @@ class TestConfig:
         model.__post_init__()
 
         assert model.temperature == 0.0
-        assert model.planner_temperature == 0.0
-        assert model.instructor_temperature == 0.0
-        assert model.assessment_temperature == 0.0
 
     def test_rag_vectorstore_linked_to_paths(self):
         """Test that RAG vectorstore path is linked to PathConfig."""

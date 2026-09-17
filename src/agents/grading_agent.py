@@ -10,13 +10,14 @@ from dataclasses import dataclass
 from typing import Optional, Dict, Any
 
 from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
 
 try:
     from ..config import config
+    from ..llm import make_chat_model, tracked_invoke
     from .assessment_generator import AssessmentQuestion
 except ImportError:
     from src.config import config
+    from src.llm import make_chat_model, tracked_invoke
     from src.agents.assessment_generator import AssessmentQuestion
 
 
@@ -77,11 +78,7 @@ class GradingAgent:
         self.model_name = model_name or config.model.model_name
 
         # Initialize LLM
-        self.llm = ChatOpenAI(
-            model=self.model_name,
-            temperature=temperature,
-            api_key=config.model.api_key,
-        )
+        self.llm = make_chat_model("grader", temperature=temperature, model_name=self.model_name)
 
         # Grading prompt template
         self.grading_prompt = PromptTemplate(
@@ -218,7 +215,7 @@ class GradingAgent:
                 max_score=int(question.points),
             )
 
-        response = self.llm.invoke(prompt).content
+        response = tracked_invoke(self.llm, prompt)[0].content
 
         # Parse JSON response
         try:
@@ -326,5 +323,5 @@ Hint Level {hint_level}: {"Gentle nudge - point them in the right direction" if 
 
 Provide a short, helpful hint (1-2 sentences):"""
 
-        hint = self.llm.invoke(hint_prompt).content
+        hint = tracked_invoke(self.llm, hint_prompt)[0].content
         return hint.strip()

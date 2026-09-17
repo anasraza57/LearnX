@@ -36,6 +36,9 @@ OER_SOURCES = {
 }
 
 
+WIKIMEDIA_USER_AGENT = "LearnX/1.0 (https://github.com/anasraza57/LearnX; educational research)"
+
+
 class OERFetcher:
     """
     Fetch educational content from open sources.
@@ -84,6 +87,8 @@ class OERFetcher:
             return []
 
         wikipedia.set_lang(language)
+        # Wikimedia throttles the library's shared default User-Agent; identify ourselves
+        wikipedia.set_user_agent(WIKIMEDIA_USER_AGENT)
 
         # Create module-specific directory
         module_dir = self.output_dir / module_id
@@ -437,17 +442,13 @@ class OERFetcher:
             Path to created markdown file, or None if failed
         """
         try:
-            from langchain_openai import ChatOpenAI
+            from ..llm import make_chat_model, tracked_invoke
         except ImportError:
             print("⚠️  LangChain not installed")
             return None
 
         try:
-            llm = ChatOpenAI(
-                model=config.model.model_name,
-                temperature=0.7,
-                api_key=config.model.api_key,
-            )
+            llm = make_chat_model("content_generator", temperature=0.7)
 
             # Build prompt
             topics_list = "\n".join(f"- {topic}" for topic in module.get("topics", []))
@@ -476,7 +477,7 @@ Length: Approximately 2000-3000 words.
 
             print(f"🤖 Generating synthetic content for: {module.get('title')}...")
 
-            response = llm.invoke(prompt)
+            response, _ = tracked_invoke(llm, prompt)
             content = response.content
 
             # Create markdown file

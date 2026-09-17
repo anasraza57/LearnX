@@ -217,7 +217,7 @@ class DocumentLoader:
                 source_type = "course"
             elif "youtube.com" in original_url or "youtu.be" in original_url:
                 source_type = "video"
-            elif any(domain in original_url for domain in ["realpython.com", "w3schools.com", "tutorialspoint.com"]):
+            elif any(domain in original_url for domain in ["realpython.com", "w3schools.com", "tutorialspoint.com", "docs.python.org"]):
                 source_type = "tutorial"
             else:
                 source_type = "website"

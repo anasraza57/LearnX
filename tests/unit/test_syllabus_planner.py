@@ -32,12 +32,14 @@ class TestLearnerAdvocateAgent(unittest.TestCase):
         self.learner = LearnerModel(
             name="Test Learner",
             difficulty_preference="easy",
+            learning_style=["visual"],
+            pace="moderate",
         )
-        self.learner._data["goals"] = ["Learn Python basics", "Build simple programs"]
-        self.learner._data["learning_style"] = "visual"
-        self.learner._data["pace"] = "moderate"
+        self.learner.add_goal("Learn Python basics")
+        self.learner.add_goal("Build simple programs")
+        self.learner.add_prior_knowledge("Python programming", "intermediate")
 
-    @patch("src.agents.syllabus_planner.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_initialization(self, mock_openai):
         """Test agent initialization with learner profile."""
         agent = LearnerAdvocateAgent(
@@ -52,7 +54,7 @@ class TestLearnerAdvocateAgent(unittest.TestCase):
         self.assertEqual(agent.duration_weeks, 4)
         self.assertEqual(agent.weekly_hours, 5.0)
 
-    @patch("src.agents.syllabus_planner.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_system_prompt_includes_goals(self, mock_openai):
         """Test system prompt includes learner goals."""
         agent = LearnerAdvocateAgent(
@@ -67,8 +69,9 @@ class TestLearnerAdvocateAgent(unittest.TestCase):
         self.assertIn("Build simple programs", prompt)
         self.assertIn("visual", prompt)
         self.assertIn("moderate", prompt)
+        self.assertIn("Python programming (intermediate)", prompt)
 
-    @patch("src.agents.syllabus_planner.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_get_initial_requirements(self, mock_openai):
         """Test initial requirements generation."""
         agent = LearnerAdvocateAgent(
@@ -85,19 +88,20 @@ class TestLearnerAdvocateAgent(unittest.TestCase):
         self.assertIn("Learn Python basics", requirements)
         self.assertIn("5.0 hours per week", requirements)
         self.assertIn("4 weeks", requirements)
+        self.assertIn("Prior knowledge: Python programming (intermediate)", requirements)
 
 
 class TestCurriculumDesignerAgent(unittest.TestCase):
     """Test Curriculum Designer Agent."""
 
-    @patch("src.agents.syllabus_planner.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_initialization(self, mock_openai):
         """Test agent initialization."""
         agent = CurriculumDesignerAgent(topic="Python Programming")
 
         self.assertEqual(agent.topic, "Python Programming")
 
-    @patch("src.agents.syllabus_planner.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_system_prompt_includes_topic(self, mock_openai):
         """Test system prompt includes topic."""
         agent = CurriculumDesignerAgent(topic="Python Programming")
@@ -106,7 +110,7 @@ class TestCurriculumDesignerAgent(unittest.TestCase):
         self.assertIn("Python Programming", prompt)
         self.assertIn("Curriculum Designer", prompt)
 
-    @patch("src.agents.syllabus_planner.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_create_initial_proposal(self, mock_openai):
         """Test initial proposal creation."""
         agent = CurriculumDesignerAgent(topic="Python Programming")
@@ -128,7 +132,7 @@ class TestSyllabusPlanner(unittest.TestCase):
             name="Test Learner",
             difficulty_preference="medium",
         )
-        self.learner._data["goals"] = ["Learn Python"]
+        self.learner.add_goal("Learn Python")
 
         self.temp_dir = tempfile.mkdtemp()
 
@@ -140,7 +144,7 @@ class TestSyllabusPlanner(unittest.TestCase):
         self.assertIsNotNone(planner.validator)
         self.assertEqual(planner.negotiation_history, [])
 
-    @patch("src.agents.syllabus_planner.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_generate_syllabus_structure(self, mock_openai):
         """Test syllabus generation returns correct structure."""
         # Mock LLM responses
@@ -148,7 +152,7 @@ class TestSyllabusPlanner(unittest.TestCase):
         mock_openai.return_value = mock_model
 
         # Mock negotiation responses
-        mock_model.return_value = AIMessage(content="APPROVED - Syllabus looks good.")
+        mock_model.invoke.return_value = AIMessage(content="Syllabus looks good.\nAPPROVED")
 
         planner = SyllabusPlanner(learner=self.learner)
 
@@ -159,6 +163,11 @@ class TestSyllabusPlanner(unittest.TestCase):
             weekly_hours=5.0,
             max_negotiation_rounds=1,
         )
+
+        # Advocate approved in round 1; extraction fell back on the non-JSON reply
+        self.assertTrue(planner.last_run["approved"])
+        self.assertEqual(planner.last_run["rounds_completed"], 1)
+        self.assertTrue(planner.last_run["extraction_fallback"])
 
         # Check structure
         self.assertIn("meta", syllabus)
@@ -313,11 +322,11 @@ class TestSyllabusPlanner(unittest.TestCase):
 
     def test_learner_profile_in_syllabus(self):
         """Test learner profile included in generated syllabus."""
-        self.learner._data["goals"] = ["Master Python", "Build projects"]
-        self.learner._data["learning_style"] = "kinesthetic"
-        self.learner._data["pace"] = "fast"
+        learner = LearnerModel(name="Test Learner", learning_style=["kinesthetic"], pace="fast")
+        learner.add_goal("Master Python")
+        learner.add_goal("Build projects")
 
-        planner = SyllabusPlanner(learner=self.learner)
+        planner = SyllabusPlanner(learner=learner)
 
         syllabus = planner._create_fallback_syllabus(
             topic="Python Programming",
@@ -327,7 +336,7 @@ class TestSyllabusPlanner(unittest.TestCase):
 
         self.assertIn("learner_profile", syllabus)
         profile = syllabus["learner_profile"]
-        self.assertIn("goals", profile)
+        self.assertEqual(profile["goals"], ["Master Python", "Build projects"])
         self.assertIn("preferences", profile)
         self.assertEqual(profile["preferences"]["learning_style"], "kinesthetic")
         self.assertEqual(profile["preferences"]["pacing"], "fast")

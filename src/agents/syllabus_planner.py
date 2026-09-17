@@ -8,13 +8,15 @@ Uses role-playing agents to negotiate and generate personalized syllabus:
 - Outputs validated JSON conforming to syllabus.schema.json
 """
 
+import copy
 import json
+import re
 import uuid
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 from datetime import datetime, timezone
 
-from langchain_community.chat_models import ChatOpenAI
+from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.prompts import (
     HumanMessagePromptTemplate,
     SystemMessagePromptTemplate,
@@ -26,8 +28,93 @@ from langchain_core.messages import (
     SystemMessage,
 )
 
+from ..llm import make_chat_model, parse_json_response, tracked_invoke
 from ..utils.validation import SchemaValidator
 from ..models.learner_profile import LearnerModel
+
+
+_VERDICT_LINE = re.compile(r"^(?:(?:STATUS|VERDICT|DECISION|FINAL) ?: ?)?(APPROVED|CONTINUE)$")
+
+
+def _final_verdict(text: str) -> Optional[str]:
+    """
+    Return APPROVED or CONTINUE if the advocate's last meaningful line is exactly
+    that verdict (markdown, punctuation and emoji ignored), else None.
+    "NOT APPROVED" is not a verdict of APPROVED.
+    """
+    for line in reversed(text.strip().splitlines()):
+        cleaned = re.sub(r"[^A-Za-z:]+", " ", line).strip().upper()
+        if not cleaned.replace(":", "").strip():
+            continue  # separators such as --- or a lone emoji
+        match = _VERDICT_LINE.match(cleaned)
+        return match.group(1) if match else None
+    return None
+
+
+def _as_hours(value: Any) -> float:
+    """Module hours as a number; unparseable values count as 0."""
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return float(value)
+    match = re.search(r"\d+(?:\.\d+)?", str(value or ""))
+    return float(match.group(0)) if match else 0.0
+
+
+def _round_half(value: float) -> float:
+    """Round to the schema's 0.5-hour granularity (minimum 0.5)."""
+    return max(0.5, round(value * 2) / 2)
+
+
+def _total_hours(syllabus: Dict[str, Any]) -> float:
+    modules = syllabus.get("modules")
+    if not isinstance(modules, list):
+        return 0.0
+    return sum(_as_hours(m.get("estimated_hours")) for m in modules if isinstance(m, dict))
+
+
+def syllabus_json_spec(topic: str, duration_weeks: int, weekly_hours: float) -> str:
+    """The JSON format every syllabus-producing prompt asks for."""
+    return f"""{{
+  "meta": {{
+    "schema_version": 1,
+    "created_at": "2026-01-01T00:00:00+00:00",
+    "generated_by": "LearnX-MultiAgent-v2"
+  }},
+  "topic": "{topic}",
+  "duration_weeks": {duration_weeks},
+  "weekly_time_hours": {weekly_hours},
+  "learner_profile": {{
+    "goals": ["goal1", "goal2"],
+    "prior_knowledge": "beginner|intermediate|advanced",
+    "preferences": {{
+      "learning_style": "mixed",
+      "pacing": "moderate"
+    }}
+  }},
+  "modules": [
+    {{
+      "id": "m01-slug-format",
+      "title": "Module Title",
+      "description": "Brief description",
+      "outcomes": ["outcome 1", "outcome 2", "outcome 3"],
+      "topics": ["topic1", "topic2", "topic3"],
+      "prerequisites": [],
+      "estimated_hours": 8.0,
+      "resources": [
+        {{
+          "title": "Resource name",
+          "type": "book|article|video|website|course",
+          "url": "https://example.com (if available)",
+          "description": "Brief description of resource"
+        }}
+      ],
+      "assessment": {{
+        "type": "quiz",
+        "passing_threshold": 70,
+        "adaptive": true
+      }}
+    }}
+  ]
+}}"""
 
 
 class DiscussAgent:
@@ -36,7 +123,7 @@ class DiscussAgent:
     def __init__(
         self,
         system_message: SystemMessage,
-        model: ChatOpenAI,
+        model: BaseChatModel,
     ) -> None:
         self.system_message = system_message
         self.model = model
@@ -58,7 +145,7 @@ class DiscussAgent:
         input_message: HumanMessage,
     ) -> AIMessage:
         messages = self.update_messages(input_message)
-        output_message = self.model(messages)
+        output_message, self.last_call_id = tracked_invoke(self.model, messages)
         self.update_messages(output_message)
         return output_message
 
@@ -80,7 +167,7 @@ class LearnerAdvocateAgent(DiscussAgent):
         topic: str,
         duration_weeks: int,
         weekly_hours: float,
-        model: Optional[ChatOpenAI] = None,
+        model: Optional[BaseChatModel] = None,
     ):
         self.learner = learner
         self.topic = topic
@@ -90,14 +177,20 @@ class LearnerAdvocateAgent(DiscussAgent):
         system_prompt = self._create_system_prompt()
         system_message = SystemMessage(content=system_prompt)
 
-        model = model or ChatOpenAI(temperature=0.3, model_name="gpt-3.5-turbo")
+        model = model or make_chat_model("advocate", temperature=0.3)
         super().__init__(system_message, model)
 
+    def _prior_knowledge_text(self) -> str:
+        prior = self.learner.get_prior_knowledge()
+        if not prior:
+            return "None stated (complete beginner)"
+        return ", ".join(f"{topic} ({level})" for topic, level in prior.items())
+
     def _create_system_prompt(self) -> str:
-        goals = self.learner._data.get("goals", [])
-        learning_style = self.learner._data.get("learning_style", "mixed")
-        pace = self.learner._data.get("pace", "moderate")
-        difficulty_pref = self.learner._data.get("difficulty_preference", "medium")
+        goals = self.learner.get_goals()
+        learning_style = ", ".join(self.learner.learning_style) or "mixed"
+        pace = self.learner.pace
+        difficulty_pref = self.learner.difficulty_preference
 
         return f"""You are a Learner Advocate representing {self.learner.name}.
 
@@ -105,6 +198,7 @@ Your role is to ensure the syllabus meets the learner's needs and constraints.
 
 Learner Profile:
 - Learning Goals: {', '.join(goals) if goals else 'General knowledge in ' + self.topic}
+- Prior Knowledge: {self._prior_knowledge_text()}
 - Learning Style: {learning_style}
 - Preferred Pace: {pace}
 - Difficulty Preference: {difficulty_pref}
@@ -133,7 +227,7 @@ End your response with:
 
     def get_initial_requirements(self) -> str:
         """Generate initial requirements message for negotiation."""
-        goals = self.learner._data.get("goals", [])
+        goals = self.learner.get_goals()
 
         requirements = f"""I represent {self.learner.name}, who wants to learn about: {self.topic}
 
@@ -144,8 +238,10 @@ Constraints:
 - Available study time: {self.weekly_hours} hours per week
 - Duration: {self.duration_weeks} weeks
 - Total time budget: {self.weekly_hours * self.duration_weeks} hours
-- Preferred pace: {self.learner._data.get('pace', 'moderate')}
-- Current level: {self.learner._data.get('difficulty_preference', 'beginner')}
+- Preferred pace: {self.learner.pace}
+- Learning style: {", ".join(self.learner.learning_style) or "mixed"}
+- Prior knowledge: {self._prior_knowledge_text()}
+- Preferred difficulty: {self.learner.difficulty_preference}
 
 Please design a syllabus that:
 1. Directly addresses these learning goals
@@ -174,14 +270,14 @@ class CurriculumDesignerAgent(DiscussAgent):
     def __init__(
         self,
         topic: str,
-        model: Optional[ChatOpenAI] = None,
+        model: Optional[BaseChatModel] = None,
     ):
         self.topic = topic
 
         system_prompt = self._create_system_prompt()
         system_message = SystemMessage(content=system_prompt)
 
-        model = model or ChatOpenAI(temperature=0.4, model_name="gpt-3.5-turbo")
+        model = model or make_chat_model("designer", temperature=0.4)
         super().__init__(system_message, model)
 
     def _create_system_prompt(self) -> str:
@@ -225,7 +321,7 @@ IMPORTANT: For resources, provide:
 3. URLs when available (Wikipedia, Khan Academy, Coursera, etc.)
 4. Type (book, article, video series, interactive tutorial, course)
 
-Respond with "READY" when your proposal is complete and awaiting feedback."""
+End each proposal with a final line containing only "READY" once it is complete and awaiting feedback."""
 
     def create_initial_proposal(self, requirements: str) -> str:
         """Generate initial module proposal based on requirements."""
@@ -252,7 +348,7 @@ For resources, suggest freely available materials like:
 - Free online textbooks (openstax.org, etc.)
 - arXiv papers for technical topics
 
-READY"""
+Write out the full proposal now."""
 
         return prompt
 
@@ -269,8 +365,10 @@ class SyllabusPlanner:
         self,
         learner: LearnerModel,
         validator: Optional[SchemaValidator] = None,
+        model_name: Optional[str] = None,
     ):
         self.learner = learner
+        self.model_name = model_name
 
         # Initialize schema validator with correct path
         if validator is None:
@@ -281,6 +379,10 @@ class SyllabusPlanner:
             self.validator = validator
 
         self.negotiation_history: List[Dict[str, str]] = []
+        # Diagnostics from the most recent generate_syllabus() call, used by the
+        # experiment runner: the syllabus as extracted (before any automatic
+        # repair), whether the advocate approved, and which repairs were applied.
+        self.last_run: Dict[str, Any] = {}
 
     def generate_syllabus(
         self,
@@ -296,20 +398,39 @@ class SyllabusPlanner:
             topic: Main subject/topic for the course
             duration_weeks: Course duration in weeks
             weekly_hours: Available study time per week
-            max_negotiation_rounds: Maximum rounds of negotiation
+            max_negotiation_rounds: Maximum rounds of negotiation. 0 gives a
+                single-shot syllabus: the designer's first proposal is extracted
+                without any advocate review
 
         Returns:
             Validated syllabus dictionary conforming to schema
         """
+        self.negotiation_history = []
+        self.last_run = {
+            "max_negotiation_rounds": max_negotiation_rounds,
+            "rounds_completed": 0,
+            "approved": False,
+            "repairs": [],
+            "negotiation_history": self.negotiation_history,
+        }
+
         # Initialize agents
         advocate = LearnerAdvocateAgent(
             learner=self.learner,
             topic=topic,
             duration_weeks=duration_weeks,
             weekly_hours=weekly_hours,
+            model=make_chat_model("advocate", temperature=0.3, model_name=self.model_name),
         )
 
-        designer = CurriculumDesignerAgent(topic=topic)
+        designer = CurriculumDesignerAgent(
+            topic=topic,
+            model=make_chat_model("designer", temperature=0.4, model_name=self.model_name),
+        )
+        self.last_run["prompts"] = {
+            "advocate_system": advocate.system_message.content,
+            "designer_system": designer.system_message.content,
+        }
 
         # Start negotiation
         print(f"\n{'='*70}")
@@ -325,9 +446,12 @@ class SyllabusPlanner:
 
         # Round 2: Curriculum Designer proposes initial design
         designer_prompt = designer.create_initial_proposal(requirements)
+        self.last_run["prompts"]["designer_initial"] = designer_prompt
         designer_response = designer.step(HumanMessage(content=designer_prompt))
         print(f"🎓 Curriculum Designer (Initial Proposal):\n{designer_response.content}\n")
-        self.negotiation_history.append({"role": "designer", "content": designer_response.content})
+        self.negotiation_history.append(
+            {"role": "designer", "content": designer_response.content, "call_id": designer.last_call_id}
+        )
 
         # Negotiation rounds
         current_response = designer_response.content
@@ -337,17 +461,24 @@ class SyllabusPlanner:
             # Advocate reviews proposal
             advocate_review = advocate.step(HumanMessage(content=current_response))
             print(f"📋 Learner Advocate (Review):\n{advocate_review.content}\n")
-            self.negotiation_history.append({"role": "advocate", "content": advocate_review.content})
+            self.negotiation_history.append(
+                {"role": "advocate", "content": advocate_review.content, "call_id": advocate.last_call_id}
+            )
+            self.last_run["rounds_completed"] = round_num + 1
+            self.last_run.setdefault("verdicts", []).append(_final_verdict(advocate_review.content))
 
-            # Check if approved
-            if "APPROVED" in advocate_review.content.upper():
+            # Check if approved (the verdict is the advocate's final line)
+            if _final_verdict(advocate_review.content) == "APPROVED":
+                self.last_run["approved"] = True
                 print("✅ Syllabus approved by Learner Advocate!\n")
                 break
 
             # Designer refines based on feedback
             designer_refinement = designer.step(HumanMessage(content=advocate_review.content))
             print(f"🎓 Curriculum Designer (Refinement):\n{designer_refinement.content}\n")
-            self.negotiation_history.append({"role": "designer", "content": designer_refinement.content})
+            self.negotiation_history.append(
+                {"role": "designer", "content": designer_refinement.content, "call_id": designer.last_call_id}
+            )
 
             current_response = designer_refinement.content
 
@@ -359,43 +490,117 @@ class SyllabusPlanner:
             duration_weeks=duration_weeks,
             weekly_hours=weekly_hours,
         )
+        return self.finalise_syllabus(structured_syllabus, duration_weeks, weekly_hours)
+
+    def finalise_syllabus(
+        self,
+        structured_syllabus: Dict[str, Any],
+        duration_weeks: int,
+        weekly_hours: float,
+    ) -> Dict[str, Any]:
+        """
+        Deterministic post-processing applied to every generated syllabus:
+        metadata normalisation, schema validation and repair, then rescaling
+        module hours towards the time budget, then a final validation. The
+        syllabus as it arrived, and its schema errors, are kept in last_run so
+        planning quality can be measured before any of these steps.
+        """
+        self.last_run.setdefault("repairs", [])
+        self.last_run["extracted_syllabus"] = copy.deepcopy(structured_syllabus)
+        self.last_run["schema_errors_raw"] = self.validator.validate(structured_syllabus).errors
+
+        # Metadata is set from what the system knows, not from what the model wrote
+        structured_syllabus = self._normalise_metadata(structured_syllabus, duration_weeks, weekly_hours)
+
+        # Validity of the model's content (metadata already set by the system), before any repair
+        self.last_run["schema_errors_as_extracted"] = self.validator.validate(structured_syllabus).errors
+        self.last_run["schema_valid_as_extracted"] = not self.last_run["schema_errors_as_extracted"]
 
         # Validate
         validation_result = self.validator.validate(structured_syllabus, auto_repair=True)
         if not validation_result.valid:
+            self.last_run["repairs"].append("auto_fix_schema_issues")
             print(f"⚠️  Schema validation warnings: {len(validation_result.errors)} issues")
             for error in validation_result.errors[:3]:  # Show first 3
                 print(f"  - {error}")
             # Auto-fix common issues
             structured_syllabus = self._auto_fix_schema_issues(structured_syllabus)
         elif validation_result.repairs:
+            self.last_run["repairs"].append("validator_auto_repair")
             print(f"✨ Auto-repaired {len(validation_result.repairs)} issues")
             structured_syllabus = validation_result.data  # Use repaired data
 
         # Validate workload constraints
-        total_hours = sum(m.get('estimated_hours', 0) for m in structured_syllabus.get('modules', []))
+        total_hours = _total_hours(structured_syllabus)
         expected_hours = duration_weeks * weekly_hours
 
         # Validate total hours
         if total_hours < expected_hours * 0.8:  # Less than 80% of expected
             print(f"⚠️ Warning: Total hours ({total_hours}) is significantly less than expected ({expected_hours})")
             print(f"   Adjusting module estimates to better utilize available time...")
+            self.last_run["repairs"].append("scale_hours_up")
             structured_syllabus = self._adjust_module_hours(structured_syllabus, expected_hours)
-            total_hours = sum(m.get('estimated_hours', 0) for m in structured_syllabus.get('modules', []))
+            total_hours = _total_hours(structured_syllabus)
             print(f"   Adjusted total: {total_hours} hours")
         elif total_hours > expected_hours * 1.1:  # More than 110% of expected
             print(f"⚠️ Warning: Total hours ({total_hours}) exceeds available time ({expected_hours})")
             print(f"   Adjusting module estimates to fit within time constraints...")
+            self.last_run["repairs"].append("scale_hours_down")
             structured_syllabus = self._adjust_module_hours(structured_syllabus, expected_hours)
-            total_hours = sum(m.get('estimated_hours', 0) for m in structured_syllabus.get('modules', []))
+            total_hours = _total_hours(structured_syllabus)
             print(f"   Adjusted total: {total_hours} hours")
 
         # Validate per-module hours justify content
+        before = _total_hours(structured_syllabus)
         structured_syllabus = self._validate_module_hours_justify_content(structured_syllabus)
+        total_hours = _total_hours(structured_syllabus)
+        if total_hours != before:
+            self.last_run["repairs"].append("justify_hours_by_content")
+
+        # Recompute derived fields and validate what is actually returned
+        structured_syllabus["total_estimated_hours"] = total_hours
+        structured_syllabus["workload_feasible"] = total_hours <= expected_hours * 1.1
+        final = self.validator.validate(structured_syllabus, auto_repair=True)
+        if final.valid and final.repairs:
+            structured_syllabus = final.data
+        self.last_run["schema_valid_final"] = final.valid
+        self.last_run["schema_errors_final"] = final.errors
 
         print(f"📊 Final syllabus: {len(structured_syllabus.get('modules', []))} modules, {total_hours} hours total")
         print("✅ Syllabus generation complete!\n")
         return structured_syllabus
+
+    def _normalise_metadata(
+        self,
+        syllabus: Dict[str, Any],
+        duration_weeks: int,
+        weekly_hours: float,
+    ) -> Dict[str, Any]:
+        """Set meta, time budget and learner_profile fields from the system's own state."""
+        prior = [lvl for lvl in self.learner.get_prior_knowledge().values()]
+        order = ["beginner", "intermediate", "advanced", "expert"]
+        level = max(prior, key=order.index) if prior else "beginner"
+        syllabus["meta"] = {
+            "schema_version": 1,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "generated_by": (syllabus.get("meta") or {}).get("generated_by", "LearnX-MultiAgent-v2")
+            if isinstance(syllabus.get("meta"), dict) else "LearnX-MultiAgent-v2",
+        }
+        syllabus["duration_weeks"] = duration_weeks
+        syllabus["weekly_time_hours"] = weekly_hours
+        goals = [g for g in self.learner.get_goals() if 5 <= len(g) <= 500][:10]
+        profile = {
+            "prior_knowledge": "advanced" if level == "expert" else level,
+            "preferences": {
+                "learning_style": self._syllabus_learning_style(),
+                "pacing": self.learner.pace if self.learner.pace in ("slow", "moderate", "fast") else "moderate",
+            },
+        }
+        if goals:
+            profile["goals"] = goals
+        syllabus["learner_profile"] = profile
+        self.last_run["repairs"].append("normalise_metadata")
+        return syllabus
 
     def _extract_structured_syllabus(
         self,
@@ -419,48 +624,7 @@ class SyllabusPlanner:
 
 Extract a structured JSON syllabus with this exact format:
 
-{{
-  "meta": {{
-    "schema_version": 1,
-    "created_at": "{datetime.now(timezone.utc).isoformat()}",
-    "generated_by": "LearnX-MultiAgent-v2"
-  }},
-  "topic": "{topic}",
-  "duration_weeks": {duration_weeks},
-  "weekly_time_hours": {weekly_hours},
-  "learner_profile": {{
-    "goals": ["goal1", "goal2"],
-    "prior_knowledge": "beginner|intermediate|advanced",
-    "preferences": {{
-      "learning_style": "mixed",
-      "pacing": "moderate"
-    }}
-  }},
-  "modules": [
-    {{
-      "id": "m01-slug-format",
-      "title": "Module Title",
-      "description": "Brief description",
-      "outcomes": ["outcome 1", "outcome 2", "outcome 3"],
-      "topics": ["topic1", "topic2", "topic3"],
-      "prerequisites": [],
-      "estimated_hours": 8.0,
-      "resources": [
-        {{
-          "title": "Resource name",
-          "type": "book|article|video|website|course",
-          "url": "https://example.com (if available)",
-          "description": "Brief description of resource"
-        }}
-      ],
-      "assessment": {{
-        "type": "quiz",
-        "passing_threshold": 70,
-        "adaptive": true
-      }}
-    }}
-  ]
-}}
+{syllabus_json_spec(topic, duration_weeks, weekly_hours)}
 
 CRITICAL REQUIREMENTS:
 1. Module IDs MUST match pattern: m01-lowercase-with-hyphens (m01, m02, m03, etc.)
@@ -473,29 +637,39 @@ CRITICAL REQUIREMENTS:
 
 JSON:"""
 
-        # Use a fresh model for extraction
-        extractor_model = ChatOpenAI(temperature=0.1, model_name="gpt-3.5-turbo")
-        response = extractor_model([HumanMessage(content=extraction_prompt)])
+        self.last_run.setdefault("prompts", {})["extraction"] = extraction_prompt
 
-        # Parse JSON from response
-        json_str = response.content.strip()
-        # Remove markdown code blocks if present
-        if json_str.startswith("```"):
-            json_str = json_str.split("```")[1]
-            if json_str.startswith("json"):
-                json_str = json_str[4:]
-        json_str = json_str.strip()
+        # Use a fresh model for extraction
+        extractor_model = make_chat_model("extractor", temperature=0.1, model_name=self.model_name)
+        response, self.last_run["extraction_call_id"] = tracked_invoke(
+            extractor_model, [HumanMessage(content=extraction_prompt)]
+        )
+        return self.parse_syllabus_json(response.content, topic, duration_weeks, weekly_hours)
+
+    def parse_syllabus_json(
+        self,
+        text: str,
+        topic: str,
+        duration_weeks: int,
+        weekly_hours: float,
+    ) -> Dict[str, Any]:
+        """Parse a model's JSON syllabus, falling back to a template syllabus if it is not JSON."""
+        self.last_run["extraction_fallback"] = False
 
         try:
-            syllabus = json.loads(json_str)
+            syllabus = parse_json_response(text)
+            if not isinstance(syllabus, dict):
+                raise json.JSONDecodeError("reply is not a JSON object", text, 0)
         except json.JSONDecodeError as e:
             print(f"⚠️  JSON parsing failed: {e}")
-            print(f"Response was: {json_str[:200]}...")
+            print(f"Response was: {text[:200]}...")
+            self.last_run["extraction_fallback"] = True
+            self.last_run["extraction_raw"] = text
             # Fallback to basic structure
             syllabus = self._create_fallback_syllabus(topic, duration_weeks, weekly_hours)
 
         # Ensure computed fields
-        total_hours = sum(m.get("estimated_hours", 0) for m in syllabus.get("modules", []))
+        total_hours = _total_hours(syllabus)
         syllabus["total_estimated_hours"] = total_hours
         syllabus["workload_feasible"] = total_hours <= (duration_weeks * weekly_hours * 1.1)  # 10% buffer
 
@@ -508,8 +682,8 @@ JSON:"""
         weekly_hours: float,
     ) -> Dict[str, Any]:
         """Create basic fallback syllabus if extraction fails."""
-        goals = self.learner._data.get("goals", [f"Learn {topic}"])
-        difficulty = self.learner._data.get("difficulty_preference", "medium")
+        goals = self.learner.get_goals() or [f"Learn {topic}"]
+        difficulty = self.learner.difficulty_preference
         prior_knowledge = "beginner" if difficulty == "easy" else "intermediate" if difficulty == "medium" else "advanced"
 
         return {
@@ -525,8 +699,8 @@ JSON:"""
                 "goals": goals,
                 "prior_knowledge": prior_knowledge,
                 "preferences": {
-                    "learning_style": self.learner._data.get("learning_style", "mixed"),
-                    "pacing": self.learner._data.get("pace", "moderate"),
+                    "learning_style": self._syllabus_learning_style(),
+                    "pacing": self.learner.pace if self.learner.pace in ("slow", "moderate", "fast") else "moderate",
                 },
             },
             "modules": [
@@ -552,6 +726,13 @@ JSON:"""
             "total_estimated_hours": duration_weeks * weekly_hours,
             "workload_feasible": True,
         }
+
+    def _syllabus_learning_style(self) -> str:
+        """Map the learner's styles onto the syllabus schema's single-value enum."""
+        styles = self.learner.learning_style
+        if len(styles) != 1:
+            return "mixed"
+        return {"reading_writing": "reading"}.get(styles[0], styles[0])
 
     def _auto_fix_schema_issues(self, syllabus: Dict[str, Any]) -> Dict[str, Any]:
         """Attempt to auto-fix common schema validation issues."""
@@ -617,7 +798,7 @@ JSON:"""
             topics = module.get("topics", [])
             outcomes = module.get("outcomes", [])
             difficulty = module.get("difficulty", "medium")
-            current_hours = module.get("estimated_hours", 0)
+            current_hours = _as_hours(module.get("estimated_hours"))
 
             # Calculate minimum reasonable hours
             # Base: 1.5 hours per topic (study + practice)
@@ -640,7 +821,7 @@ JSON:"""
             # If current hours are too low, adjust
             if current_hours < suggested_min * 0.7:  # Less than 70% of minimum
                 old_hours = current_hours
-                module['estimated_hours'] = round(suggested_min, 1)
+                module['estimated_hours'] = _round_half(suggested_min)
                 print(f"   ⚙️  Adjusted '{module.get('title')}': {old_hours}h → {module['estimated_hours']}h "
                       f"(justified by {len(topics)} topics, {difficulty} difficulty)")
                 adjustments_made += 1
@@ -660,18 +841,18 @@ JSON:"""
         if not modules:
             return syllabus
 
-        current_total = sum(m.get('estimated_hours', 0) for m in modules)
+        current_total = sum(_as_hours(m.get('estimated_hours')) for m in modules)
         if current_total == 0:
             # Distribute equally if no estimates
             hours_per_module = target_hours / len(modules)
             for module in modules:
-                module['estimated_hours'] = round(hours_per_module, 1)
+                module['estimated_hours'] = _round_half(hours_per_module)
         else:
             # Scale proportionally
             scale_factor = target_hours / current_total
             for module in modules:
-                current = module.get('estimated_hours', 0)
-                module['estimated_hours'] = round(current * scale_factor, 1)
+                current = _as_hours(module.get('estimated_hours'))
+                module['estimated_hours'] = _round_half(current * scale_factor)
 
         return syllabus
 
@@ -781,7 +962,7 @@ Please reply with the specified task in {word_limit} words or less. Do not add a
         template=task_specifier_prompt
     )
     task_specify_agent = DiscussAgent(
-        task_specifier_sys_msg, ChatOpenAI(temperature=1.0)
+        task_specifier_sys_msg, make_chat_model("legacy", temperature=1.0)
     )
 
     # Get specified task
@@ -798,9 +979,9 @@ Please reply with the specified task in {word_limit} words or less. Do not add a
     )
 
     assistant_agent = DiscussAgent(
-        assistant_sys_msg, ChatOpenAI(temperature=0.2)
+        assistant_sys_msg, make_chat_model("legacy", temperature=0.2)
     )
-    user_agent = DiscussAgent(user_sys_msg, ChatOpenAI(temperature=0.2))
+    user_agent = DiscussAgent(user_sys_msg, make_chat_model("legacy", temperature=0.2))
 
     # Reset agents
     assistant_agent.reset()
@@ -849,7 +1030,7 @@ Please reply with the specified task in {word_limit} words or less. Do not add a
         template=summarizer_prompt
     )
     summarizer_agent = DiscussAgent(
-        summarizer_sys_msg, ChatOpenAI(temperature=1.0)
+        summarizer_sys_msg, make_chat_model("legacy", temperature=1.0)
     )
     summarizer_msg = summarizer_template.format_messages(
         assistant_role_name=assistant_role_name,

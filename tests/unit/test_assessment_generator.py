@@ -199,7 +199,7 @@ class TestAssessmentGenerator(unittest.TestCase):
             temperature=0.7,
         )
 
-    @patch("src.agents.assessment_generator.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_initialization(self, mock_chat):
         """Test generator initialization."""
         generator = AssessmentGenerator()

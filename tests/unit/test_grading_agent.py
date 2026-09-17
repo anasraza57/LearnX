@@ -113,7 +113,7 @@ class TestGradingAgent(unittest.TestCase):
             self.agent.grade_response(invalid_question, "Some answer")
         self.assertIn("points must be between 0 and 100", str(cm.exception))
 
-    @patch("src.agents.grading_agent.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_grade_essay_response(self, mock_chat):
         """Test grading an essay response."""
         # Mock LLM response
@@ -142,7 +142,7 @@ class TestGradingAgent(unittest.TestCase):
         self.assertIsInstance(result.strengths, list)
         self.assertIsInstance(result.improvements, list)
 
-    @patch("src.agents.grading_agent.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_grade_code_response(self, mock_chat):
         """Test grading a code response."""
         mock_llm = MagicMock()
@@ -171,7 +171,7 @@ class TestGradingAgent(unittest.TestCase):
         self.assertEqual(result.graded_by, "llm")
         self.assertIsNotNone(result.rubric_scores)
 
-    @patch("src.agents.grading_agent.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_score_normalization(self, mock_chat):
         """Test score is normalized to 0-100 range."""
         mock_llm = MagicMock()
@@ -192,7 +192,7 @@ class TestGradingAgent(unittest.TestCase):
         # 8/10 = 80%
         self.assertEqual(result.score, 80.0)
 
-    @patch("src.agents.grading_agent.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_score_clamping(self, mock_chat):
         """Test score is clamped to [0, 100]."""
         mock_llm = MagicMock()
@@ -213,7 +213,7 @@ class TestGradingAgent(unittest.TestCase):
             self.agent.grade_response(self.essay_question, "Test answer")
         self.assertIn("out of valid range", str(cm.exception))
 
-    @patch("src.agents.grading_agent.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_fallback_grading_on_parse_error(self, mock_chat):
         """Test fallback grading when LLM response is invalid."""
         mock_llm = MagicMock()
@@ -230,7 +230,7 @@ class TestGradingAgent(unittest.TestCase):
         self.assertIn("Unable to parse", result.feedback)
         self.assertEqual(result.graded_by, "llm")
 
-    @patch("src.agents.grading_agent.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_batch_grading(self, mock_chat):
         """Test batch grading multiple responses."""
         mock_llm = MagicMock()
@@ -263,7 +263,7 @@ class TestGradingAgent(unittest.TestCase):
             self.agent.batch_grade(questions, answers)
         self.assertIn("must match", str(cm.exception))
 
-    @patch("src.agents.grading_agent.ChatOpenAI")
+    @patch("src.llm.ChatOpenAI")
     def test_graded_by_field_set(self, mock_chat):
         """Test that graded_by field is always set."""
         mock_llm = MagicMock()
