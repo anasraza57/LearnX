@@ -15,6 +15,7 @@ Usage:
     python -m src.experiment.corpus label     # write/refresh relevance labels
     python -m src.experiment.corpus index     # purge and rebuild the vector index
     python -m src.experiment.corpus stats     # print corpus statistics
+    python -m src.experiment.corpus search "list comprehension"   # search it, for annotation (D26)
 """
 
 from __future__ import annotations
@@ -345,9 +346,32 @@ def load_corpus_store():
     return store
 
 
+def search_corpus(query: str, top_k: int = 10) -> List[Dict[str, Any]]:
+    """
+    Search the indexed corpus. Used by raters to judge a claim against the corpus
+    as a whole (D26), so it applies no similarity threshold: a rater needs the
+    best matches whatever their score.
+    """
+    store = load_corpus_store()
+    return [
+        {
+            "similarity": round(score, 3),
+            "doc_id": doc.metadata.get("doc_id"),
+            "strand": doc.metadata.get("strand"),
+            "source": doc.metadata.get("source"),
+            "url": doc.metadata.get("original_url"),
+            "text": doc.content,
+        }
+        for doc, score in store.search(query, top_k=top_k, min_similarity=0.0)
+    ]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("command", choices=["fetch", "label", "index", "stats"])
+    parser.add_argument("command", choices=["fetch", "label", "index", "stats", "search"])
+    parser.add_argument("query", nargs="?", help="search text (for the search command)")
+    parser.add_argument("--top-k", type=int, default=10)
+    parser.add_argument("--json", action="store_true", help="print search results as JSON")
     args = parser.parse_args()
     if args.command == "fetch":
         fetch_documents()
@@ -355,6 +379,18 @@ def main() -> None:
         label_documents()
     elif args.command == "index":
         build_index()
+    elif args.command == "search":
+        if not args.query:
+            sys.exit('Usage: python -m src.experiment.corpus search "your query"')
+        results = search_corpus(args.query, args.top_k)
+        if args.json:
+            print(json.dumps(results, indent=2, ensure_ascii=False))
+            return
+        for rank, hit in enumerate(results, 1):
+            print(f"\n[{rank}] {hit['similarity']:.3f}  {hit['source']}  ({hit['strand']})")
+            if hit["url"]:
+                print(f"     {hit['url']}")
+            print("     " + re.sub(r"\s+", " ", hit["text"])[:600])
     else:
         print(json.dumps(corpus_stats(), indent=2))
 
