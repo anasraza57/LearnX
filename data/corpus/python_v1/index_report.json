@@ -1,0 +1,70 @@
+{
+  "corpus_version": "python_v1",
+  "collection": "learnx_python_v1",
+  "indexed_at": "2026-09-17T08:02:41.485574+00:00",
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "chunk_size": 800,
+  "chunk_overlap": 150,
+  "top_k": 5,
+  "similarity_threshold": 0.35,
+  "documents_indexed": 12,
+  "chunks_indexed": 533,
+  "stats": {
+    "per_strand": {
+      "py01-basics": {
+        "fetched": {
+          "automatic:paper": 6,
+          "automatic:wikipedia": 5,
+          "curated:tutorial": 2
+        },
+        "indexed": {
+          "automatic:wikipedia": 2,
+          "curated:tutorial": 2
+        },
+        "chunks_indexed": 142
+      },
+      "py02-control-flow": {
+        "fetched": {
+          "automatic:paper": 6,
+          "automatic:wikipedia": 4,
+          "curated:tutorial": 1
+        },
+        "indexed": {
+          "automatic:wikipedia": 2,
+          "curated:tutorial": 1
+        },
+        "chunks_indexed": 180
+      },
+      "py03-data-structures": {
+        "fetched": {
+          "automatic:paper": 6,
+          "automatic:wikipedia": 5,
+          "curated:tutorial": 1
+        },
+        "indexed": {
+          "automatic:wikipedia": 1,
+          "curated:tutorial": 1
+        },
+        "chunks_indexed": 74
+      },
+      "py04-oop": {
+        "fetched": {
+          "automatic:paper": 6,
+          "automatic:wikipedia": 5,
+          "curated:tutorial": 1
+        },
+        "indexed": {
+          "automatic:wikipedia": 2,
+          "curated:tutorial": 1
+        },
+        "chunks_indexed": 137
+      }
+    },
+    "automatic_documents": 43,
+    "automatic_off_topic": 36,
+    "automatic_off_topic_by_source": {
+      "paper": 24,
+      "wikipedia": 12
+    }
+  }
+}

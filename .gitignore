@@ -171,7 +171,12 @@ cython_debug/
 secrets/
 credentials.json
 
-data/
+data/*
+# The versioned scenario set is an experimental input and is tracked
+!data/scenarios/
+# Corpus provenance (documents themselves are not tracked)
+!data/corpus/
+data/corpus/*/documents/
 
 # Temporary files
 *.tmp
@@ -179,3 +184,6 @@ data/
 
 # IDE specific
 .vscode/
+
+# Throwaway smoke-test output of the experiment runner
+results/smoke/

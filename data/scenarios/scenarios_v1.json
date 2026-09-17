@@ -1,0 +1,712 @@
+{
+  "design": "3 x 2 x 2 x 2 full factorial",
+  "factor_levels": {
+    "goal_profile": {
+      "broad": {
+        "description": "broad foundations across all four modules",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ]
+      },
+      "narrow": {
+        "description": "narrow applied focus on one strand (data structures)",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ]
+      }
+    },
+    "preference_profile": {
+      "P1": {
+        "difficulty_preference": "easy",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "pace": "slow"
+      },
+      "P2": {
+        "difficulty_preference": "hard",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "pace": "fast"
+      }
+    },
+    "prior_knowledge": [
+      "novice",
+      "intermediate",
+      "advanced"
+    ],
+    "time_budget": {
+      "4w": {
+        "duration_weeks": 4,
+        "weekly_hours": 5.0
+      },
+      "8w": {
+        "duration_weeks": 8,
+        "weekly_hours": 5.0
+      }
+    }
+  },
+  "generator": "src/experiment/scenarios.py",
+  "scenario_set_version": "v1",
+  "scenarios": [
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P1",
+        "prior_knowledge": "novice",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-fa341524-a7a6-47a0-a176-2eb09ddd7bf5",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S01",
+        "pace": "slow",
+        "prior_knowledge": {}
+      },
+      "scenario_id": "S01",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P2",
+        "prior_knowledge": "novice",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-4f786106-e2c0-4d56-80c3-a442fa3fcd12",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S02",
+        "pace": "fast",
+        "prior_knowledge": {}
+      },
+      "scenario_id": "S02",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P1",
+        "prior_knowledge": "novice",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-012d60fe-3c82-4fca-8e4e-4062429e9dfd",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S03",
+        "pace": "slow",
+        "prior_knowledge": {}
+      },
+      "scenario_id": "S03",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P2",
+        "prior_knowledge": "novice",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-8cf1fa33-5f7c-4e6f-9e8f-4e94249b03fd",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S04",
+        "pace": "fast",
+        "prior_knowledge": {}
+      },
+      "scenario_id": "S04",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P1",
+        "prior_knowledge": "novice",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-8b49d2bc-dea6-416d-81ed-48bd540b605a",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S05",
+        "pace": "slow",
+        "prior_knowledge": {}
+      },
+      "scenario_id": "S05",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P2",
+        "prior_knowledge": "novice",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-a652f4bb-3576-46c6-852a-bca7ef1764b3",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S06",
+        "pace": "fast",
+        "prior_knowledge": {}
+      },
+      "scenario_id": "S06",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P1",
+        "prior_knowledge": "novice",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-7b29a43e-d9e1-431e-8f48-bba036bebc44",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S07",
+        "pace": "slow",
+        "prior_knowledge": {}
+      },
+      "scenario_id": "S07",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P2",
+        "prior_knowledge": "novice",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-65788c7a-d311-481a-aac7-a609e5c4c325",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S08",
+        "pace": "fast",
+        "prior_knowledge": {}
+      },
+      "scenario_id": "S08",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P1",
+        "prior_knowledge": "intermediate",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-bc3589b7-b923-4ea0-9fa8-c552055a5cd7",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S09",
+        "pace": "slow",
+        "prior_knowledge": {
+          "Python programming": "intermediate"
+        }
+      },
+      "scenario_id": "S09",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P2",
+        "prior_knowledge": "intermediate",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-93c163aa-d44a-4aac-a6a0-0c420ab9feac",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S10",
+        "pace": "fast",
+        "prior_knowledge": {
+          "Python programming": "intermediate"
+        }
+      },
+      "scenario_id": "S10",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P1",
+        "prior_knowledge": "intermediate",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-4a871c3c-1f97-4a03-b2be-3ca7c5b5470f",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S11",
+        "pace": "slow",
+        "prior_knowledge": {
+          "Python programming": "intermediate"
+        }
+      },
+      "scenario_id": "S11",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P2",
+        "prior_knowledge": "intermediate",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-06531b2f-dee8-441d-bab6-e60dcb32f715",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S12",
+        "pace": "fast",
+        "prior_knowledge": {
+          "Python programming": "intermediate"
+        }
+      },
+      "scenario_id": "S12",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P1",
+        "prior_knowledge": "intermediate",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-7e8ea066-0052-4037-bacb-eddb7eea0595",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S13",
+        "pace": "slow",
+        "prior_knowledge": {
+          "Python programming": "intermediate"
+        }
+      },
+      "scenario_id": "S13",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P2",
+        "prior_knowledge": "intermediate",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-87098a5d-9fa8-44f9-b7aa-f673fb46bcf4",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S14",
+        "pace": "fast",
+        "prior_knowledge": {
+          "Python programming": "intermediate"
+        }
+      },
+      "scenario_id": "S14",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P1",
+        "prior_knowledge": "intermediate",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-c366b9e6-cd83-4dc6-8a88-ea5329935120",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S15",
+        "pace": "slow",
+        "prior_knowledge": {
+          "Python programming": "intermediate"
+        }
+      },
+      "scenario_id": "S15",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P2",
+        "prior_knowledge": "intermediate",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-384a1583-4114-4e13-980a-12619c5075c2",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S16",
+        "pace": "fast",
+        "prior_knowledge": {
+          "Python programming": "intermediate"
+        }
+      },
+      "scenario_id": "S16",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P1",
+        "prior_knowledge": "advanced",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-d825ddd3-7788-49a8-aa42-2b3b33a87fe8",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S17",
+        "pace": "slow",
+        "prior_knowledge": {
+          "Python programming": "advanced"
+        }
+      },
+      "scenario_id": "S17",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P2",
+        "prior_knowledge": "advanced",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-80848cd3-620a-4f11-8ac1-c96633471bc1",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S18",
+        "pace": "fast",
+        "prior_knowledge": {
+          "Python programming": "advanced"
+        }
+      },
+      "scenario_id": "S18",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P1",
+        "prior_knowledge": "advanced",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-882a21de-5087-4c2e-b70f-24fc3de5ca86",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S19",
+        "pace": "slow",
+        "prior_knowledge": {
+          "Python programming": "advanced"
+        }
+      },
+      "scenario_id": "S19",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 4,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P2",
+        "prior_knowledge": "advanced",
+        "time_budget": "4w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-90fccf50-1bb0-4f8e-b925-d5494e6f7c9f",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S20",
+        "pace": "fast",
+        "prior_knowledge": {
+          "Python programming": "advanced"
+        }
+      },
+      "scenario_id": "S20",
+      "topic": "Introductory Python programming",
+      "total_hours": 20.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P1",
+        "prior_knowledge": "advanced",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-0f9b6834-1a39-4ff1-89cb-619a7e2ec291",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S21",
+        "pace": "slow",
+        "prior_knowledge": {
+          "Python programming": "advanced"
+        }
+      },
+      "scenario_id": "S21",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "broad",
+        "preference_profile": "P2",
+        "prior_knowledge": "advanced",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Build a solid foundation across Python basics, control flow and functions, data structures, and object-oriented programming"
+        ],
+        "learner_id": "learner-8cb20ea5-07ba-4200-876e-8f1df5aa45a0",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S22",
+        "pace": "fast",
+        "prior_knowledge": {
+          "Python programming": "advanced"
+        }
+      },
+      "scenario_id": "S22",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P1",
+        "prior_knowledge": "advanced",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "easy",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-34090b40-8f1a-4c7d-9936-908b45afb07e",
+        "learning_style": [
+          "reading_writing"
+        ],
+        "name": "Scenario S23",
+        "pace": "slow",
+        "prior_knowledge": {
+          "Python programming": "advanced"
+        }
+      },
+      "scenario_id": "S23",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    },
+    {
+      "duration_weeks": 8,
+      "factors": {
+        "goal_profile": "narrow",
+        "preference_profile": "P2",
+        "prior_knowledge": "advanced",
+        "time_budget": "8w"
+      },
+      "learner": {
+        "difficulty_preference": "hard",
+        "goals": [
+          "Use Python data structures (lists, tuples, dictionaries and sets) to organise and process data in small practical scripts"
+        ],
+        "learner_id": "learner-2196e7b1-fefa-4af0-b8c9-0d9d70fe7dee",
+        "learning_style": [
+          "kinesthetic"
+        ],
+        "name": "Scenario S24",
+        "pace": "fast",
+        "prior_knowledge": {
+          "Python programming": "advanced"
+        }
+      },
+      "scenario_id": "S24",
+      "topic": "Introductory Python programming",
+      "total_hours": 40.0,
+      "weekly_hours": 5.0
+    }
+  ],
+  "seed": 20260917,
+  "topic": "Introductory Python programming"
+}

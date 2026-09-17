@@ -1,0 +1,648 @@
+{
+  "corpus_version": "python_v1",
+  "fetched_at": "2026-09-17T01:10:31.386546+00:00",
+  "strands": {
+    "py01-basics": {
+      "title": "Python basics",
+      "description": "Python syntax, variables, numbers, strings, operators, data types and basic input and output.",
+      "query_topics": [
+        "Python basics",
+        "Data types",
+        "Variables",
+        "Variables and operators",
+        "Basic input/output"
+      ],
+      "curated_urls": [
+        "https://docs.python.org/3.11/tutorial/introduction.html",
+        "https://docs.python.org/3.11/tutorial/inputoutput.html"
+      ]
+    },
+    "py02-control-flow": {
+      "title": "Control flow and functions",
+      "description": "Conditional statements, for and while loops, break and continue, and defining and calling functions in Python.",
+      "query_topics": [
+        "Conditional statements",
+        "Loops",
+        "Functions",
+        "Indentation",
+        "Flow control"
+      ],
+      "curated_urls": [
+        "https://docs.python.org/3.11/tutorial/controlflow.html"
+      ]
+    },
+    "py03-data-structures": {
+      "title": "Data structures",
+      "description": "Python lists, tuples, dictionaries, sets and list comprehensions.",
+      "query_topics": [
+        "Lists",
+        "Tuples",
+        "Dictionaries",
+        "Sets",
+        "List comprehensions"
+      ],
+      "curated_urls": [
+        "https://docs.python.org/3.11/tutorial/datastructures.html"
+      ]
+    },
+    "py04-oop": {
+      "title": "Object-oriented programming",
+      "description": "Python classes and objects, attributes and methods, inheritance, polymorphism and encapsulation.",
+      "query_topics": [
+        "Classes",
+        "Objects",
+        "Inheritance",
+        "Polymorphism",
+        "Encapsulation and abstraction"
+      ],
+      "curated_urls": [
+        "https://docs.python.org/3.11/tutorial/classes.html"
+      ]
+    }
+  },
+  "fetch_settings": {
+    "wikipedia_max_topics": 5,
+    "arxiv_topics": 3,
+    "arxiv_results_per_topic": 2,
+    "youtube": false,
+    "synthetic_fallback": false
+  },
+  "documents": [
+    {
+      "doc_id": "py01-basics/arxiv_byzantine-resilient_sgd_in_high_dimensions_on_hete",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/arxiv_byzantine-resilient_sgd_in_high_dimensions_on_hete.md",
+      "title": "Byzantine-Resilient SGD in High Dimensions on Heterogeneous Data",
+      "url": "https://arxiv.org/abs/2005.07866v1",
+      "source_type": "paper",
+      "query_topic": "Data types",
+      "chars": 2092,
+      "sha256": "9e57b9ae84a46fdfc8281daea5331e856346cbf2eab4acdb66e0116cd4c3c7e6"
+    },
+    {
+      "doc_id": "py01-basics/arxiv_data_encoding_for_byzantine-resilient_distributed_",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/arxiv_data_encoding_for_byzantine-resilient_distributed_.md",
+      "title": "Data Encoding for Byzantine-Resilient Distributed Optimization",
+      "url": "https://arxiv.org/abs/1907.02664v2",
+      "source_type": "paper",
+      "query_topic": "Data types",
+      "chars": 2122,
+      "sha256": "734a2e37ba6a4772b6bbab09679ca87bafd61e1bed29fb7617220edf7960fc08"
+    },
+    {
+      "doc_id": "py01-basics/arxiv_epython_an_implementation_of_python_for_the_many-c",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/arxiv_epython_an_implementation_of_python_for_the_many-c.md",
+      "title": "ePython: An implementation of Python for the many-core Epiphany coprocessor",
+      "url": "https://arxiv.org/abs/2010.14827v1",
+      "source_type": "paper",
+      "query_topic": "Python basics",
+      "chars": 1660,
+      "sha256": "a6191f3142b1aec679adc2648417fbf719a505d6be97dd952152ad72e8b8ed04"
+    },
+    {
+      "doc_id": "py01-basics/arxiv_multipartite_greenberger-horne-zeilinger_paradoxes",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/arxiv_multipartite_greenberger-horne-zeilinger_paradoxes.md",
+      "title": "Multipartite Greenberger-Horne-Zeilinger paradoxes for continuous variables",
+      "url": "https://arxiv.org/abs/quant-ph/0205102v1",
+      "source_type": "paper",
+      "query_topic": "Variables",
+      "chars": 546,
+      "sha256": "73be9cf3bb7c458f52735b19adbb915b4a420506fe3ca8463294e7605b1424d4"
+    },
+    {
+      "doc_id": "py01-basics/arxiv_social_network_analysis_from_graph_theory_to_appli",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/arxiv_social_network_analysis_from_graph_theory_to_appli.md",
+      "title": "Social Network Analysis: From Graph Theory to Applications with Python",
+      "url": "https://arxiv.org/abs/2102.10014v1",
+      "source_type": "paper",
+      "query_topic": "Python basics",
+      "chars": 1160,
+      "sha256": "7df2cb784647431552dfabdf1b5d8b21578300543eef7fe445ab275ebf352b31"
+    },
+    {
+      "doc_id": "py01-basics/arxiv_variability_periodicity_and_contact_binaries_in_wi",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/arxiv_variability_periodicity_and_contact_binaries_in_wi.md",
+      "title": "Variability, periodicity and contact binaries in WISE",
+      "url": "https://arxiv.org/abs/2012.04690v2",
+      "source_type": "paper",
+      "query_topic": "Variables",
+      "chars": 1573,
+      "sha256": "8d90feda12507e43c6255e3ad7fed271884a4b790873aa30c832033d7cc9a0c0"
+    },
+    {
+      "doc_id": "py01-basics/basic_inputoutput",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/basic_inputoutput.md",
+      "title": "BIOS",
+      "url": "https://en.wikipedia.org/wiki/BIOS",
+      "source_type": "wikipedia",
+      "query_topic": "Basic input/output",
+      "chars": 47923,
+      "sha256": "1a7098305c0e66c46aac01d3b72c3d778f434b53eb8c2e7b4e472370b3e80132"
+    },
+    {
+      "doc_id": "py01-basics/data_types",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/data_types.md",
+      "title": "Data type",
+      "url": "https://en.wikipedia.org/wiki/Data_type",
+      "source_type": "wikipedia",
+      "query_topic": "Data types",
+      "chars": 20625,
+      "sha256": "84e58cf868b7a70ecbc1f97f1976aea64d8b69aaa4dcdee8e1c4d3047062b3f8"
+    },
+    {
+      "doc_id": "py01-basics/pydocs_inputoutput",
+      "strand": "py01-basics",
+      "origin": "curated",
+      "path": "documents/py01-basics/pydocs_inputoutput.md",
+      "title": "7.Input and Output",
+      "url": "https://docs.python.org/3.11/tutorial/inputoutput.html",
+      "source_type": "tutorial",
+      "query_topic": null,
+      "chars": 18384,
+      "sha256": "ed208275bc19fb2570f878829ed82a7da034de4744eaf557ff3c00ebf86933c4"
+    },
+    {
+      "doc_id": "py01-basics/pydocs_introduction",
+      "strand": "py01-basics",
+      "origin": "curated",
+      "path": "documents/py01-basics/pydocs_introduction.md",
+      "title": "3.An Informal Introduction to Python",
+      "url": "https://docs.python.org/3.11/tutorial/introduction.html",
+      "source_type": "tutorial",
+      "query_topic": null,
+      "chars": 17799,
+      "sha256": "61daf8444a5f9ac6b7157af90384d5fb0df9c5edeb4ecca57c889126c9fdb5dc"
+    },
+    {
+      "doc_id": "py01-basics/python_basics",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/python_basics.md",
+      "title": "Expect",
+      "url": "https://en.wikipedia.org/wiki/Expect",
+      "source_type": "wikipedia",
+      "query_topic": "Python basics",
+      "chars": 5963,
+      "sha256": "464cae857d39c365014c39744385bb736eed32cd1b4645751d06800b2b9acbca"
+    },
+    {
+      "doc_id": "py01-basics/variables",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/variables.md",
+      "title": "Variable (high-level programming language)",
+      "url": "https://en.wikipedia.org/wiki/Variable_(high-level_programming_language)",
+      "source_type": "wikipedia",
+      "query_topic": "Variables",
+      "chars": 19196,
+      "sha256": "6a335cfaafb03217a6e566cb7edb6bfdca5a20eba87745aa6c021e358c4e2d2d"
+    },
+    {
+      "doc_id": "py01-basics/variables_and_operators",
+      "strand": "py01-basics",
+      "origin": "automatic",
+      "path": "documents/py01-basics/variables_and_operators.md",
+      "title": "Free variables and bound variables",
+      "url": "https://en.wikipedia.org/wiki/Free_variables_and_bound_variables",
+      "source_type": "wikipedia",
+      "query_topic": "Variables and operators",
+      "chars": 35860,
+      "sha256": "4b81b7c1fded579197ea2512bd959d38a1087cedfa46f2b9c27ca7e33b282ac4"
+    },
+    {
+      "doc_id": "py02-control-flow/arxiv_coxeter-chein_loops",
+      "strand": "py02-control-flow",
+      "origin": "automatic",
+      "path": "documents/py02-control-flow/arxiv_coxeter-chein_loops.md",
+      "title": "Coxeter-Chein Loops",
+      "url": "https://arxiv.org/abs/1110.6390v1",
+      "source_type": "paper",
+      "query_topic": "Loops",
+      "chars": 769,
+      "sha256": "1f42a22b4eb0da3569b13a0cdafcf9573ca4ad8bf21479c46b09d61a61effab4"
+    },
+    {
+      "doc_id": "py02-control-flow/arxiv_de_finettian_logics_of_indicative_conditionals",
+      "strand": "py02-control-flow",
+      "origin": "automatic",
+      "path": "documents/py02-control-flow/arxiv_de_finettian_logics_of_indicative_conditionals.md",
+      "title": "De Finettian Logics of Indicative Conditionals",
+      "url": "https://arxiv.org/abs/1901.10266v2",
+      "source_type": "paper",
+      "query_topic": "Conditional statements",
+      "chars": 1308,
+      "sha256": "085bc25e389e1649f2c5b4123a7ed694f116c5c6a634e47bea459997e6168cee"
+    },
+    {
+      "doc_id": "py02-control-flow/arxiv_introductory_topics_in_binary_set_functions",
+      "strand": "py02-control-flow",
+      "origin": "automatic",
+      "path": "documents/py02-control-flow/arxiv_introductory_topics_in_binary_set_functions.md",
+      "title": "Introductory Topics in Binary Set Functions",
+      "url": "https://arxiv.org/abs/math/0110336v1",
+      "source_type": "paper",
+      "query_topic": "Functions",
+      "chars": 584,
+      "sha256": "396974f898ac967419b19ebb14491a1a66b75636fb10377154331f41ab6e2cea"
+    },
+    {
+      "doc_id": "py02-control-flow/arxiv_monotonicity_properties_and_functional_inequalitie",
+      "strand": "py02-control-flow",
+      "origin": "automatic",
+      "path": "documents/py02-control-flow/arxiv_monotonicity_properties_and_functional_inequalitie.md",
+      "title": "Monotonicity Properties and functional inequalities for the Volterra and incomplete Volterra functions",
+      "url": "https://arxiv.org/abs/1805.01462v2",
+      "source_type": "paper",
+      "query_topic": "Functions",
+      "chars": 632,
+      "sha256": "61c7557a5fc341d5040549defae463029c1542137f2bd3c917b3a89eec233643"
+    },
+    {
+      "doc_id": "py02-control-flow/arxiv_on_translating_conditional_statements_into_mathema",
+      "strand": "py02-control-flow",
+      "origin": "automatic",
+      "path": "documents/py02-control-flow/arxiv_on_translating_conditional_statements_into_mathema.md",
+      "title": "On translating conditional statements into mathematical logic",
+      "url": "https://arxiv.org/abs/2208.00252v1",
+      "source_type": "paper",
+      "query_topic": "Conditional statements",
+      "chars": 427,
+      "sha256": "774789c1fa3bc7991720b34874fc9fa8e6d7b612531ab320c5a1e3ae3e9e7d20"
+    },
+    {
+      "doc_id": "py02-control-flow/arxiv_three-loop_results_in_hqet",
+      "strand": "py02-control-flow",
+      "origin": "automatic",
+      "path": "documents/py02-control-flow/arxiv_three-loop_results_in_hqet.md",
+      "title": "Three-loop results in HQET",
+      "url": "https://arxiv.org/abs/0805.1474v1",
+      "source_type": "paper",
+      "query_topic": "Loops",
+      "chars": 217,
+      "sha256": "52960edad649684babd8596e682ec871dac7b26d3f8bd14e32f1fba1541e73ec"
+    },
+    {
+      "doc_id": "py02-control-flow/conditional_statements",
+      "strand": "py02-control-flow",
+      "origin": "automatic",
+      "path": "documents/py02-control-flow/conditional_statements.md",
+      "title": "Material conditional",
+      "url": "https://en.wikipedia.org/wiki/Material_conditional",
+      "source_type": "wikipedia",
+      "query_topic": "Conditional statements",
+      "chars": 23001,
+      "sha256": "02547cfeac751817f1535e3d01a7f3b610f82f17a4e9ecebcf8c007c05425a0a"
+    },
+    {
+      "doc_id": "py02-control-flow/flow_control",
+      "strand": "py02-control-flow",
+      "origin": "automatic",
+      "path": "documents/py02-control-flow/flow_control.md",
+      "title": "Control flow",
+      "url": "https://en.wikipedia.org/wiki/Control_flow",
+      "source_type": "wikipedia",
+      "query_topic": "Flow control",
+      "chars": 28414,
+      "sha256": "36a1c295610e36741a994ee4791b03cda3a8bcde21d3fac42326a00e47a01db0"
+    },
+    {
+      "doc_id": "py02-control-flow/functions",
+      "strand": "py02-control-flow",
+      "origin": "automatic",
+      "path": "documents/py02-control-flow/functions.md",
+      "title": "Function key",
+      "url": "https://en.wikipedia.org/wiki/Function_key",
+      "source_type": "wikipedia",
+      "query_topic": "Functions",
+      "chars": 16263,
+      "sha256": "8e23b85ca7731752fe7c9e3e137fe88743e116f6d674f0d82f3299f848575f80"
+    },
+    {
+      "doc_id": "py02-control-flow/indentation",
+      "strand": "py02-control-flow",
+      "origin": "automatic",
+      "path": "documents/py02-control-flow/indentation.md",
+      "title": "Indentation style",
+      "url": "https://en.wikipedia.org/wiki/Indentation_style",
+      "source_type": "wikipedia",
+      "query_topic": "Indentation",
+      "chars": 25718,
+      "sha256": "92e3c22da589f9ae8081ac8700c90ec9310cff5964ed8eea923695a58d167851"
+    },
+    {
+      "doc_id": "py02-control-flow/pydocs_controlflow",
+      "strand": "py02-control-flow",
+      "origin": "curated",
+      "path": "documents/py02-control-flow/pydocs_controlflow.md",
+      "title": "4.More Control Flow Tools",
+      "url": "https://docs.python.org/3.11/tutorial/controlflow.html",
+      "source_type": "tutorial",
+      "query_topic": null,
+      "chars": 36218,
+      "sha256": "714bdc30e0141099c63e2e7f9c6d5c233703eb1e8f9958d3dd7d6e4d8aaf7718"
+    },
+    {
+      "doc_id": "py03-data-structures/arxiv_dilations_of_unitary_tuples",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/arxiv_dilations_of_unitary_tuples.md",
+      "title": "Dilations of unitary tuples",
+      "url": "https://arxiv.org/abs/2006.01869v3",
+      "source_type": "paper",
+      "query_topic": "Tuples",
+      "chars": 1832,
+      "sha256": "6c5090003831a8726ca643eaeb4971e1a85150bc697d23b440f49d092a9aa77d"
+    },
+    {
+      "doc_id": "py03-data-structures/arxiv_dynamics_of_tuples_of_complex_upper_triangular_toe",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/arxiv_dynamics_of_tuples_of_complex_upper_triangular_toe.md",
+      "title": "Dynamics of tuples of complex upper triangular Toeplitz matrices",
+      "url": "https://arxiv.org/abs/1008.0780v2",
+      "source_type": "paper",
+      "query_topic": "Tuples",
+      "chars": 371,
+      "sha256": "38b36dfac75d75d747011e823ee6eb8f6ba5c8d302af4388a1595752792b8411"
+    },
+    {
+      "doc_id": "py03-data-structures/arxiv_incoherent_dictionaries_and_the_statistical_restri",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/arxiv_incoherent_dictionaries_and_the_statistical_restri.md",
+      "title": "Incoherent dictionaries and the statistical restricted isometry property",
+      "url": "https://arxiv.org/abs/0809.1687v4",
+      "source_type": "paper",
+      "query_topic": "Dictionaries",
+      "chars": 868,
+      "sha256": "57da264f5d3520cdd3ee8274231c7f2621380b261906818d17adf8ba9d15d579"
+    },
+    {
+      "doc_id": "py03-data-structures/arxiv_learning_certifiably_optimal_rule_lists_for_catego",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/arxiv_learning_certifiably_optimal_rule_lists_for_catego.md",
+      "title": "Learning Certifiably Optimal Rule Lists for Categorical Data",
+      "url": "https://arxiv.org/abs/1704.01701v4",
+      "source_type": "paper",
+      "query_topic": "Lists",
+      "chars": 1164,
+      "sha256": "9107434aa1409224588922406f36a0bd9717cc7d561ed1c2ca0e344612776729"
+    },
+    {
+      "doc_id": "py03-data-structures/arxiv_sets_lists_and_noncrossing_partitions",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/arxiv_sets_lists_and_noncrossing_partitions.md",
+      "title": "Sets, Lists and Noncrossing Partitions",
+      "url": "https://arxiv.org/abs/0711.4841v2",
+      "source_type": "paper",
+      "query_topic": "Lists",
+      "chars": 822,
+      "sha256": "188a39a9965bc52eed77231c8586e40658b8eeb8f64d22d1674de9b1c0ad7013"
+    },
+    {
+      "doc_id": "py03-data-structures/arxiv_wavelet_based_dictionaries_for_piecewise_dimension",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/arxiv_wavelet_based_dictionaries_for_piecewise_dimension.md",
+      "title": "Wavelet Based Dictionaries for Piecewise Dimensionality Reduction of ECG Signals",
+      "url": "https://arxiv.org/abs/1811.05517v2",
+      "source_type": "paper",
+      "query_topic": "Dictionaries",
+      "chars": 851,
+      "sha256": "e8659f62203321c8d276dfb172ed807ffaf0f964210cd67d554a0f989d7eca23"
+    },
+    {
+      "doc_id": "py03-data-structures/dictionaries",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/dictionaries.md",
+      "title": "Dictionary",
+      "url": "https://en.wikipedia.org/wiki/Dictionary",
+      "source_type": "wikipedia",
+      "query_topic": "Dictionaries",
+      "chars": 28263,
+      "sha256": "01267dbe901bfe0bdcc5df3fe23373bd4bba29ba4e536e9840343a761726210e"
+    },
+    {
+      "doc_id": "py03-data-structures/list_comprehensions",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/list_comprehensions.md",
+      "title": "List comprehension",
+      "url": "https://en.wikipedia.org/wiki/List_comprehension",
+      "source_type": "wikipedia",
+      "query_topic": "List comprehensions",
+      "chars": 14691,
+      "sha256": "4a541bc7f7a73202d428ae3f72b19aee3984cb807a8a24cd2d3133d55bf9a2aa"
+    },
+    {
+      "doc_id": "py03-data-structures/lists",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/lists.md",
+      "title": "List of lists of lists",
+      "url": "https://en.wikipedia.org/wiki/List_of_lists_of_lists",
+      "source_type": "wikipedia",
+      "query_topic": "Lists",
+      "chars": 33924,
+      "sha256": "02435ddc0732c99476dddacb1e7c2272552a0253a8a10239a43cfb53c46d01e5"
+    },
+    {
+      "doc_id": "py03-data-structures/pydocs_datastructures",
+      "strand": "py03-data-structures",
+      "origin": "curated",
+      "path": "documents/py03-data-structures/pydocs_datastructures.md",
+      "title": "5.Data Structures",
+      "url": "https://docs.python.org/3.11/tutorial/datastructures.html",
+      "source_type": "tutorial",
+      "query_topic": null,
+      "chars": 22959,
+      "sha256": "b75a236b6bb4d83518598befae343a96e932bc604518c5afdec048f6b57b7e2a"
+    },
+    {
+      "doc_id": "py03-data-structures/sets",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/sets.md",
+      "title": "Set (mathematics)",
+      "url": "https://en.wikipedia.org/wiki/Set_(mathematics)",
+      "source_type": "wikipedia",
+      "query_topic": "Sets",
+      "chars": 69599,
+      "sha256": "009693b054ffc6cdcdaf39c6fb581ab4de67ecda47986f1d4de4696343c337b6"
+    },
+    {
+      "doc_id": "py03-data-structures/tuples",
+      "strand": "py03-data-structures",
+      "origin": "automatic",
+      "path": "documents/py03-data-structures/tuples.md",
+      "title": "Tuple",
+      "url": "https://en.wikipedia.org/wiki/Tuple",
+      "source_type": "wikipedia",
+      "query_topic": "Tuples",
+      "chars": 37405,
+      "sha256": "d03e075f376452e64b548901837e0ca82b870fecbee16591f3269b86ebabd2cf"
+    },
+    {
+      "doc_id": "py04-oop/arxiv_align-deform-subtract_an_interventional_framework_",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/arxiv_align-deform-subtract_an_interventional_framework_.md",
+      "title": "Align-Deform-Subtract: An Interventional Framework for Explaining Object Differences",
+      "url": "https://arxiv.org/abs/2203.04694v2",
+      "source_type": "paper",
+      "query_topic": "Objects",
+      "chars": 877,
+      "sha256": "f404f821daac74db57e5fd5f98185b1d100996857706e7f07c32e1b16bef212a"
+    },
+    {
+      "doc_id": "py04-oop/arxiv_binding_actions_to_objects_in_world_models",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/arxiv_binding_actions_to_objects_in_world_models.md",
+      "title": "Binding Actions to Objects in World Models",
+      "url": "https://arxiv.org/abs/2204.13022v1",
+      "source_type": "paper",
+      "query_topic": "Objects",
+      "chars": 992,
+      "sha256": "4863c11909ee5e650eb455597705bdf528f75eb834076edb088dfcedcc104b37"
+    },
+    {
+      "doc_id": "py04-oop/arxiv_diophantine_inheritance_for_p-adic_measures",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/arxiv_diophantine_inheritance_for_p-adic_measures.md",
+      "title": "Diophantine inheritance for p-adic measures",
+      "url": "https://arxiv.org/abs/1903.09362v2",
+      "source_type": "paper",
+      "query_topic": "Inheritance",
+      "chars": 764,
+      "sha256": "3d44830daa3983fdc975be5f89d46af650dfbe15dbd729124313c74db20b3cc9"
+    },
+    {
+      "doc_id": "py04-oop/arxiv_refined_chern_characteristic_classes_of_blow-ups",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/arxiv_refined_chern_characteristic_classes_of_blow-ups.md",
+      "title": "Refined Chern characteristic classes of blow-ups",
+      "url": "https://arxiv.org/abs/2408.03210v2",
+      "source_type": "paper",
+      "query_topic": "Classes",
+      "chars": 566,
+      "sha256": "3919f0bb105176efce6c180fa727098f98238c87d423850a4a38cc0cc137edd9"
+    },
+    {
+      "doc_id": "py04-oop/arxiv_structure_constants_for_chern_classes_of_schubert_",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/arxiv_structure_constants_for_chern_classes_of_schubert_.md",
+      "title": "Structure constants for Chern classes of Schubert cells",
+      "url": "https://arxiv.org/abs/1909.10940v2",
+      "source_type": "paper",
+      "query_topic": "Classes",
+      "chars": 652,
+      "sha256": "d503a0f3d9a0c131fceb6f50210e284a18e337a41cd809a38af610520ad4445e"
+    },
+    {
+      "doc_id": "py04-oop/arxiv_understanding_and_mitigating_bias_inheritance_in_l",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/arxiv_understanding_and_mitigating_bias_inheritance_in_l.md",
+      "title": "Understanding and Mitigating Bias Inheritance in LLM-based Data Augmentation on Downstream Tasks",
+      "url": "https://arxiv.org/abs/2502.04419v3",
+      "source_type": "paper",
+      "query_topic": "Inheritance",
+      "chars": 1698,
+      "sha256": "c44aa98f617be5cfe0bd140e0375357f37315ebbf108b03532c655b187e86b6c"
+    },
+    {
+      "doc_id": "py04-oop/classes",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/classes.md",
+      "title": "Class (taxonomy)",
+      "url": "https://en.wikipedia.org/wiki/Class_(taxonomy)",
+      "source_type": "wikipedia",
+      "query_topic": "Classes",
+      "chars": 2859,
+      "sha256": "47dfa3db23e81dfa33f3bb408b63cda9bdfdd93d75651266d7f6e346e113dad6"
+    },
+    {
+      "doc_id": "py04-oop/encapsulation_and_abstraction",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/encapsulation_and_abstraction.md",
+      "title": "Abstraction (computer science)",
+      "url": "https://en.wikipedia.org/wiki/Abstraction_(computer_science)",
+      "source_type": "wikipedia",
+      "query_topic": "Encapsulation and abstraction",
+      "chars": 22039,
+      "sha256": "213aa61b8d592b2ba9ba443af130f8e2b25442fb32d59841ce594d71f73f3136"
+    },
+    {
+      "doc_id": "py04-oop/inheritance",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/inheritance.md",
+      "title": "Inheritance",
+      "url": "https://en.wikipedia.org/wiki/Inheritance",
+      "source_type": "wikipedia",
+      "query_topic": "Inheritance",
+      "chars": 18968,
+      "sha256": "057c48b512f873910c5e8b3e0bbc3661cd8f8cb706fdb302ebd1d8b531481093"
+    },
+    {
+      "doc_id": "py04-oop/objects",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/objects.md",
+      "title": "Subject and object (philosophy)",
+      "url": "https://en.wikipedia.org/wiki/Subject_and_object_(philosophy)",
+      "source_type": "wikipedia",
+      "query_topic": "Objects",
+      "chars": 17217,
+      "sha256": "b2a62263ba309f5d338e884e1c1af43988892bc60546701b79a106e884b73c9d"
+    },
+    {
+      "doc_id": "py04-oop/polymorphism",
+      "strand": "py04-oop",
+      "origin": "automatic",
+      "path": "documents/py04-oop/polymorphism.md",
+      "title": "Polymorphism (computer science)",
+      "url": "https://en.wikipedia.org/wiki/Polymorphism_(computer_science)",
+      "source_type": "wikipedia",
+      "query_topic": "Polymorphism",
+      "chars": 10550,
+      "sha256": "85739a3ed2193e7f6c24f0ab662f06e8aad4698354f00d204677c14882e60e2f"
+    },
+    {
+      "doc_id": "py04-oop/pydocs_classes",
+      "strand": "py04-oop",
+      "origin": "curated",
+      "path": "documents/py04-oop/pydocs_classes.md",
+      "title": "9.Classes",
+      "url": "https://docs.python.org/3.11/tutorial/classes.html",
+      "source_type": "tutorial",
+      "query_topic": null,
+      "chars": 34587,
+      "sha256": "143974ea89f72e903a9aa2beb1abc6f00b6172e96497f45a6c7dbf7377874109"
+    }
+  ]
+}
