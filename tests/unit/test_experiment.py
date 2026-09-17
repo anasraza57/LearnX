@@ -254,6 +254,15 @@ class TestRunnerRecords:
         from src.experiment.runner import failed_path
         assert failed_path(tmp_path / "S01.json").name == "S01.failed.json"
 
+    def test_failure_streak_stops_a_dead_backend_but_tolerates_one_bad_run(self):
+        from src.experiment.runner import MAX_CONSECUTIVE_FAILURES, failure_streak
+        streak = 0
+        for _ in range(MAX_CONSECUTIVE_FAILURES):
+            streak = failure_streak(streak, {"failed": True})
+        assert streak >= MAX_CONSECUTIVE_FAILURES
+        assert failure_streak(streak, {"failed": False}) == 0
+        assert failure_streak(0, {"failed": True}) < MAX_CONSECUTIVE_FAILURES
+
 
 class TestEmbeddingConcurrency:
     """The runner shares one embedding model across worker threads."""

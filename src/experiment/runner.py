@@ -73,6 +73,11 @@ PACKAGES = ["langchain-core", "langchain-openai", "openai", "chromadb", "sentenc
 # OLLAMA_CONTEXT_LENGTH=32768 ollama serve
 MIN_LOCAL_CONTEXT = 32768
 
+# If this many runs fail in a row, something is wrong with the backend (no
+# credits, an outage, a bad model id) rather than with one scenario. Stop, so a
+# dead backend cannot burn through the queue leaving a pile of failed records.
+MAX_CONSECUTIVE_FAILURES = 3
+
 
 def model_slug(model: str) -> str:
     return model.replace(":", "_").replace("/", "_")
@@ -320,6 +325,11 @@ def failed_path(path: Path) -> Path:
     return path.with_name(path.stem + ".failed.json")
 
 
+def failure_streak(streak: int, record: Dict[str, Any]) -> int:
+    """Consecutive failed runs, reset by any run that completes cleanly."""
+    return streak + 1 if record.get("failed") else 0
+
+
 def local_model_info(base_url: str, model: str) -> Dict[str, Any]:
     """Loaded-model details from Ollama's native API (context window, digest, quantisation)."""
     import requests
@@ -465,7 +475,7 @@ def main() -> None:
 
     log_path = out_root / "logs" / f"{stamp}.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)
-    done = failed = 0
+    done = failed = streak = 0
     with log_path.open("w", encoding="utf-8") as log, contextlib.redirect_stdout(log):
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
             futures = {
@@ -477,6 +487,7 @@ def main() -> None:
                 cond_id, scenario_id, repeat = futures[future]
                 record = future.result()
                 done += 1
+                streak = failure_streak(streak, record)
                 problems = len(record["errors"]) + sum(len(m["errors"]) for m in record["modules"])
                 failed += 1 if record["failed"] else 0
                 lessons = sum(len(m["lessons"]) for m in record["modules"])
@@ -490,6 +501,16 @@ def main() -> None:
                     f"{problems} errors",
                     file=sys.stderr,
                 )
+                if streak >= MAX_CONSECUTIVE_FAILURES:
+                    for pending in futures:
+                        pending.cancel()
+                    print(
+                        f"\nStopping: {streak} runs failed in a row, so the backend is likely "
+                        f"unavailable rather than these scenarios being at fault. Fix the cause and "
+                        f"rerun the same command; completed runs are skipped and failed ones retried.",
+                        file=sys.stderr,
+                    )
+                    break
     print(f"Finished {done} runs; {failed} failed and were saved as *.failed.json for retry. Log: {log_path}", file=sys.stderr)
 
 
