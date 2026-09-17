@@ -267,8 +267,14 @@ class TestSyllabusPlanner(unittest.TestCase):
         self.assertEqual(loaded["topic"], "Python Programming")
         self.assertEqual(loaded["duration_weeks"], 4)
 
-    def test_extract_structured_syllabus_json_parsing(self):
+    @patch("src.llm.ChatOpenAI")
+    def test_extract_structured_syllabus_json_parsing(self, mock_openai):
         """Test JSON extraction from negotiation history."""
+        mock_openai.return_value.invoke.return_value = AIMessage(content=json.dumps({
+            "topic": "Python Programming",
+            "modules": [{"id": "m01-basics", "title": "Basics", "outcomes": ["Write scripts"],
+                         "topics": ["Variables"], "estimated_hours": 8.0}],
+        }))
         planner = SyllabusPlanner(learner=self.learner)
 
         # Simulate negotiation history
@@ -294,6 +300,8 @@ class TestSyllabusPlanner(unittest.TestCase):
         self.assertIn("modules", syllabus)
         self.assertIn("total_estimated_hours", syllabus)
         self.assertIn("workload_feasible", syllabus)
+        self.assertEqual(syllabus["modules"][0]["id"], "m01-basics")
+        self.assertFalse(planner.last_run["extraction_fallback"])
 
     def test_workload_feasibility_calculation(self):
         """Test workload feasibility calculation."""

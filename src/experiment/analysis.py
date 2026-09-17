@@ -1,0 +1,350 @@
+"""
+Aggregates run records into scenario-level rates and applies the pre-registered
+statistical treatment.
+
+The unit of analysis is the scenario (D28): for each scenario and condition one
+rate is computed, giving paired observations per contrast. Comparisons use the
+Wilcoxon signed-rank test, with the median paired difference and a bootstrap
+confidence interval, Cliff's delta as a second effect size, and Wilson intervals
+for descriptive proportions. Binary per-scenario outcomes use an exact McNemar
+test instead, which is the documented exception.
+
+A contrast counts as supported only if the 95% interval on the paired difference
+excludes zero in the direction predicted before running (D29). Outcomes that
+depend on human annotation are listed as pending rather than approximated.
+
+Usage:
+    python -m src.experiment.analysis --experiment e1 --model gpt-5.4-mini
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import random
+import statistics
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
+
+from scipy import stats
+
+from .checks import run_metrics
+from .runner import EXPERIMENT_DIRS, RESULTS_DIR, model_slug
+
+BOOTSTRAP_SAMPLES = 10000
+BOOTSTRAP_SEED = 20260917
+CONFIDENCE = 0.95
+
+# Pre-registered primary outcomes (handoff section 4.7.1, D29). "higher"/"lower"
+# is the direction predicted for the first condition of the pair.
+PRIMARY_CONTRASTS = [
+    {"contrast": "A1 vs A2", "isolates": "agent decomposition", "conditions": ("A1", "A2"),
+     "outcome": "constraint_satisfaction_rate", "direction": "higher", "kind": "rate"},
+    {"contrast": "A1 vs A3", "isolates": "retrieval grounding", "conditions": ("A1", "A3"),
+     "outcome": "unsupported_claim_rate", "direction": "lower", "kind": "annotated"},
+    {"contrast": "A1 vs A4", "isolates": "the negotiation protocol", "conditions": ("A1", "A4"),
+     "outcome": "time_budget_satisfied", "direction": "higher", "kind": "binary"},
+    {"contrast": "A1 vs A5", "isolates": "the citation instruction", "conditions": ("A1", "A5"),
+     "outcome": "misattribution_rate", "direction": "lower", "kind": "annotated"},
+    {"contrast": "A1 vs A5", "isolates": "the citation instruction", "conditions": ("A1", "A5"),
+     "outcome": "missing_citation_rate", "direction": "lower", "kind": "annotated"},
+]
+
+# Automatic measures reported alongside, for every contrast against A1. These are
+# descriptive: they were not pre-registered as primary outcomes.
+SECONDARY_OUTCOMES = [
+    "no_passage_above_threshold", "low_confidence_retrieval", "off_strand_passage_rate",
+    "model_written_refusal", "response_without_citation", "invalid_citation_marker_rate",
+    "citations_per_response", "code_parse_failure", "item_valid", "item_placeholder",
+    "item_retrieval_failed",
+]
+
+
+def wilson_interval(successes: int, total: int, confidence: float = CONFIDENCE) -> Optional[Tuple[float, float]]:
+    """Wilson score interval for a proportion (better than the normal approximation at the extremes)."""
+    if total == 0:
+        return None
+    z = stats.norm.ppf(1 - (1 - confidence) / 2)
+    phat = successes / total
+    denominator = 1 + z**2 / total
+    centre = (phat + z**2 / (2 * total)) / denominator
+    half = z * math.sqrt(phat * (1 - phat) / total + z**2 / (4 * total**2)) / denominator
+    return max(0.0, centre - half), min(1.0, centre + half)
+
+
+def cliffs_delta(a: Sequence[float], b: Sequence[float]) -> Optional[float]:
+    """Cliff's delta: how often a exceeds b, minus how often b exceeds a."""
+    if not a or not b:
+        return None
+    greater = sum((x > y) - (x < y) for x in a for y in b)
+    return greater / (len(a) * len(b))
+
+
+def bootstrap_ci(
+    values: Sequence[float],
+    statistic: Callable[[Sequence[float]], float] = statistics.median,
+    samples: int = BOOTSTRAP_SAMPLES,
+    confidence: float = CONFIDENCE,
+) -> Optional[Tuple[float, float]]:
+    """Percentile bootstrap interval, with a fixed seed so the result is reproducible."""
+    values = list(values)
+    if len(values) < 2:
+        return None
+    rng = random.Random(BOOTSTRAP_SEED)
+    draws = sorted(
+        statistic([values[rng.randrange(len(values))] for _ in values]) for _ in range(samples)
+    )
+    low = draws[int((1 - confidence) / 2 * samples)]
+    high = draws[min(samples - 1, int((1 + confidence) / 2 * samples))]
+    return low, high
+
+
+def mcnemar_exact(both: int, only_a: int, only_b: int, neither: int) -> Dict[str, Any]:
+    """Exact McNemar test on the discordant pairs."""
+    discordant = only_a + only_b
+    p_value = 1.0 if discordant == 0 else float(stats.binomtest(only_a, discordant, 0.5).pvalue)
+    return {
+        "both": both, "only_first": only_a, "only_second": only_b, "neither": neither,
+        "discordant": discordant, "p_value": p_value,
+    }
+
+
+def paired_comparison(pairs: List[Tuple[str, float, float]], direction: str) -> Dict[str, Any]:
+    """Wilcoxon signed-rank plus effect sizes on paired scenario-level rates."""
+    first = [a for _, a, _ in pairs]
+    second = [b for _, _, b in pairs]
+    differences = [a - b for a, b in zip(first, second)]
+    non_zero = [d for d in differences if d != 0]
+
+    result: Dict[str, Any] = {
+        "n_pairs": len(pairs),
+        "median_first": statistics.median(first) if first else None,
+        "median_second": statistics.median(second) if second else None,
+        "median_difference": statistics.median(differences) if differences else None,
+        "mean_difference": statistics.fmean(differences) if differences else None,
+        "ties": len(differences) - len(non_zero),
+        "cliffs_delta": cliffs_delta(first, second),
+        "difference_ci": bootstrap_ci(differences),
+        "direction_predicted": direction,
+    }
+    if non_zero:
+        statistic, p_value = stats.wilcoxon(first, second, zero_method="wilcox")
+        result["wilcoxon_statistic"], result["p_value"] = float(statistic), float(p_value)
+    else:
+        result["wilcoxon_statistic"], result["p_value"] = None, 1.0
+
+    ci = result["difference_ci"]
+    if ci is None:
+        result["supported"] = None
+    elif direction == "higher":
+        result["supported"] = ci[0] > 0
+    else:
+        result["supported"] = ci[1] < 0
+    return result
+
+
+def _outcome_value(metrics: Dict[str, Any], outcome: str) -> Optional[float]:
+    if outcome in metrics["rates"]:
+        return metrics["rates"][outcome]
+    planning = metrics["planning"]
+    if outcome in planning:
+        value = planning[outcome]
+        return float(value) if isinstance(value, (int, float, bool)) else None
+    return None
+
+
+def load_runs(experiment: str, model: str, results_dir: Path = RESULTS_DIR) -> List[Dict[str, Any]]:
+    """Every completed run record for a model, as metrics. Failed runs are excluded."""
+    root = results_dir / EXPERIMENT_DIRS[experiment] / model_slug(model)
+    runs = []
+    for path in sorted(root.glob("*/*.json")):
+        if path.name.endswith(".failed.json"):
+            continue
+        record = json.loads(path.read_text(encoding="utf-8"))
+        if record.get("failed"):
+            continue
+        runs.append(run_metrics(record))
+    return runs
+
+
+def compare(runs: List[Dict[str, Any]], first: str, second: str, outcome: str, direction: str,
+            kind: str = "rate") -> Dict[str, Any]:
+    """One contrast on one outcome, paired by scenario."""
+    by_condition = {c: {r["scenario_id"]: r for r in runs if r["condition"] == c} for c in (first, second)}
+    shared = sorted(set(by_condition[first]) & set(by_condition[second]))
+    pairs = []
+    for scenario in shared:
+        a = _outcome_value(by_condition[first][scenario], outcome)
+        b = _outcome_value(by_condition[second][scenario], outcome)
+        if a is not None and b is not None:
+            pairs.append((scenario, float(a), float(b)))
+
+    header = {"conditions": [first, second], "outcome": outcome, "kind": kind,
+              "scenarios_compared": len(pairs)}
+    if not pairs:
+        return {**header, "status": "no data"}
+
+    if kind == "binary":
+        both = sum(1 for _, a, b in pairs if a and b)
+        only_a = sum(1 for _, a, b in pairs if a and not b)
+        only_b = sum(1 for _, a, b in pairs if b and not a)
+        neither = sum(1 for _, a, b in pairs if not a and not b)
+        first_successes, second_successes = both + only_a, both + only_b
+        return {
+            **header,
+            "status": "computed",
+            "proportion_first": first_successes / len(pairs),
+            "proportion_second": second_successes / len(pairs),
+            "ci_first": wilson_interval(first_successes, len(pairs)),
+            "ci_second": wilson_interval(second_successes, len(pairs)),
+            "mcnemar": mcnemar_exact(both, only_a, only_b, neither),
+            "direction_predicted": direction,
+            **paired_comparison(pairs, direction),
+        }
+    return {**header, "status": "computed", **paired_comparison(pairs, direction)}
+
+
+def _fmt(value: Any, digits: int = 3) -> str:
+    if value is None:
+        return "n/a"
+    if isinstance(value, tuple):
+        return f"[{value[0]:+.{digits}f}, {value[1]:+.{digits}f}]"
+    if isinstance(value, bool):
+        return "yes" if value else "no"
+    if isinstance(value, float):
+        return f"{value:.{digits}f}"
+    return str(value)
+
+
+def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str, Dict[str, Any]]:
+    """A markdown report and the same content as data."""
+    conditions = sorted({r["condition"] for r in runs})
+    lines = [f"# {experiment} results: {model}", "",
+             f"Runs: {len(runs)} across conditions {', '.join(conditions)}. "
+             f"Unit of analysis: the scenario (D28). Intervals are 95% and the decision rule is D29.", ""]
+
+    lines += ["## Coverage", "", "| Condition | Scenarios | Responses | Items | Cost (USD) | Median response latency (s) |",
+              "|---|---|---|---|---|---|"]
+    summary: Dict[str, Any] = {"conditions": {}}
+    for condition in conditions:
+        subset = [r for r in runs if r["condition"] == condition]
+        costs = [r["cost"]["cost_usd"] for r in subset if r["cost"]["cost_usd"] is not None]
+        latencies = [r["cost"]["median_response_latency_s"] for r in subset
+                     if r["cost"]["median_response_latency_s"]]
+        summary["conditions"][condition] = {
+            "scenarios": len(subset),
+            "responses": sum(r["counts"]["responses"] for r in subset),
+            "items": sum(r["counts"]["items"] for r in subset),
+            "cost_usd": sum(costs) if costs else None,
+            "median_latency_s": statistics.median(latencies) if latencies else None,
+        }
+        row = summary["conditions"][condition]
+        lines.append(f"| {condition} | {row['scenarios']} | {row['responses']} | {row['items']} | "
+                     f"{_fmt(row['cost_usd'], 2)} | {_fmt(row['median_latency_s'], 1)} |")
+
+    lines += ["", "## Pre-registered contrasts", "",
+              "| Contrast | Isolates | Outcome | Median A | Median B | Median difference | 95% CI | Cliff's delta | p | Supported |",
+              "|---|---|---|---|---|---|---|---|---|---|"]
+    summary["primary"] = []
+    for spec in PRIMARY_CONTRASTS:
+        first, second = spec["conditions"]
+        if spec["kind"] == "annotated":
+            lines.append(f"| {spec['contrast']} | {spec['isolates']} | {spec['outcome']} | "
+                         f"pending E3 annotation | | | | | | |")
+            summary["primary"].append({**spec, "status": "pending annotation"})
+            continue
+        result = compare(runs, first, second, spec["outcome"], spec["direction"], spec["kind"])
+        summary["primary"].append({**spec, **result})
+        if result["status"] != "computed":
+            lines.append(f"| {spec['contrast']} | {spec['isolates']} | {spec['outcome']} | no data | | | | | | |")
+            continue
+        lines.append(
+            f"| {spec['contrast']} | {spec['isolates']} | {spec['outcome']} | "
+            f"{_fmt(result['median_first'])} | {_fmt(result['median_second'])} | "
+            f"{_fmt(result['median_difference'])} | {_fmt(result['difference_ci'])} | "
+            f"{_fmt(result['cliffs_delta'])} | {_fmt(result['p_value'])} | "
+            f"{_fmt(result['supported'])} (predicted {result['direction_predicted']}) |"
+        )
+        if spec["kind"] == "binary":
+            m = result["mcnemar"]
+            lines.append(f"| | | proportions | {_fmt(result['proportion_first'])} "
+                         f"{_fmt(result['ci_first'])} | {_fmt(result['proportion_second'])} "
+                         f"{_fmt(result['ci_second'])} | McNemar exact | discordant {m['discordant']} "
+                         f"({m['only_first']} vs {m['only_second']}) | | {_fmt(m['p_value'])} | |")
+
+    lines += ["", "## Automatic measures by condition", "",
+              "| Measure | " + " | ".join(conditions) + " |", "|---" * (len(conditions) + 1) + "|"]
+    summary["descriptive"] = {}
+    for outcome in SECONDARY_OUTCOMES:
+        cells = []
+        summary["descriptive"][outcome] = {}
+        for condition in conditions:
+            values = [v for v in (_outcome_value(r, outcome) for r in runs if r["condition"] == condition)
+                      if v is not None]
+            median = statistics.median(values) if values else None
+            summary["descriptive"][outcome][condition] = {
+                "median": median, "n": len(values),
+                "mean": statistics.fmean(values) if values else None,
+            }
+            cells.append(_fmt(median))
+        lines.append(f"| {outcome} | " + " | ".join(cells) + " |")
+
+    lines += ["", "## Planning checks by condition", "",
+              "| Check | " + " | ".join(conditions) + " |", "|---" * (len(conditions) + 1) + "|"]
+    checks = ["schema_valid_as_extracted", "extraction_parsed", "time_budget_satisfied",
+              "module_count_in_range", "goal_covered", "prerequisites_present",
+              "prerequisites_resolvable", "prerequisites_acyclic", "final_hours_over_budget",
+              "all_constraints_satisfied"]
+    summary["planning"] = {}
+    for check in checks:
+        cells = []
+        summary["planning"][check] = {}
+        for condition in conditions:
+            values = [bool(r["planning"][check]) for r in runs if r["condition"] == condition]
+            rate = sum(values) / len(values) if values else None
+            interval = wilson_interval(sum(values), len(values)) if values else None
+            summary["planning"][check][condition] = {"rate": rate, "n": len(values), "wilson_ci": interval}
+            cells.append(f"{_fmt(rate, 2)} {_fmt(interval, 2)}" if rate is not None else "n/a")
+        lines.append(f"| {check} | " + " | ".join(cells) + " |")
+
+    negotiation = [r for r in runs if r["negotiation"]["negotiation_enabled"]]
+    if negotiation:
+        lines += ["", "## Negotiation", "",
+                  f"Runs with negotiation enabled: {len(negotiation)}. "
+                  f"Approved: {sum(1 for r in negotiation if r['negotiation']['approved'])}. "
+                  f"Reached the round limit without approval: "
+                  f"{sum(1 for r in negotiation if r['negotiation']['max_rounds_without_approval'])}. "
+                  f"No revision occurred: {sum(1 for r in negotiation if r['negotiation']['no_revision_occurred'])}. "
+                  f"Role inversion suspected (needs confirmation by reading the transcript): "
+                  f"{sum(1 for r in negotiation if r['negotiation']['roles_inverted_suspected'])}."]
+
+    lines += ["", "## Not computed here", "",
+              "Claim support, citation correctness and whether an item is answerable from the corpus "
+              "come from the E3 annotation study and are not approximated by any measure above.", ""]
+    return "\n".join(lines), summary
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--experiment", choices=sorted(EXPERIMENT_DIRS), default="e1")
+    parser.add_argument("--model", required=True)
+    parser.add_argument("--out", type=Path, help="where to write the report (default: alongside the records)")
+    args = parser.parse_args()
+
+    runs = load_runs(args.experiment, args.model)
+    if not runs:
+        raise SystemExit(f"No completed runs for {args.model} under {args.experiment}")
+    text, summary = report(args.experiment, args.model, runs)
+    print(text)
+
+    out = args.out or RESULTS_DIR / EXPERIMENT_DIRS[args.experiment] / model_slug(args.model)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "analysis.md").write_text(text + "\n", encoding="utf-8")
+    (out / "analysis.json").write_text(json.dumps({"runs": runs, "summary": summary}, indent=2, default=str),
+                                       encoding="utf-8")
+    print(f"\nWritten: {out / 'analysis.md'} and {out / 'analysis.json'}")
+
+
+if __name__ == "__main__":
+    main()
