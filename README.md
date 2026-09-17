@@ -34,14 +34,18 @@ cd LearnX
 ```
 
 ### 2. Set up a virtual environment
+Python 3.11 is required.
 ```bash
-# Create and activate virtual environment
-python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+# Create the environment and install the exact versions used for the experiments
+make venv
 
-# Install dependencies
-pip install -r requirements.txt
+# Or by hand:
+python3.11 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.lock.txt
 ```
+`requirements.txt` lists the direct dependencies; `requirements.lock.txt` pins every
+version and is what the evaluation ran on.
 
 ### 3. Configure API keys
 Create a `.env` file in the root directory:
@@ -55,6 +59,8 @@ OPENAI_API_KEY=your_key_here
 # Optional: Choose your model (default: gpt-4o-mini)
 OPENAI_MODEL=gpt-4o-mini
 ```
+`.env.example` documents every setting, including the OpenAI-compatible endpoint for
+local models, the deterministic sampling policy and request handling.
 
 **Model Options:**
 - `gpt-4o-mini` (default) - Best cost-performance ratio: $0.0034/student, 74.85% avg score
@@ -76,6 +82,13 @@ curl -fsSL https://ollama.ai/install.sh | sh
 #### Step 2: Pull Mistral 7B model
 ```bash
 ollama pull mistral
+```
+
+#### Step 3: Serve it with a large enough context window
+The planning prompts exceed Ollama's default 4,096-token window, and the
+OpenAI-compatible endpoint cannot raise it per request, so start the server with:
+```bash
+OLLAMA_CONTEXT_LENGTH=32768 ollama serve
 ```
 
 #### Step 3: Configure LearnX to use Ollama
@@ -183,6 +196,13 @@ LearnX/
 │   ├── utils/                # Utilities & infrastructure
 │   │   ├── config.py               # Configuration management
 │   │   └── validation.py           # JSON Schema validation
+│   ├── experiment/           # Scenario-based evaluation harness
+│   │   ├── scenarios.py            # Controlled learner scenarios (full factorial)
+│   │   ├── corpus.py               # Corpus build, relevance labelling, indexing
+│   │   ├── conditions.py           # Ablation conditions
+│   │   ├── single_agent.py         # Single-agent baseline
+│   │   └── runner.py               # Runs conditions over scenarios, writes records
+│   ├── llm.py                # Chat model factory and usage instrumentation
 │   ├── orchestrator.py       # Main pipeline orchestration
 │   └── run.py                # Entry point
 ├── tests/
@@ -197,12 +217,43 @@ LearnX/
 │       ├── test_orchestrator.py
 │       └── test_syllabus_planner.py
 ├── data/                     # Runtime data storage
+│   ├── scenarios/            # Versioned scenario sets (experiment inputs)
+│   ├── corpus/               # Corpus manifest, relevance labels, index report
 │   ├── sessions/             # Session state persistence
 │   └── profiles/             # Learner profile storage
+├── results/                  # Experiment records, one JSON per run
 ├── schemas/                  # JSON Schema definitions
-├── requirements.txt
+├── requirements.txt          # Direct dependencies
+├── requirements.lock.txt     # Exact pinned environment
 └── README.md
 ```
+
+## 🔬 Scenario-based evaluation
+
+The system is evaluated by running it over a fixed set of controlled learner
+scenarios and recording what it produces. Scenarios are experimental inputs: they
+fix the profile the system is given and produce no scores.
+
+```bash
+make scenarios                      # check the scenario set reproduces byte for byte
+make corpus-fetch                   # fetch the corpus (once per corpus version)
+make corpus-label                   # apply the relevance rule, writing labels for review
+make corpus-index                   # rebuild the vector index from empty
+
+make probe  MODEL=gpt-5.4-mini      # repeat one scenario to quantify residual variation
+make e1     MODEL=gpt-5.4-mini ARGS="--workers 4"   # ablation across all conditions
+
+# Any backend, including a local OpenAI-compatible server:
+.venv/bin/python -m src.experiment.runner --experiment e2 --model mistral:7b \
+    --base-url http://localhost:11434/v1
+```
+
+Each run writes `results/<experiment>/<model>/<condition>/<scenario>.json` holding the
+syllabus as extracted and as finalised, the negotiation transcript, every response with
+its retrieved passages, prompt and inline citations, every generated assessment item, and
+per-call token usage, latency and cost. Runs resume where they stopped, and each record
+records the model snapshot, the scenario set and corpus hashes, package versions and a
+content hash of the code that produced it.
 
 ## 🧪 Testing
 

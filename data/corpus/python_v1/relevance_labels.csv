@@ -1,15 +1,15 @@
 doc_id,strand,origin,source_type,query_topic,title,auto_label,auto_reason,reviewed_label,reviewer_note
 py01-basics/arxiv_byzantine-resilient_sgd_in_high_dimensions_on_hete,py01-basics,automatic,paper,Data types,Byzantine-Resilient SGD in High Dimensions on Heterogeneous Data,off_topic,"python=0, programming_terms=0",,
 py01-basics/arxiv_data_encoding_for_byzantine-resilient_distributed_,py01-basics,automatic,paper,Data types,Data Encoding for Byzantine-Resilient Distributed Optimization,off_topic,"python=0, programming_terms=0",,
-py01-basics/arxiv_epython_an_implementation_of_python_for_the_many-c,py01-basics,automatic,paper,Python basics,ePython: An implementation of Python for the many-core Epiphany coprocessor,on_topic,mentions Python 9 times,off_topic,"PROPOSED 2026-09-17, author to confirm: Python runtime for coprocessor hardware; not introductory material"
+py01-basics/arxiv_epython_an_implementation_of_python_for_the_many-c,py01-basics,automatic,paper,Python basics,ePython: An implementation of Python for the many-core Epiphany coprocessor,on_topic,mentions Python 9 times,off_topic,Confirmed by author 2026-09-17: Python runtime for coprocessor hardware; not introductory material
 py01-basics/arxiv_multipartite_greenberger-horne-zeilinger_paradoxes,py01-basics,automatic,paper,Variables,Multipartite Greenberger-Horne-Zeilinger paradoxes for continuous variables,off_topic,"python=0, programming_terms=0",,
-py01-basics/arxiv_social_network_analysis_from_graph_theory_to_appli,py01-basics,automatic,paper,Python basics,Social Network Analysis: From Graph Theory to Applications with Python,on_topic,mentions Python 3 times,off_topic,"PROPOSED 2026-09-17, author to confirm: graph analytics paper; uses Python, does not teach it"
+py01-basics/arxiv_social_network_analysis_from_graph_theory_to_appli,py01-basics,automatic,paper,Python basics,Social Network Analysis: From Graph Theory to Applications with Python,on_topic,mentions Python 3 times,off_topic,"Confirmed by author 2026-09-17: graph analytics paper; uses Python, does not teach it"
 py01-basics/arxiv_variability_periodicity_and_contact_binaries_in_wi,py01-basics,automatic,paper,Variables,"Variability, periodicity and contact binaries in WISE",off_topic,"python=0, programming_terms=0",,
 py01-basics/basic_inputoutput,py01-basics,automatic,wikipedia,Basic input/output,BIOS,off_topic,"python=0, programming_terms=2",,
 py01-basics/data_types,py01-basics,automatic,wikipedia,Data types,Data type,on_topic,"Wikipedia, 34 programming terms",,
 py01-basics/pydocs_inputoutput,py01-basics,curated,tutorial,,7.Input and Output,on_topic,curated Python documentation,,
 py01-basics/pydocs_introduction,py01-basics,curated,tutorial,,3.An Informal Introduction to Python,on_topic,curated Python documentation,,
-py01-basics/python_basics,py01-basics,automatic,wikipedia,Python basics,Expect,on_topic,mentions Python 5 times,off_topic,"PROPOSED 2026-09-17, author to confirm: Unix automation tool; mentions Python only via Pexpect"
+py01-basics/python_basics,py01-basics,automatic,wikipedia,Python basics,Expect,on_topic,mentions Python 5 times,off_topic,Confirmed by author 2026-09-17: Unix automation tool; mentions Python only via Pexpect
 py01-basics/variables,py01-basics,automatic,wikipedia,Variables,Variable (high-level programming language),on_topic,mentions Python 5 times,,
 py01-basics/variables_and_operators,py01-basics,automatic,wikipedia,Variables and operators,Free variables and bound variables,off_topic,"python=0, programming_terms=2",,
 py02-control-flow/arxiv_coxeter-chein_loops,py02-control-flow,automatic,paper,Loops,Coxeter-Chein Loops,off_topic,"python=0, programming_terms=0",,
