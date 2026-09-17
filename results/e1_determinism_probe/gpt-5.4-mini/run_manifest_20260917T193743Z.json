@@ -1,0 +1,78 @@
+{
+  "model": {
+    "requested": "gpt-5.4-mini",
+    "base_url": null,
+    "deterministic": true,
+    "temperature_supported": true,
+    "seed": 42,
+    "reasoning_effort": null,
+    "request_timeout_s": 60.0,
+    "local": null,
+    "pricing": {
+      "input": 0.75,
+      "cached_input": 0.075,
+      "output": 4.5
+    },
+    "pricing_date": "2026-09-17",
+    "pricing_source": "https://developers.openai.com/api/docs/pricing"
+  },
+  "scenario_set": {
+    "version": "v1",
+    "seed": 20260917,
+    "sha256": "7c3337a7a18761df0fe89b343838fe96e342ab12d4b266736dc9a2b89fb3e4a5"
+  },
+  "corpus": {
+    "version": "python_v1",
+    "collection": "learnx_python_v1",
+    "index_report_sha256": "eedcd2d1da6350411cd12eeed947fd848ae8345bccb2f482ecaa7ba748c0aa95",
+    "manifest_sha256": "68be24a894411a54b54825fb25fc2272ae17c446d40fea980f65ec799320ae2d",
+    "relevance_labels_sha256": "7a5bd1daaf5d62565813bf17ebb5c794b30fe910254ac3d7f2c0be6829e3ef96",
+    "top_k": 5,
+    "similarity_threshold": 0.35
+  },
+  "code": {
+    "content_sha256": "a18293d7e0dc6d6377909a0c934fcb1497cd13d3b9d3291af9b56d0833564ddf",
+    "commit": "d34a1d48448e9f96fc963f57ff217dcfa591eb46",
+    "dirty": false
+  },
+  "packages": {
+    "langchain-core": "1.6.3",
+    "langchain-openai": "1.6.2",
+    "openai": "3.14.1",
+    "chromadb": "1.5.9",
+    "sentence-transformers": "5.1.1",
+    "transformers": "4.57.1",
+    "torch": "2.14.0"
+  },
+  "run_date": "2026-09-17",
+  "experiment": "probe",
+  "conditions": [
+    "A1"
+  ],
+  "scenarios": [
+    "S01"
+  ],
+  "repeats": 3,
+  "workers": 3,
+  "preflight": {
+    "ok": true,
+    "reply": "OK",
+    "resolved_model": "gpt-5.4-mini-2026-03-17"
+  },
+  "command": [
+    "/Users/anasraza/Desktop/Projects/LearnX Project/LearnX/src/experiment/runner.py",
+    "--experiment",
+    "probe",
+    "--model",
+    "gpt-5.4-mini",
+    "--conditions",
+    "A1",
+    "--scenarios",
+    "S01",
+    "--repeats",
+    "3",
+    "--workers",
+    "3"
+  ],
+  "started_at": "2026-09-17T19:37:43.522517+00:00"
+}

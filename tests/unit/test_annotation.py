@@ -62,6 +62,26 @@ class TestSegmentation:
     def test_segmentation_is_deterministic(self):
         assert annotation.segment_claims(RESPONSE) == annotation.segment_claims(RESPONSE)
 
+    @pytest.mark.parametrize("text", [
+        "If you want, I can still help in one of these ways:",          # the tutor offering
+        "Here are some of the most useful dictionary methods for you:",  # a lead-in to a list
+        "Here\u2019s a clear explanation of loops based only on the provided material.",
+        "This connects directly to what you already learned about parameters here.",
+        "I am sorry, but the provided context does not include information on sets.",
+        "explain the general idea of abstraction using only the provided sources, or",  # a fragment
+    ])
+    def test_meta_discourse_and_fragments_are_not_claims(self, text):
+        assert annotation.segment_claims(text) == []
+
+    @pytest.mark.parametrize("text", [
+        "`get()` is safer than direct lookup when a key might be missing.",
+        "**Default parameter:** a parameter with a built-in value used when none is passed.",
+        "> The else clause does not run if the loop ended because of a break.",
+        "In Python, parameters with default values must come after those without.",
+    ])
+    def test_real_claims_survive_including_code_and_markup(self, text):
+        assert len(annotation.segment_claims(text)) == 1
+
     def test_abbreviations_do_not_split_a_sentence(self):
         text = "Lists are mutable, e.g. you can append to them, which tuples do not allow at all."
         assert len(annotation.segment_claims(text)) == 1

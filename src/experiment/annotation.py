@@ -39,7 +39,7 @@ from ..config import config
 from .runner import EXPERIMENT_DIRS, RESULTS_DIR, model_slug
 
 ANNOTATION_DIR = config.paths.data_dir / "annotation"
-SEGMENTER_VERSION = "rule-v1"
+SEGMENTER_VERSION = "rule-v2"
 DEFAULT_SEED = 20260917
 
 # Conditions that emit citations, so the citation dimension applies (handoff 4.4).
@@ -56,6 +56,33 @@ CITATION_MARKER = re.compile(r"\[(?:Sources?\s+)?\d+(?:\s*[-–,;]\s*(?:Sources?
 # they support.
 SENTENCE_END = re.compile(r"[.!?](?:\s*\[[^\]\n]*\])*(?=\s+[A-Z`*\"'(\[])")
 MIN_CLAIM_CHARS = 40
+
+# Sentences that are not claims about the subject matter: the tutor talking about
+# itself or about the lesson, and lead-ins to a list. They would all be labelled
+# not applicable, so they are excluded from the sample rather than sent to two
+# raters. Judged on the sentence, so the rule stays deterministic and reviewable.
+NOT_A_CLAIM = re.compile(
+    r"\b(i can|i could|i'll|i will|i'm|i am|i'd|let me|i apologi[sz]e|sorry)\b"
+    r"|\b(the|this|provided) (context|materials?) (does|do|did|doesn't|don't)\b"
+    r"|\bwhat the context\b"
+    r"|\b(in|for) this (lesson|module|section)\b"
+    r"|\byou (already )?(learned|saw|covered)\b"
+    r"|\b(here|there)['\u2019]?s\b|\b(here are|below are|below is|the following)\b",
+    re.IGNORECASE,
+)
+
+# A claim must read as a whole sentence. Anything starting lower case is a
+# fragment left by the sentence splitter (usually part of a bulleted offer).
+# A sentence opening with a code span ("`get()` is safer...") is not a fragment.
+LEADING_MARKUP = re.compile(r"^[*_>\"\u201c\u2018(\[\s]+")
+STARTS_MID_SENTENCE = re.compile(r"^[a-z]")
+
+
+def _is_fragment(sentence: str) -> bool:
+    stripped = LEADING_MARKUP.sub("", sentence)
+    if stripped.startswith("`"):
+        return False
+    return bool(STARTS_MID_SENTENCE.match(stripped))
 
 
 def _split_sentences(line: str) -> List[str]:
@@ -74,8 +101,9 @@ def segment_claims(response_text: str) -> List[Dict[str, Any]]:
 
     The rule: drop code blocks, headings, list scaffolding and questions; split
     the remaining prose on sentence boundaries; keep sentences of at least
-    MIN_CLAIM_CHARS. Citation markers are kept with the claim they sit on, since
-    the citation dimension needs them, and are also recorded separately.
+    MIN_CLAIM_CHARS that are not lead-ins (ending in a colon) and not the tutor
+    talking about itself or the lesson. Citation markers are kept with the claim
+    they sit on, since the citation dimension needs them, and recorded separately.
     """
     claims: List[Dict[str, Any]] = []
     text = CODE_BLOCK.sub(" ", response_text or "")
@@ -83,11 +111,16 @@ def segment_claims(response_text: str) -> List[Dict[str, Any]]:
         line = block.strip()
         if not line or line.startswith("#") or line.startswith("|") or set(line) <= set("-*_ "):
             continue
+        line = re.sub(r"^\s*>\s*", "", line)                    # blockquote markers
         line = re.sub(r"^\s*(?:[-*+]|\d+\.)\s+", "", line)  # list markers
         for sentence in _split_sentences(line):
             sentence = sentence.strip()
-            if len(sentence) < MIN_CLAIM_CHARS or sentence.endswith("?"):
+            if len(sentence) < MIN_CLAIM_CHARS or sentence.endswith(("?", ":")):
                 continue
+            if NOT_A_CLAIM.search(sentence):
+                continue  # meta-discourse or a lead-in, not a claim to judge
+            if _is_fragment(sentence):
+                continue  # a fragment, not a whole claim
             plain = INLINE_CODE.sub(" ", CITATION_MARKER.sub("", sentence)).strip()
             if len(plain) < MIN_CLAIM_CHARS:
                 continue  # mostly markup or code

@@ -187,3 +187,8 @@ data/corpus/*/documents/
 
 # Throwaway smoke-test output of the experiment runner
 results/smoke/
+
+# Raw run records are large (140 MB for E1 alone) and regenerable from the
+# harness; the derived analysis, run manifests and corpus provenance are tracked
+results/*/*/A[1-5]/
+results/*/*/logs/
