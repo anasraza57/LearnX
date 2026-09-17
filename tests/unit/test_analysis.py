@@ -232,3 +232,48 @@ class TestCompare:
         text, summary = analysis.report("e1", "m", self._runs())
         assert "pending E3 annotation" in text
         assert any(p.get("status") == "pending annotation" for p in summary["primary"])
+
+
+class TestAppendix:
+    """The prompt appendix must quote prompts in full, minus clearly marked per-run data."""
+
+    INSTRUCTOR_PROMPT = (
+        "You are an expert educational instructor.\n\n"
+        "**Question:** Teach me about lists.\n\n"
+        "**Context from educational materials:**\n"
+        "[Source 1: 5. Data Structures]\nLists are mutable.\n\n---\n[Source 2: Lists]\nMore text.\n\n"
+        "**Instructions:**\n1. Answer using ONLY the context\n2. Be pedagogical\n\n"
+        "**Citation requirements:**\n- Cite every factual statement\n\n"
+        "**Answer:**"
+    )
+
+    def test_eliding_passages_keeps_every_instruction(self):
+        from src.experiment.appendix import _elide
+
+        elided = _elide(self.INSTRUCTOR_PROMPT)
+        assert "Lists are mutable." not in elided          # per-run passages go
+        assert "elided here" in elided                      # and say so
+        assert "**Instructions:**" in elided                # instructions stay
+        assert "1. Answer using ONLY the context" in elided
+        assert "**Citation requirements:**" in elided
+        assert elided.endswith("**Answer:**")
+
+    def test_extraction_prompt_keeps_its_format_specification(self):
+        from src.experiment.appendix import _elide
+
+        prompt = ("Based on this syllabus negotiation:\n\n"
+                  "ADVOCATE: I want Python\nDESIGNER: here is a plan\n\n"
+                  "Extract a structured JSON syllabus with this exact format:\n\n"
+                  '{\n  "topic": "..."\n}\n\nCRITICAL REQUIREMENTS:\n1. Module IDs\n\nJSON:')
+        elided = _elide(prompt)
+        assert "ADVOCATE: I want Python" not in elided
+        assert "Extract a structured JSON syllabus" in elided
+        assert "CRITICAL REQUIREMENTS:" in elided and "JSON:" in elided
+
+    def test_fence_survives_backticks_in_the_prompt(self):
+        from src.experiment.appendix import _fence
+
+        fenced = _fence("Use ```python blocks``` in your answer")
+        first = fenced.splitlines()[0]
+        assert first.startswith("````")                     # longer than any run inside
+        assert fenced.splitlines()[-1] == first.replace("text", "")
