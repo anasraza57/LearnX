@@ -166,6 +166,14 @@ than ungrounded instruction.
 
 ### 3.6.7 Statistical analysis
 
+> Every call is made with the same sampling policy: temperature 0, a fixed seed, and a cap of 8,192
+> tokens on a single completion. The cap bounds a model that fails to terminate rather than shaping a
+> well-behaved one: across the 9,159 calls of the ablation the largest completion was 3,921 tokens and
+> none reached 4,096, and no call in any reported run was stopped by the cap. Backends whose context
+> window cannot hold the longest prompt alongside the cap are run with a smaller one, recorded per run.
+> A call the cap stops is recorded as truncated and counted, so a cut-off artefact is never read as a
+> model failing a check.
+
 > Responses are nested within scenarios and are not independent, so the scenario is the unit of
 > analysis: for each scenario and condition a single rate is computed, giving 24 paired observations
 > per contrast. Contrasts use the Wilcoxon signed-rank test with the median paired difference, a
