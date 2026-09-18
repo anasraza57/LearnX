@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import ast
 import re
+import statistics
 import textwrap
 from typing import Any, Dict, List, Optional
 
@@ -465,9 +466,8 @@ def run_metrics(record: Dict[str, Any]) -> Dict[str, Any]:
             "wall_clock_s": record["wall_clock_s"],
             "llm_errors": usage["llm_errors"],
             "median_response_latency_s": (
-                sorted(r["latency_s"] for r in responses if r["latency_s"])[len(
-                    [r for r in responses if r["latency_s"]]) // 2]
-                if any(r["latency_s"] for r in responses) else None
+                statistics.median([r["latency_s"] for r in responses if r["latency_s"] is not None])
+                if any(r["latency_s"] is not None for r in responses) else None
             ),
         },
     }

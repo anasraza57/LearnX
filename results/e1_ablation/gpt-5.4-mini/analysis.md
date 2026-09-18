@@ -7,10 +7,10 @@ Runs: 120 across conditions A1, A2, A3, A4, A5. Unit of analysis: the scenario (
 | Condition | Scenarios | Responses | Items | Cost (USD) | Median response latency (s) |
 |---|---|---|---|---|---|
 | A1 | 24 | 946 | 946 | 6.11 | 4.2 |
-| A2 | 24 | 714 | 714 | 4.59 | 4.8 |
+| A2 | 24 | 714 | 714 | 4.59 | 4.7 |
 | A3 | 24 | 919 | 919 | 10.92 | 11.0 |
 | A4 | 24 | 899 | 899 | 5.58 | 4.2 |
-| A5 | 24 | 911 | 911 | 6.41 | 4.6 |
+| A5 | 24 | 911 | 911 | 6.41 | 4.5 |
 
 ## Pre-registered contrasts
 
