@@ -65,10 +65,15 @@ class TestHeadlineContrast:
                 f"{name} quotes no current rendering of Cliff's delta {renderings}"
             assert p_value in text, f"{name} does not quote p = {p_value}"
 
-    def test_no_document_still_quotes_a_superseded_figure(self):
+    def test_no_draft_still_quotes_a_superseded_figure(self):
+        """
+        The manuscript drafts must carry only current figures. The handoff is
+        exempt because it is the change log: recording what a number used to be,
+        and why it changed, is its job.
+        """
         superseded = ["-0.365", "p = 0.021", "0.365", "100% schema-valid",
                       "16,474", "10,244", "17,224"]
-        for name in DOCUMENTS:
+        for name in ("results", "methods", "discussion"):
             text = _text(name)
             for stale in superseded:
                 assert stale not in text, f"{name} still quotes the superseded {stale!r}"
