@@ -186,3 +186,8 @@ than ungrounded instruction.
   belongs in the results as a system failure, not hidden in the methods.
 - Do not describe the question-answering path as working: it filters retrieval on a module identifier
   that indexed chunks have never carried, so it always returns the canned refusal.
+- The adaptive assessment must be described as implemented rather than evaluated. The runs generate
+  assessment items and never answer them, so difficulty adaptation never executes in any experiment.
+  The implemented rule is two consecutive correct answers to move up and two consecutive wrong to move
+  down, across five levels; the accuracy thresholds in the configuration are read by nothing, and a
+  different score-based rule is used only to recommend a difficulty after a quiz ends.
