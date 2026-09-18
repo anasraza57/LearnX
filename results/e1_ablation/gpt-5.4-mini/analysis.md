@@ -75,6 +75,36 @@ Runs: 120 across conditions A1, A2, A3, A4, A5. Unit of analysis: the scenario (
 
 Runs with negotiation enabled: 72. Approved: 72. Reached the round limit without approval: 0. No revision occurred: 0. Role inversion suspected (needs confirmation by reading the transcript): 2.
 
+## E4 failure taxonomy: rates by stage
+
+Each row is a failure mode from the taxonomy. Values are the mean of the per-scenario rates, since the scenario is the unit of analysis (D28), over the unit named. Claim support and citation correctness come from the annotation study (E3).
+
+| Stage | Failure mode | Unit | A1 | A2 | A3 | A4 | A5 |
+|---|---|---|---|---|---|---|---|
+| Retrieval (instruction) | No passage above threshold | per response | 0.118 | 0.089 | n/a | 0.070 | 0.107 |
+| Retrieval (instruction) | All passages near threshold | per response | 0.163 | 0.152 | n/a | 0.151 | 0.172 |
+| Retrieval (instruction) | Passage from another strand | per passage | 0.410 | 0.401 | n/a | 0.399 | 0.414 |
+| Retrieval (assessment) | No passage retrieved for the item | per item | 0.173 | 0.102 | n/a | 0.111 | 0.154 |
+| Planning | Schema invalid as extracted | per scenario | 0.458 | 0.042 | 0.417 | 0.292 | 0.458 |
+| Planning | Reply was not parseable JSON | per scenario | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| Planning | Time budget not satisfied | per scenario | 0.000 | 0.042 | 0.000 | 0.125 | 0.000 |
+| Planning | Prerequisites unresolvable | per scenario | 0.250 | 0.042 | 0.250 | 0.083 | 0.250 |
+| Planning | Prerequisite graph cyclic | per scenario | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| Planning | Stated goal uncovered | per scenario | 0.167 | 0.167 | 0.083 | 0.125 | 0.208 |
+| Planning | Final syllabus over budget after repair | per scenario | 1.000 | 0.917 | 1.000 | 1.000 | 1.000 |
+| Negotiation | No revision occurred | per scenario | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| Negotiation | Round limit without approval | per scenario | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| Negotiation | Role inversion suspected | per scenario | 0.042 | 0.000 | 0.000 | 0.000 | 0.042 |
+| Response | Canned refusal (nothing retrieved) | per response | 0.118 | 0.089 | n/a | 0.070 | 0.107 |
+| Response | Refusal written by the model | per response | 0.101 | 0.012 | 0.000 | 0.089 | 0.090 |
+| Response | Truncated at the token limit | per response | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| Response | Code block that does not parse | per code block | 0.032 | 0.005 | 0.025 | 0.027 | 0.034 |
+| Assessment | Item fails its schema | per item | 0.004 | 0.000 | 0.002 | 0.001 | 0.000 |
+| Assessment | Placeholder item (reply unparseable) | per item | 0.004 | 0.000 | 0.000 | 0.001 | 0.000 |
+| Grounding and citation | Unsupported claim | per claim | pending E3 | pending E3 | pending E3 | pending E3 | pending E3 |
+| Grounding and citation | Misattributed citation | per claim | pending E3 | pending E3 | pending E3 | pending E3 | pending E3 |
+| Grounding and citation | Missing citation | per claim | pending E3 | pending E3 | pending E3 | pending E3 | pending E3 |
+
 ## Not computed here
 
 Claim support, citation correctness and whether an item is answerable from the corpus come from the E3 annotation study and are not approximated by any measure above.

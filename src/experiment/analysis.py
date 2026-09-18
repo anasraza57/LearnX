@@ -62,6 +62,43 @@ SECONDARY_OUTCOMES = [
 ]
 
 
+# The E4 failure taxonomy (handoff section 4.5), as (stage, failure mode, where
+# the value comes from, unit). Instruction-stage and assessment-stage retrieval
+# failures are separate rows, per B12. Grounding and citation failures come from
+# the annotation study and are listed as pending rather than approximated.
+FAILURE_TAXONOMY = [
+    ("Retrieval (instruction)", "No passage above threshold", ("rates", "no_passage_above_threshold"), "response"),
+    ("Retrieval (instruction)", "All passages near threshold", ("rates", "low_confidence_retrieval"), "response"),
+    ("Retrieval (instruction)", "Passage from another strand", ("rates", "off_strand_passage_rate"), "passage"),
+    ("Retrieval (assessment)", "No passage retrieved for the item", ("rates", "item_retrieval_failed"), "item"),
+    ("Planning", "Schema invalid as extracted", ("planning", "schema_valid_as_extracted"), "scenario-inverted"),
+    ("Planning", "Reply was not parseable JSON", ("planning", "extraction_parsed"), "scenario-inverted"),
+    ("Planning", "Time budget not satisfied", ("planning", "time_budget_satisfied"), "scenario-inverted"),
+    ("Planning", "Prerequisites unresolvable", ("planning", "prerequisites_resolvable"), "scenario-inverted"),
+    ("Planning", "Prerequisite graph cyclic", ("planning", "prerequisites_acyclic"), "scenario-inverted"),
+    ("Planning", "Stated goal uncovered", ("planning", "goal_covered"), "scenario-inverted"),
+    ("Planning", "Final syllabus over budget after repair", ("planning", "final_hours_over_budget"), "scenario"),
+    ("Negotiation", "No revision occurred", ("negotiation", "no_revision_occurred"), "scenario"),
+    ("Negotiation", "Round limit without approval", ("negotiation", "max_rounds_without_approval"), "scenario"),
+    ("Negotiation", "Role inversion suspected", ("negotiation", "roles_inverted_suspected"), "scenario"),
+    ("Response", "Canned refusal (nothing retrieved)", ("rates", "no_passage_above_threshold"), "response"),
+    ("Response", "Refusal written by the model", ("rates", "model_written_refusal"), "response"),
+    ("Response", "Truncated at the token limit", ("rates", "truncated_response"), "response"),
+    ("Response", "Code block that does not parse", ("rates", "code_block_parse_failure"), "code block"),
+    ("Assessment", "Item fails its schema", ("rates", "item_valid"), "item-inverted"),
+    ("Assessment", "Placeholder item (reply unparseable)", ("rates", "item_placeholder"), "item"),
+]
+
+
+def _taxonomy_value(metrics: Dict[str, Any], source: Tuple[str, str], unit: str) -> Optional[float]:
+    section, key = source
+    value = metrics[section].get(key)
+    if value is None:
+        return None
+    value = float(value)
+    return 1.0 - value if unit.endswith("-inverted") else value
+
+
 def wilson_interval(successes: int, total: int, confidence: float = CONFIDENCE) -> Optional[Tuple[float, float]]:
     """Wilson score interval for a proportion (better than the normal approximation at the extremes)."""
     if total == 0:
@@ -342,6 +379,28 @@ def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str
                   f"No revision occurred: {sum(1 for r in negotiation if r['negotiation']['no_revision_occurred'])}. "
                   f"Role inversion suspected (needs confirmation by reading the transcript): "
                   f"{sum(1 for r in negotiation if r['negotiation']['roles_inverted_suspected'])}."]
+
+    lines += ["", "## E4 failure taxonomy: rates by stage", "",
+              "Each row is a failure mode from the taxonomy. Values are the mean of the "
+              "per-scenario rates, since the scenario is the unit of analysis (D28), over the unit "
+              "named. Claim support and citation correctness come from the annotation study (E3).", "",
+              "| Stage | Failure mode | Unit | " + " | ".join(conditions) + " |",
+              "|---|---|---|" + "---|" * len(conditions)]
+    summary["failure_taxonomy"] = []
+    for stage, mode, source, unit in FAILURE_TAXONOMY:
+        cells, row = [], {"stage": stage, "mode": mode, "unit": unit.replace("-inverted", ""), "rates": {}}
+        for condition in conditions:
+            values = [v for v in (_taxonomy_value(r, source, unit) for r in runs if r["condition"] == condition)
+                      if v is not None]
+            mean = statistics.fmean(values) if values else None
+            row["rates"][condition] = {"mean": mean, "n": len(values)}
+            cells.append(_fmt(mean, 3))
+        summary["failure_taxonomy"].append(row)
+        lines.append(f"| {stage} | {mode} | per {unit.replace('-inverted', '')} | " + " | ".join(cells) + " |")
+    for stage, mode in [("Grounding and citation", "Unsupported claim"),
+                        ("Grounding and citation", "Misattributed citation"),
+                        ("Grounding and citation", "Missing citation")]:
+        lines.append(f"| {stage} | {mode} | per claim | " + " | ".join(["pending E3"] * len(conditions)) + " |")
 
     lines += ["", "## Not computed here", "",
               "Claim support, citation correctness and whether an item is answerable from the corpus "

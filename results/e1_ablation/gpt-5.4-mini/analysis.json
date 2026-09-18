@@ -13048,6 +13048,548 @@
           "supported": false
         }
       }
-    }
+    },
+    "failure_taxonomy": [
+      {
+        "stage": "Retrieval (instruction)",
+        "mode": "No passage above threshold",
+        "unit": "response",
+        "rates": {
+          "A1": {
+            "mean": 0.11796566015072164,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.08937735753525228,
+            "n": 24
+          },
+          "A3": {
+            "mean": null,
+            "n": 0
+          },
+          "A4": {
+            "mean": 0.07040277207730902,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.10652926319239504,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Retrieval (instruction)",
+        "mode": "All passages near threshold",
+        "unit": "response",
+        "rates": {
+          "A1": {
+            "mean": 0.16339010669145584,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.15223772815878078,
+            "n": 24
+          },
+          "A3": {
+            "mean": null,
+            "n": 0
+          },
+          "A4": {
+            "mean": 0.15138760931558473,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.17210696674177586,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Retrieval (instruction)",
+        "mode": "Passage from another strand",
+        "unit": "passage",
+        "rates": {
+          "A1": {
+            "mean": 0.41044408764685825,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.4013297289987301,
+            "n": 24
+          },
+          "A3": {
+            "mean": null,
+            "n": 0
+          },
+          "A4": {
+            "mean": 0.39932073921085337,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.41390324974653575,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Retrieval (assessment)",
+        "mode": "No passage retrieved for the item",
+        "unit": "item",
+        "rates": {
+          "A1": {
+            "mean": 0.17311288731886335,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.10240645806435279,
+            "n": 24
+          },
+          "A3": {
+            "mean": null,
+            "n": 0
+          },
+          "A4": {
+            "mean": 0.11053217999509031,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.15377704980203655,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Planning",
+        "mode": "Schema invalid as extracted",
+        "unit": "scenario",
+        "rates": {
+          "A1": {
+            "mean": 0.4583333333333333,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.041666666666666664,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.4166666666666667,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.2916666666666667,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.4583333333333333,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Planning",
+        "mode": "Reply was not parseable JSON",
+        "unit": "scenario",
+        "rates": {
+          "A1": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.0,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Planning",
+        "mode": "Time budget not satisfied",
+        "unit": "scenario",
+        "rates": {
+          "A1": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.041666666666666664,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.125,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.0,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Planning",
+        "mode": "Prerequisites unresolvable",
+        "unit": "scenario",
+        "rates": {
+          "A1": {
+            "mean": 0.25,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.041666666666666664,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.25,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.08333333333333333,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.25,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Planning",
+        "mode": "Prerequisite graph cyclic",
+        "unit": "scenario",
+        "rates": {
+          "A1": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.0,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Planning",
+        "mode": "Stated goal uncovered",
+        "unit": "scenario",
+        "rates": {
+          "A1": {
+            "mean": 0.16666666666666666,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.16666666666666666,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.08333333333333333,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.125,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.20833333333333334,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Planning",
+        "mode": "Final syllabus over budget after repair",
+        "unit": "scenario",
+        "rates": {
+          "A1": {
+            "mean": 1.0,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.9166666666666666,
+            "n": 24
+          },
+          "A3": {
+            "mean": 1.0,
+            "n": 24
+          },
+          "A4": {
+            "mean": 1.0,
+            "n": 24
+          },
+          "A5": {
+            "mean": 1.0,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Negotiation",
+        "mode": "No revision occurred",
+        "unit": "scenario",
+        "rates": {
+          "A1": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.0,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Negotiation",
+        "mode": "Round limit without approval",
+        "unit": "scenario",
+        "rates": {
+          "A1": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.0,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Negotiation",
+        "mode": "Role inversion suspected",
+        "unit": "scenario",
+        "rates": {
+          "A1": {
+            "mean": 0.041666666666666664,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.041666666666666664,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Response",
+        "mode": "Canned refusal (nothing retrieved)",
+        "unit": "response",
+        "rates": {
+          "A1": {
+            "mean": 0.11796566015072164,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.08937735753525228,
+            "n": 24
+          },
+          "A3": {
+            "mean": null,
+            "n": 0
+          },
+          "A4": {
+            "mean": 0.07040277207730902,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.10652926319239504,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Response",
+        "mode": "Refusal written by the model",
+        "unit": "response",
+        "rates": {
+          "A1": {
+            "mean": 0.10126586591657455,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.012127636009214958,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.0885950661108831,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.09020302044394037,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Response",
+        "mode": "Truncated at the token limit",
+        "unit": "response",
+        "rates": {
+          "A1": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.0,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Response",
+        "mode": "Code block that does not parse",
+        "unit": "code block",
+        "rates": {
+          "A1": {
+            "mean": 0.031984640827724814,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.004714380876683727,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.024930242552526502,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.026907616579858306,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.03419382519615337,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Assessment",
+        "mode": "Item fails its schema",
+        "unit": "item",
+        "rates": {
+          "A1": {
+            "mean": 0.004183673094321809,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.002347883597883599,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.000992063492063493,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.0,
+            "n": 24
+          }
+        }
+      },
+      {
+        "stage": "Assessment",
+        "mode": "Placeholder item (reply unparseable)",
+        "unit": "item",
+        "rates": {
+          "A1": {
+            "mean": 0.004183673094321809,
+            "n": 24
+          },
+          "A2": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A3": {
+            "mean": 0.0,
+            "n": 24
+          },
+          "A4": {
+            "mean": 0.000992063492063492,
+            "n": 24
+          },
+          "A5": {
+            "mean": 0.0,
+            "n": 24
+          }
+        }
+      }
+    ]
   }
 }
