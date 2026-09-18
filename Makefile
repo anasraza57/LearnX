@@ -33,11 +33,6 @@ e1:
 probe:
 	$(PYTHON) -m src.experiment.runner --experiment probe --model $(MODEL) --conditions A1 --scenarios S01 --repeats 3 $(ARGS)
 
-# ---- Retired: these draw results from assumed distributions instead of running
-# the system, so they cannot be used as evaluation results.
-compare-models compare-models-quick evaluate-all:
-	@echo "'$@' samples results from assumed distributions rather than running the system. Disabled; use the harness targets above."; exit 1
-
 # Run tests
 test:
 	$(PYTHON) -m pytest tests/ -v

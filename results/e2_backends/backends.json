@@ -1,0 +1,429 @@
+{
+  "condition": "A1",
+  "arms": {
+    "gpt-5.4-mini": {
+      "scenarios": 24,
+      "responses": 946,
+      "items": 946,
+      "cost_usd": 6.114560699999999,
+      "median_latency_s": 4.2249874164990615
+    },
+    "mistral:7b": {
+      "scenarios": 1,
+      "responses": 28,
+      "items": 28,
+      "cost_usd": null,
+      "median_latency_s": 13.662182542000664
+    }
+  },
+  "measures": {
+    "schema_valid_as_extracted": {
+      "gpt-5.4-mini": {
+        "rate": 0.5416666666666666,
+        "n": 24,
+        "wilson_ci": [
+          0.3507486535891948,
+          0.72108666268789
+        ]
+      },
+      "mistral:7b": {
+        "rate": 1.0,
+        "n": 1,
+        "wilson_ci": [
+          0.20654931437723745,
+          1.0
+        ]
+      }
+    },
+    "extraction_parsed": {
+      "gpt-5.4-mini": {
+        "rate": 1.0,
+        "n": 24,
+        "wilson_ci": [
+          0.8620237953250198,
+          1.0
+        ]
+      },
+      "mistral:7b": {
+        "rate": 1.0,
+        "n": 1,
+        "wilson_ci": [
+          0.20654931437723745,
+          1.0
+        ]
+      }
+    },
+    "time_budget_satisfied": {
+      "gpt-5.4-mini": {
+        "rate": 1.0,
+        "n": 24,
+        "wilson_ci": [
+          0.8620237953250198,
+          1.0
+        ]
+      },
+      "mistral:7b": {
+        "rate": 0.0,
+        "n": 1,
+        "wilson_ci": [
+          0.0,
+          0.7934506856227626
+        ]
+      }
+    },
+    "prerequisites_resolvable": {
+      "gpt-5.4-mini": {
+        "rate": 0.75,
+        "n": 24,
+        "wilson_ci": [
+          0.55100555994846,
+          0.8800063377140499
+        ]
+      },
+      "mistral:7b": {
+        "rate": 1.0,
+        "n": 1,
+        "wilson_ci": [
+          0.20654931437723745,
+          1.0
+        ]
+      }
+    },
+    "goal_covered": {
+      "gpt-5.4-mini": {
+        "rate": 0.8333333333333334,
+        "n": 24,
+        "wilson_ci": [
+          0.6414692935030095,
+          0.9332132367136705
+        ]
+      },
+      "mistral:7b": {
+        "rate": 1.0,
+        "n": 1,
+        "wilson_ci": [
+          0.20654931437723745,
+          1.0
+        ]
+      }
+    },
+    "all_constraints_satisfied": {
+      "gpt-5.4-mini": {
+        "rate": 0.4166666666666667,
+        "n": 24,
+        "wilson_ci": [
+          0.24467602609811764,
+          0.6116533413477124
+        ]
+      },
+      "mistral:7b": {
+        "rate": 0.0,
+        "n": 1,
+        "wilson_ci": [
+          0.0,
+          0.7934506856227626
+        ]
+      }
+    },
+    "no_passage_above_threshold": {
+      "gpt-5.4-mini": {
+        "median": 0.09285714285714286,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.07142857142857142,
+        "n": 1
+      }
+    },
+    "low_confidence_retrieval": {
+      "gpt-5.4-mini": {
+        "median": 0.1624764299182904,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.07142857142857142,
+        "n": 1
+      }
+    },
+    "off_strand_passage_rate": {
+      "gpt-5.4-mini": {
+        "median": 0.4100877192982456,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.25396825396825395,
+        "n": 1
+      }
+    },
+    "model_written_refusal": {
+      "gpt-5.4-mini": {
+        "median": 0.08333333333333333,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.10714285714285714,
+        "n": 1
+      }
+    },
+    "response_without_citation": {
+      "gpt-5.4-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.0,
+        "n": 1
+      }
+    },
+    "invalid_citation_marker_rate": {
+      "gpt-5.4-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.0,
+        "n": 1
+      }
+    },
+    "citations_per_response": {
+      "gpt-5.4-mini": {
+        "median": 19.349056603773583,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 7.846153846153846,
+        "n": 1
+      }
+    },
+    "code_blocks_per_response": {
+      "gpt-5.4-mini": {
+        "median": 1.476923076923077,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 1.6428571428571428,
+        "n": 1
+      }
+    },
+    "code_block_parse_failure": {
+      "gpt-5.4-mini": {
+        "median": 0.008403361344537815,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.15217391304347827,
+        "n": 1
+      }
+    },
+    "response_with_broken_code": {
+      "gpt-5.4-mini": {
+        "median": 0.022727272727272707,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.10526315789473684,
+        "n": 1
+      }
+    },
+    "item_valid": {
+      "gpt-5.4-mini": {
+        "median": 1.0,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.8571428571428571,
+        "n": 1
+      }
+    },
+    "item_placeholder": {
+      "gpt-5.4-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.07142857142857142,
+        "n": 1
+      }
+    },
+    "item_retrieval_failed": {
+      "gpt-5.4-mini": {
+        "median": 0.16869918699186992,
+        "n": 24
+      },
+      "mistral:7b": {
+        "median": 0.07142857142857142,
+        "n": 1
+      }
+    }
+  },
+  "against_first": {
+    "constraint_satisfaction_rate": {
+      "mistral:7b": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral:7b"
+        ],
+        "outcome": "constraint_satisfaction_rate",
+        "kind": "rate",
+        "scenarios_compared": 1,
+        "status": "computed",
+        "n_pairs": 1,
+        "median_first": 0.8571428571428571,
+        "median_second": 0.8571428571428571,
+        "median_difference": 0.0,
+        "mean_difference": 0.0,
+        "ties": 1,
+        "cliffs_delta": 0.0,
+        "difference_ci": null,
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": null,
+        "p_value": 1.0,
+        "supported": null
+      }
+    },
+    "schema_valid_as_extracted": {
+      "mistral:7b": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral:7b"
+        ],
+        "outcome": "schema_valid_as_extracted",
+        "kind": "rate",
+        "scenarios_compared": 1,
+        "status": "computed",
+        "n_pairs": 1,
+        "median_first": 0.0,
+        "median_second": 1.0,
+        "median_difference": -1.0,
+        "mean_difference": -1.0,
+        "ties": 0,
+        "cliffs_delta": -1.0,
+        "difference_ci": null,
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.0,
+        "supported": null
+      }
+    },
+    "time_budget_satisfied": {
+      "mistral:7b": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral:7b"
+        ],
+        "outcome": "time_budget_satisfied",
+        "kind": "rate",
+        "scenarios_compared": 1,
+        "status": "computed",
+        "n_pairs": 1,
+        "median_first": 1.0,
+        "median_second": 0.0,
+        "median_difference": 1.0,
+        "mean_difference": 1.0,
+        "ties": 0,
+        "cliffs_delta": 1.0,
+        "difference_ci": null,
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.0,
+        "supported": null
+      }
+    },
+    "no_passage_above_threshold": {
+      "mistral:7b": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral:7b"
+        ],
+        "outcome": "no_passage_above_threshold",
+        "kind": "rate",
+        "scenarios_compared": 1,
+        "status": "computed",
+        "n_pairs": 1,
+        "median_first": 0.023809523809523808,
+        "median_second": 0.07142857142857142,
+        "median_difference": -0.047619047619047616,
+        "mean_difference": -0.047619047619047616,
+        "ties": 0,
+        "cliffs_delta": -1.0,
+        "difference_ci": null,
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.0,
+        "supported": null
+      }
+    },
+    "citations_per_response": {
+      "mistral:7b": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral:7b"
+        ],
+        "outcome": "citations_per_response",
+        "kind": "rate",
+        "scenarios_compared": 1,
+        "status": "computed",
+        "n_pairs": 1,
+        "median_first": 21.634146341463413,
+        "median_second": 7.846153846153846,
+        "median_difference": 13.787992495309567,
+        "mean_difference": 13.787992495309567,
+        "ties": 0,
+        "cliffs_delta": 1.0,
+        "difference_ci": null,
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.0,
+        "supported": null
+      }
+    },
+    "item_valid": {
+      "mistral:7b": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral:7b"
+        ],
+        "outcome": "item_valid",
+        "kind": "rate",
+        "scenarios_compared": 1,
+        "status": "computed",
+        "n_pairs": 1,
+        "median_first": 1.0,
+        "median_second": 0.8571428571428571,
+        "median_difference": 0.1428571428571429,
+        "mean_difference": 0.1428571428571429,
+        "ties": 0,
+        "cliffs_delta": 1.0,
+        "difference_ci": null,
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.0,
+        "supported": null
+      }
+    },
+    "code_block_parse_failure": {
+      "mistral:7b": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral:7b"
+        ],
+        "outcome": "code_block_parse_failure",
+        "kind": "rate",
+        "scenarios_compared": 1,
+        "status": "computed",
+        "n_pairs": 1,
+        "median_first": 0.0,
+        "median_second": 0.15217391304347827,
+        "median_difference": -0.15217391304347827,
+        "mean_difference": -0.15217391304347827,
+        "ties": 0,
+        "cliffs_delta": -1.0,
+        "difference_ci": null,
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.0,
+        "supported": null
+      }
+    }
+  }
+}

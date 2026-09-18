@@ -408,13 +408,130 @@ def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str
     return "\n".join(lines), summary
 
 
+def backend_report(arms: List[Tuple[str, str]], condition: str = "A1") -> Tuple[str, Dict[str, Any]]:
+    """
+    E2: the architecture held fixed while the backend varies.
+
+    Each arm contributes its runs of one condition (A1 by default), relabelled by
+    backend so the same paired machinery applies. The scenarios are identical
+    across backends, so differences are paired by scenario. These comparisons
+    were not pre-registered: E2 asks what model capability contributes, and is
+    reported descriptively with intervals rather than as hypothesis tests.
+    """
+    runs: List[Dict[str, Any]] = []
+    for experiment, model in arms:
+        for metrics in load_runs(experiment, model):
+            if metrics["condition"] != condition:
+                continue
+            metrics = {**metrics, "backend": model, "condition": model}
+            runs.append(metrics)
+    labels = [model for _, model in arms if any(r["condition"] == model for r in runs)]
+    if not labels:
+        raise SystemExit("No completed runs found for any of those arms")
+
+    lines = [f"# E2 backends: condition {condition} across models", "",
+             "The architecture, corpus, scenarios and prompts are identical across these arms; only "
+             "the model differs. Paired by scenario. Not pre-registered: reported descriptively.", "",
+             "## Coverage", "",
+             "| Backend | Scenarios | Responses | Items | API cost (USD) | Median latency (s) | Runs failed |",
+             "|---|---|---|---|---|---|---|"]
+    summary: Dict[str, Any] = {"condition": condition, "arms": {}, "measures": {}, "against_first": {}}
+    for label in labels:
+        subset = [r for r in runs if r["condition"] == label]
+        costs = [r["cost"]["cost_usd"] for r in subset if r["cost"]["cost_usd"] is not None]
+        latencies = [r["cost"]["median_response_latency_s"] for r in subset
+                     if r["cost"]["median_response_latency_s"]]
+        entry = {
+            "scenarios": len(subset),
+            "responses": sum(r["counts"]["responses"] for r in subset),
+            "items": sum(r["counts"]["items"] for r in subset),
+            "cost_usd": sum(costs) if costs else None,
+            "median_latency_s": statistics.median(latencies) if latencies else None,
+        }
+        summary["arms"][label] = entry
+        lines.append(f"| {label} | {entry['scenarios']} | {entry['responses']} | {entry['items']} | "
+                     f"{_fmt(entry['cost_usd'], 2)} | {_fmt(entry['median_latency_s'], 1)} | 0 |")
+
+    # Planning checks are pass/fail per scenario, so they are proportions with a
+    # Wilson interval. The rest are per-scenario rates, summarised by median.
+    planning_keys = ["schema_valid_as_extracted", "extraction_parsed", "time_budget_satisfied",
+                     "prerequisites_resolvable", "goal_covered", "all_constraints_satisfied"]
+    lines += ["", "## Planning checks by backend (proportion of scenarios, 95% Wilson)", "",
+              "| Check | " + " | ".join(labels) + " |", "|---" * (len(labels) + 1) + "|"]
+    for key in planning_keys:
+        cells = []
+        summary["measures"].setdefault(key, {})
+        for label in labels:
+            values = [bool(_outcome_value(r, key)) for r in runs if r["condition"] == label
+                      and _outcome_value(r, key) is not None]
+            rate = sum(values) / len(values) if values else None
+            interval = wilson_interval(sum(values), len(values)) if values else None
+            summary["measures"][key][label] = {"rate": rate, "n": len(values), "wilson_ci": interval}
+            cells.append(f"{_fmt(rate, 2)} {_fmt(interval, 2)}" if rate is not None else "n/a")
+        lines.append(f"| {key} | " + " | ".join(cells) + " |")
+
+    lines += ["", "## Automatic measures by backend (median of per-scenario rates)", "",
+              "| Measure | " + " | ".join(labels) + " |", "|---" * (len(labels) + 1) + "|"]
+    for key in SECONDARY_OUTCOMES:
+        cells = []
+        summary["measures"].setdefault(key, {})
+        for label in labels:
+            values = [v for v in (_outcome_value(r, key) for r in runs if r["condition"] == label)
+                      if v is not None]
+            median = statistics.median(values) if values else None
+            summary["measures"][key][label] = {"median": median, "n": len(values)}
+            cells.append(_fmt(median))
+        lines.append(f"| {key} | " + " | ".join(cells) + " |")
+
+    reference = labels[0]
+    others = labels[1:]
+    if others:
+        lines += ["", f"## Paired differences against {reference}", "",
+                  "| Measure | " + " | ".join(f"vs {o}" for o in others) + " |",
+                  "|---" * (len(others) + 1) + "|"]
+        for key in ["constraint_satisfaction_rate", "schema_valid_as_extracted", "time_budget_satisfied",
+                    "no_passage_above_threshold", "citations_per_response", "item_valid",
+                    "code_block_parse_failure"]:
+            cells = []
+            summary["against_first"].setdefault(key, {})
+            for other in others:
+                result = compare(runs, reference, other, key, "higher")
+                summary["against_first"][key][other] = result
+                if result["status"] != "computed":
+                    cells.append("n/a")
+                    continue
+                cells.append(f"{result['median_difference']:+.3f} "
+                             f"[{result['difference_ci'][0]:+.3f}, {result['difference_ci'][1]:+.3f}]"
+                             if result["difference_ci"] else f"{result['median_difference']:+.3f}")
+            lines.append(f"| {key} | " + " | ".join(cells) + " |")
+
+    lines += ["", "Local backends report no API cost. Their cost of ownership (energy and amortised "
+              "hardware) is computed separately by `python -m src.experiment.tco`.", ""]
+    return "\n".join(lines), summary
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--experiment", choices=sorted(EXPERIMENT_DIRS), default="e1")
-    parser.add_argument("--model", required=True)
+    parser.add_argument("--model")
+    parser.add_argument("--arm", nargs=2, action="append", metavar=("EXPERIMENT", "MODEL"),
+                        help="an E2 arm to compare, repeatable: --arm e1 gpt-5.4-mini --arm e2 mistral:7b")
+    parser.add_argument("--condition", default="A1", help="condition to compare across backends")
     parser.add_argument("--out", type=Path, help="where to write the report (default: alongside the records)")
     args = parser.parse_args()
 
+    if args.arm:
+        text, summary = backend_report([(e, m) for e, m in args.arm], args.condition)
+        out = args.out or RESULTS_DIR / EXPERIMENT_DIRS["e2"]
+        out.mkdir(parents=True, exist_ok=True)
+        print(text)
+        (out / "backends.md").write_text(text + "\n", encoding="utf-8")
+        (out / "backends.json").write_text(json.dumps(summary, indent=2, default=str), encoding="utf-8")
+        print(f"\nWritten: {out / 'backends.md'} and {out / 'backends.json'}")
+        return
+
+    if not args.model:
+        parser.error("--model is required unless --arm is used")
     runs = load_runs(args.experiment, args.model)
     if not runs:
         raise SystemExit(f"No completed runs for {args.model} under {args.experiment}")
