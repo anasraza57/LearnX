@@ -75,7 +75,13 @@ the system pointed at does not. That combination is the reason the two dimension
 ## Dimension 3: supported by the retrieved passages (secondary, grounded responses only)
 
 `yes`, `no` or `not_applicable`: does the claim follow from the passages **this response was given**,
-listed in `contexts.json`? Leave blank where the response retrieved nothing.
+listed in `contexts.json`?
+
+Two cases are not the same and should not be filled in the same way. Where the response retrieved
+nothing at all, so there is no passage to judge against, leave the cell **blank**: it drops out of
+the agreement entirely, which is right, because there was nothing for either of us to disagree
+about. Use `not_applicable` only where dimension 1 was `not_applicable`, so that we still record
+having looked.
 
 The gap between dimension 1 and dimension 3 tells us whether the model used what it was handed, which
 is a different question from whether the claim is true.
