@@ -1,0 +1,18 @@
+# Commit map after the history rewrite of 18 September 2026
+#
+# Three files that were committed to this public repository by mistake (two private
+# planning documents and the submitted PDF) were removed from the history, which
+# changed every commit hash after the first of them. Run manifests in results/ record
+# the commit they ran at, so this maps the hash each one recorded to the hash that
+# now holds the same tree. The content_sha256 in each manifest is unaffected: it
+# hashes the code itself, not the commit.
+#
+# old hash                                 new hash
+100d5acd0f8d9fcb919ec5b5b6ddfa0d3d54eeb1 1a3b16f4b5941a6f058809d9693031d9df784e03
+3b667bbd1fd11c46b4259acf3692b93bdd355297 ecf8275e9954c01eee35c1651fbb1efa5520314b
+82cd8334392183a39978ccb7ed243ae3f9f29c72 e9a3d511884f8552dced3ebf352b4c64f9a54f02
+8feaa59e7f899f8383a0e3899eb571a217221fa3 62830b86fb6db57e3f02d9fa3cda60b1f0727a1b
+ad75992809bd7072090b22b872e693ece60f07e0 88d41c5f2b1668454410fd1820e166bfa20e1c30
+d34a1d48448e9f96fc963f57ff217dcfa591eb46 5276093553aef7c0d910d1a2e3d13a7206e15bbc
+daeb8158586cf0e4209fdfd73ec2b5d008713840 e395dd9ac9fe9b076689072f31f4c1bbc6f41ba7
+fa397fc2e872c0c6ecee8d851f4ac5a7a77a2a7f a231b0b63946b322bca484277f93db6d4f2da8b5
