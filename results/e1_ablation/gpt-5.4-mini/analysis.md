@@ -41,7 +41,7 @@ A prerequisite written as prose fails the schema and the prerequisite checks ali
 |---|---|---|---|---|---|
 | no_passage_above_threshold | 0.093 | 0.082 | n/a | 0.056 | 0.099 |
 | low_confidence_retrieval | 0.176 | 0.163 | n/a | 0.159 | 0.177 |
-| off_strand_passage_rate | 0.438 | 0.425 | n/a | 0.430 | 0.476 |
+| off_strand_passage_rate | 0.444 | 0.425 | n/a | 0.430 | 0.476 |
 | model_written_refusal | 0.098 | 0.000 | 0.000 | 0.094 | 0.090 |
 | response_without_citation | 0.000 | 0.000 | 1.000 | 0.000 | 1.000 |
 | invalid_citation_marker_rate | 0.000 | 0.000 | 1.000 | 0.000 | n/a |
@@ -114,7 +114,7 @@ Each row is a failure mode from the taxonomy. Values are the mean of the per-sce
 |---|---|---|---|---|---|---|---|
 | Retrieval (instruction) | No passage above threshold | per response | 0.118 | 0.089 | n/a | 0.070 | 0.107 |
 | Retrieval (instruction) | All passages near threshold | per response | 0.186 | 0.169 | n/a | 0.163 | 0.195 |
-| Retrieval (instruction) | Passage from another strand | per passage | 0.454 | 0.450 | n/a | 0.454 | 0.484 |
+| Retrieval (instruction) | Passage from another strand | per passage | 0.459 | 0.454 | n/a | 0.456 | 0.486 |
 | Retrieval (assessment) | No passage retrieved for the item | per item | 0.173 | 0.102 | n/a | 0.111 | 0.154 |
 | Planning | Schema invalid as extracted | per scenario | 0.458 | 0.042 | 0.417 | 0.292 | 0.458 |
 | Planning | Reply was not parseable JSON | per scenario | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |

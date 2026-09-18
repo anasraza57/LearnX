@@ -341,7 +341,12 @@ def response_checks(record: Dict[str, Any]) -> Dict[str, Any]:
                 "mode": lesson.get("mode"),
                 "no_passage_above_threshold": lesson.get("refused", False),
                 "low_confidence_retrieval": (max(sims) < threshold + NEAR_THRESHOLD_MARGIN) if sims else None,
-                "off_strand_passages": sum(1 for p in passages if strand and p.get("strand") != strand),
+                # None, not zero, where the module is about no strand in the corpus:
+                # the question does not arise, and counting it as zero off-strand
+                # would flatter a backend precisely when it plans outside the corpus
+                "off_strand_passages": (sum(1 for p in passages if p.get("strand") != strand)
+                                        if strand else None),
+                "strand_known": strand is not None,
                 "passages": len(passages),
                 "model_written_refusal": (bool(REFUSAL_PATTERNS.search(lesson.get("content", "")))
                                          if not lesson.get("refused") else None),
@@ -379,6 +384,20 @@ def assessment_checks(record: Dict[str, Any]) -> Dict[str, Any]:
     return {"items": rows}
 
 
+def _off_strand_rate(grounded: List[Dict[str, Any]]) -> Optional[float]:
+    """Off-strand passages over the passages the question can be asked of."""
+    judged = [r for r in grounded if r["off_strand_passages"] is not None]
+    total = sum(r["passages"] for r in judged)
+    return sum(r["off_strand_passages"] for r in judged) / total if total else None
+
+
+def _known_strand_share(grounded: List[Dict[str, Any]]) -> Optional[float]:
+    total = sum(r["passages"] for r in grounded)
+    if not total:
+        return None
+    return sum(r["passages"] for r in grounded if r["off_strand_passages"] is not None) / total
+
+
 def _rate(rows: List[Dict[str, Any]], field: str) -> Optional[float]:
     values = [bool(r[field]) for r in rows if r.get(field) is not None]
     return sum(values) / len(values) if values else None
@@ -408,10 +427,9 @@ def run_metrics(record: Dict[str, Any]) -> Dict[str, Any]:
             "no_passage_above_threshold": _rate(grounded, "no_passage_above_threshold"),
             "low_confidence_retrieval": _rate([r for r in grounded if r["low_confidence_retrieval"] is not None],
                                               "low_confidence_retrieval"),
-            "off_strand_passage_rate": (
-                sum(r["off_strand_passages"] for r in grounded) / sum(r["passages"] for r in grounded)
-                if sum(r["passages"] for r in grounded) else None
-            ),
+            "off_strand_passage_rate": _off_strand_rate(grounded),
+            # How much of the retrieval this measure can speak to at all
+            "passages_in_modules_of_known_strand": _known_strand_share(grounded),
             # Instruction
             "model_written_refusal": _rate([r for r in responses if r["model_written_refusal"] is not None],
                                            "model_written_refusal"),
