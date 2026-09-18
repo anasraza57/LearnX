@@ -80,14 +80,16 @@ than ungrounded instruction.
 > parameter present in earlier configuration was unused and has been removed.
 >
 > When nothing clears the threshold the instructor returns a fixed refusal rather than answering
-> unsupported; this happened for 9.3% of responses under the full architecture. Low-confidence
-> retrieval, meaning every returned passage sits within 0.05 of the threshold, is recorded separately
-> and occurred for 16.2% of responses. Conflicting passages are not detected automatically; the
+> unsupported; this happened for 115 of 946 responses (12.2%) under the full architecture.
+> Low-confidence retrieval, meaning every passage returned sits within 0.05 of the threshold, is
+> recorded separately over the responses that retrieved anything, and occurred for 17.6% of them. Conflicting passages are not detected automatically; the
 > annotation study records contradiction at claim level.
 >
 > Retrieved passages carry the strand they came from, which makes it measurable how often retrieval
-> crosses strands: 41% of passages supplied to the full architecture came from a strand other than the
-> one the module belonged to.
+> crosses strands: 44% of passages supplied to the full architecture came from a strand other than the
+> one the module's title and topics describe. Judging that against the strand the module is about
+> matters, since judging it against the passages the module itself retrieved would score uniformly
+> wrong retrieval as perfect.
 
 ---
 
@@ -106,7 +108,8 @@ than ungrounded instruction.
 > condition. With the instruction, all 831 answered responses carried at least one marker, 16,474 in
 > total, a median of 19 per response. Of those, 5 (0.03%) pointed outside the set of passages
 > supplied, all five in a single response citing a source numbered 6 when it had been given five;
-> every other marker referred to a passage that existed.
+> every other marker referred to a passage that existed. The other citing conditions produce such
+> markers at a similar rate (0.10% and 0.09%).
 >
 > Whether a cited passage in fact supports the claim attached to it is not decidable automatically and
 > is measured by the two-rater study in §3.6.

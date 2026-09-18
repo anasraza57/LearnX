@@ -148,8 +148,17 @@ def mcnemar_exact(both: int, only_a: int, only_b: int, neither: int) -> Dict[str
     }
 
 
-def paired_comparison(pairs: List[Tuple[str, float, float]], direction: str) -> Dict[str, Any]:
-    """Wilcoxon signed-rank plus effect sizes on paired scenario-level rates."""
+def paired_comparison(pairs: List[Tuple[str, float, float]], direction: str,
+                      statistic: Callable[[Sequence[float]], float] = statistics.median) -> Dict[str, Any]:
+    """
+    Wilcoxon signed-rank plus effect sizes on paired scenario-level rates.
+
+    `statistic` summarises the paired differences and is what the confidence
+    interval is built on. Binary outcomes pass the mean, because the median of
+    differences drawn from {-1, 0, +1} is zero unless more than half the pairs
+    are discordant in one direction, which would make the decision rule
+    unreachable regardless of the size of the effect.
+    """
     first = [a for _, a, _ in pairs]
     second = [b for _, _, b in pairs]
     differences = [a - b for a, b in zip(first, second)]
@@ -161,17 +170,21 @@ def paired_comparison(pairs: List[Tuple[str, float, float]], direction: str) -> 
         "median_second": statistics.median(second) if second else None,
         "median_difference": statistics.median(differences) if differences else None,
         "mean_difference": statistics.fmean(differences) if differences else None,
+        "summary_statistic": "mean" if statistic is statistics.fmean else "median",
         "ties": len(differences) - len(non_zero),
-        "cliffs_delta": cliffs_delta(first, second),
-        "difference_ci": bootstrap_ci(differences),
+        # Cliff's delta compares all pairs across the two groups, so it ignores
+        # the pairing; reported as the unpaired effect size
+        "cliffs_delta_unpaired": cliffs_delta(first, second),
+        "difference_ci": bootstrap_ci(differences, statistic=statistic),
         "direction_predicted": direction,
     }
     if non_zero:
-        statistic, p_value = stats.wilcoxon(first, second, zero_method="wilcox")
-        result["wilcoxon_statistic"], result["p_value"] = float(statistic), float(p_value)
+        wilcoxon_statistic, p_value = stats.wilcoxon(first, second, zero_method="wilcox")
+        result["wilcoxon_statistic"], result["p_value"] = float(wilcoxon_statistic), float(p_value)
     else:
         result["wilcoxon_statistic"], result["p_value"] = None, 1.0
 
+    result["point_estimate"] = statistic(differences) if differences else None
     ci = result["difference_ci"]
     if ci is None:
         result["supported"] = None
@@ -229,6 +242,12 @@ def compare(runs: List[Dict[str, Any]], first: str, second: str, outcome: str, d
         only_b = sum(1 for _, a, b in pairs if b and not a)
         neither = sum(1 for _, a, b in pairs if not a and not b)
         first_successes, second_successes = both + only_a, both + only_b
+        comparison = paired_comparison(pairs, direction, statistic=statistics.fmean)
+        mcnemar = mcnemar_exact(both, only_a, only_b, neither)
+        # The pre-registered test for a binary per-scenario outcome is exact
+        # McNemar; the signed-rank statistic on 0/1 data is not meaningful here
+        comparison.update({"p_value": mcnemar["p_value"], "wilcoxon_statistic": None,
+                           "test": "exact McNemar"})
         return {
             **header,
             "status": "computed",
@@ -236,11 +255,12 @@ def compare(runs: List[Dict[str, Any]], first: str, second: str, outcome: str, d
             "proportion_second": second_successes / len(pairs),
             "ci_first": wilson_interval(first_successes, len(pairs)),
             "ci_second": wilson_interval(second_successes, len(pairs)),
-            "mcnemar": mcnemar_exact(both, only_a, only_b, neither),
+            "mcnemar": mcnemar,
             "direction_predicted": direction,
-            **paired_comparison(pairs, direction),
+            **comparison,
         }
-    return {**header, "status": "computed", **paired_comparison(pairs, direction)}
+    return {**header, "status": "computed", "test": "Wilcoxon signed-rank",
+            **paired_comparison(pairs, direction)}
 
 
 def _fmt(value: Any, digits: int = 3) -> str:
@@ -282,7 +302,7 @@ def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str
                      f"{_fmt(row['cost_usd'], 2)} | {_fmt(row['median_latency_s'], 1)} |")
 
     lines += ["", "## Pre-registered contrasts", "",
-              "| Contrast | Isolates | Outcome | Median A | Median B | Median difference | 95% CI | Cliff's delta | p | Supported |",
+              "| Contrast | Isolates | Outcome | Median A | Median B | Paired difference | 95% CI | Cliff's delta (unpaired) | p | Supported |",
               "|---|---|---|---|---|---|---|---|---|---|"]
     summary["primary"] = []
     for spec in PRIMARY_CONTRASTS:
@@ -300,8 +320,8 @@ def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str
         lines.append(
             f"| {spec['contrast']} | {spec['isolates']} | {spec['outcome']} | "
             f"{_fmt(result['median_first'])} | {_fmt(result['median_second'])} | "
-            f"{_fmt(result['median_difference'])} | {_fmt(result['difference_ci'])} | "
-            f"{_fmt(result['cliffs_delta'])} | {_fmt(result['p_value'])} | "
+            f"{_fmt(result['point_estimate'])} | {_fmt(result['difference_ci'])} | "
+            f"{_fmt(result['cliffs_delta_unpaired'])} | {_fmt(result['p_value'])} ({result['test']}) | "
             f"{_fmt(result['supported'])} (predicted {result['direction_predicted']}) |"
         )
         if spec["kind"] == "binary":
@@ -379,6 +399,47 @@ def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str
                   f"No revision occurred: {sum(1 for r in negotiation if r['negotiation']['no_revision_occurred'])}. "
                   f"Role inversion suspected (needs confirmation by reading the transcript): "
                   f"{sum(1 for r in negotiation if r['negotiation']['roles_inverted_suspected'])}."]
+
+    # Pooled totals, for measures whose unit is not the scenario. The tables above
+    # summarise per-scenario rates, which is right for the paired tests but is not
+    # the rate over all items, blocks or markers.
+    lines += ["", "## Pooled totals (over every unit, not per scenario)", "",
+              "| Quantity | " + " | ".join(conditions) + " |", "|---" * (len(conditions) + 1) + "|"]
+    summary["pooled"] = {}
+    pooled_rows = [
+        ("Responses", lambda rs: sum(r["counts"]["responses"] for r in rs), None),
+        ("Responses refused (nothing retrieved)", None, ("no_passage_above_threshold", "responses")),
+        ("Assessment items", lambda rs: sum(r["counts"]["items"] for r in rs), None),
+    ]
+    for label, count, _ in pooled_rows:
+        if count is None:
+            continue
+        cells = []
+        for condition in conditions:
+            cells.append(str(count([r for r in runs if r["condition"] == condition])))
+        lines.append(f"| {label} | " + " | ".join(cells) + " |")
+    for label, key, num, den in [
+        ("Items failing their schema", "item", "items_invalid", "items"),
+        ("Placeholder items", "item", "items_placeholder", "items"),
+        ("Code blocks written", "block", "code_blocks", None),
+        ("Code blocks that do not parse", "block", "code_blocks_failing", "code_blocks"),
+        ("Citation markers emitted", "marker", "citation_markers", None),
+        ("Citation markers pointing outside the passages", "marker", "invalid_markers", "citation_markers"),
+    ]:
+        cells = []
+        summary["pooled"][num] = {}
+        for condition in conditions:
+            subset = [r for r in runs if r["condition"] == condition]
+            total = sum(r["pooled"][num] for r in subset)
+            if den:
+                base = sum(r["pooled"][den] for r in subset)
+                value = f"{total} ({total / base:.2%})" if base else f"{total}"
+                summary["pooled"][num][condition] = {"count": total, "of": base}
+            else:
+                value = f"{total}"
+                summary["pooled"][num][condition] = {"count": total}
+            cells.append(value)
+        lines.append(f"| {label} | " + " | ".join(cells) + " |")
 
     lines += ["", "## E4 failure taxonomy: rates by stage", "",
               "Each row is a failure mode from the taxonomy. Values are the mean of the "

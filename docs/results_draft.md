@@ -22,10 +22,11 @@ the stored records. 120 runs, five conditions over 24 scenarios, one model
 > Decomposition (full architecture against the single-agent baseline) was predicted to raise
 > curriculum constraint satisfaction. It did not: the median scenario scored 0.86 under the full
 > architecture and 1.00 under the single agent, with the paired difference running against the
-> prediction (Cliff's delta -0.39, p = 0.011). The negotiation protocol was predicted to raise time
+> prediction (unpaired Cliff's delta -0.39, Wilcoxon p = 0.011). The negotiation protocol was predicted to raise time
 > budget satisfaction; the full architecture satisfied the budget in 24 scenarios of 24 and the
-> single-shot condition in 21, but with only three discordant pairs this is not a detectable
-> difference (exact McNemar p = 0.250).
+> single-shot condition in 21, a difference of 12.5 percentage points, but the interval on that
+> difference includes zero ([0.0, 29.2] points) and with three discordant pairs the exact McNemar
+> test gives p = 0.250. The direction is as predicted; the evidence is not sufficient to claim it.
 >
 > The remaining two contrasts, grounding and the citation instruction, are measured by the annotation
 > study and are reported in §4.x.
@@ -71,26 +72,34 @@ the stored records. 120 runs, five conditions over 24 scenarios, one model
 > citations, 16,474 markers in total, a median of 19 per response, of which five (0.03%) pointed
 > outside the passages supplied. Those five are one response in one scenario repeatedly citing a
 > source numbered 6 when five passages had been given to it, which is the hallucinated attribution
-> that checking markers against the supplied set exists to catch. Without it, none of the 814 answered responses carried a single
+> that checking markers against the supplied set exists to catch. The other citing conditions do the
+> same a little more often: 10 of 10,244 markers (0.10%) in the single-agent baseline and 15 of
+> 17,224 (0.09%) without negotiation. Without it, none of the 814 answered responses carried a single
 > marker, though the system still appended its list of retrieved sources. Whether those citations are
 > correct is the annotation study's question, not this one's.
 >
-> Retrieval changes what instruction looks like. The no-retrieval condition wrote a median of 22 code
-> blocks per response against the full architecture's 1.5, whose median response contains no code at
-> all. Told to answer only from a prose corpus, the instructor explains rather than demonstrates. For a
-> programming tutor this is a substantive trade-off, and it is not visible in any measure of citation
-> or schema quality.
+> Retrieval changes what instruction looks like, and improves it. The no-retrieval condition wrote a
+> median of 22 code blocks per response against the full architecture's 1.5, whose median response
+> contains no code at all: told to answer only from a prose corpus, the instructor explains rather
+> than demonstrates. But the code it does write is sounder. Pooled over every block, 2.18% of the
+> ungrounded condition's 20,283 blocks fail to parse against 0.19% of the full architecture's 1,558,
+> an elevenfold difference, and only 63 of those 442 failures are errors written deliberately to
+> illustrate a point. Grounding therefore trades the quantity of worked examples for their
+> correctness, which is a trade-off a programming tutor has to make consciously.
 
 ---
 
 ## 4.x Failure analysis (E4)
 
-> One taxonomy was applied to every artefact. Rates are means of per-scenario rates.
+> One taxonomy was applied to every artefact. Rates over scenarios are means of per-scenario rates;
+> rates over responses, items, code blocks and citation markers are pooled over every unit, and the
+> two are not interchangeable.
 
 > Two entries deserve comment.
 >
-> **Retrieval crosses strands in about 40% of passages** in every grounded condition, and 9% of
-> responses find nothing above the similarity threshold at all. The corpus is organised into four
+> **Retrieval crosses strands in about 44% of passages** in every grounded condition, judged against
+> the strand a module's title and topics describe, and 12.2% of responses under the full architecture
+> (115 of 946) find nothing above the similarity threshold at all. The corpus is organised into four
 > strands and the retriever is not told which strand a module belongs to, so a module on functions is
 > routinely taught from passages about data structures.
 >
@@ -126,6 +135,11 @@ the stored records. 120 runs, five conditions over 24 scenarios, one model
 > Prices are the provider's published per-token rates on the run date, recorded with the results. Cost
 > per faithfully grounded response, which the revision substitutes for the withdrawn
 > cost-effectiveness ratio, requires the annotation study and is reported in §4.x.
+>
+> One caveat belongs with the time budget result. The pre-registered outcome is measured on the
+> syllabus as the agents produced it, because the repair step that follows is identical in every
+> condition. On the syllabus actually delivered to the learner, every condition violates the budget
+> in essentially every run, so a reader should not take 24 of 24 as a statement about the product.
 
 ---
 

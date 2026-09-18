@@ -122,7 +122,23 @@ class TestResponseChecks:
         lessons = {"m01-a": [_lesson([("py03-data-structures", 0.36), ("py01-basics", 0.36)])]}
         metrics = run_metrics(_record([module], lessons=lessons))
         assert metrics["rates"]["low_confidence_retrieval"] == 1.0
+        # Judged against the strand the module is about, not the strand its own
+        # passages happened to come from
         assert metrics["rates"]["off_strand_passage_rate"] == 0.5
+
+    def test_off_strand_is_not_measured_against_the_retrieved_passages(self):
+        """Uniformly wrong retrieval must not score zero off-strand."""
+        module = _module("m01-a", "Lists and dictionaries", ["Lists", "Dictionaries"], 16.0)
+        lessons = {"m01-a": [_lesson([("py04-oop", 0.6), ("py04-oop", 0.55)])]}
+        metrics = run_metrics(_record([module], lessons=lessons))
+        assert metrics["rates"]["off_strand_passage_rate"] == 1.0
+
+    def test_low_confidence_ignores_responses_that_retrieved_nothing(self):
+        module = _module("m01-a", "Lists", ["Lists"], 16.0)
+        lessons = {"m01-a": [_lesson([("py03-data-structures", 0.9)]),
+                             _lesson([], refused=True, content="no context")]}
+        metrics = run_metrics(_record([module], lessons=lessons))
+        assert metrics["rates"]["low_confidence_retrieval"] == 0.0
 
     def test_model_written_refusal_is_separate_from_the_canned_one(self):
         module = _module("m01-a", "Lists", ["Lists"], 16.0)
@@ -131,7 +147,9 @@ class TestResponseChecks:
             _lesson([], content="I don't have enough information in my knowledge base.", refused=True),
         ]}
         metrics = run_metrics(_record([module], lessons=lessons))
-        assert metrics["rates"]["model_written_refusal"] == 0.5
+        # The canned refusal leaves the denominator: a response the model never
+        # wrote cannot be a refusal the model wrote
+        assert metrics["rates"]["model_written_refusal"] == 1.0
         assert metrics["rates"]["no_passage_above_threshold"] == 0.5
 
     @pytest.mark.parametrize("text,expected", [
@@ -225,6 +243,8 @@ class TestCompare:
         result = analysis.compare(self._runs(), "A1", "A2", "constraint_satisfaction_rate", "higher")
         assert result["scenarios_compared"] == 24
         assert result["median_difference"] == pytest.approx(0.5)
+        assert result["point_estimate"] == pytest.approx(0.5)
+        assert result["test"] == "Wilcoxon signed-rank"
         assert result["supported"] is True
 
     def test_binary_outcome_uses_mcnemar(self):
@@ -232,6 +252,28 @@ class TestCompare:
         assert result["proportion_first"] == 1.0 and result["proportion_second"] == 0.0
         assert result["mcnemar"]["discordant"] == 24
         assert result["mcnemar"]["p_value"] < 1e-6
+        # The binary decision rests on the difference in proportions and the
+        # exact McNemar test, not on a median of differences in {-1, 0, +1}
+        assert result["test"] == "exact McNemar"
+        assert result["p_value"] == result["mcnemar"]["p_value"]
+        assert result["summary_statistic"] == "mean"
+        assert result["point_estimate"] == pytest.approx(1.0)
+        assert result["supported"] is True
+
+    def test_binary_decision_is_reachable_when_a_minority_of_pairs_differ(self):
+        """A median of differences in {-1, 0, +1} could never show a minority effect."""
+        runs = []
+        for condition in ("A1", "A2"):
+            for i in range(1, 25):
+                metrics = run_metrics(_record([_module("m01-a", "Lists", ["Lists"], 16.0)],
+                                              condition=condition, scenario=f"S{i:02d}"))
+                # A1 satisfies every scenario; A2 fails six of 24
+                metrics["planning"]["time_budget_satisfied"] = condition == "A1" or i > 6
+                runs.append(metrics)
+        result = analysis.compare(runs, "A1", "A2", "time_budget_satisfied", "higher", kind="binary")
+        assert result["point_estimate"] == pytest.approx(0.25)
+        assert result["difference_ci"][0] > 0        # reachable, unlike a median of {-1, 0, +1}
+        assert result["supported"] is True
 
     def test_missing_condition_is_reported_not_guessed(self):
         result = analysis.compare(self._runs(), "A1", "A5", "constraint_satisfaction_rate", "higher")

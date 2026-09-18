@@ -114,9 +114,11 @@ def figure_contrasts(summary: Dict[str, Any], out_dir: Path) -> Optional[Path]:
         low, high = row["difference_ci"]
         colour = CONDITION_COLOURS[row["conditions"][1]]
         ax.plot([low, high], [i, i], color=colour, linewidth=2, solid_capstyle="round", zorder=2)
-        ax.plot([row["median_difference"]], [i], "o", color=colour, markersize=9,
+        ax.plot([row["point_estimate"]], [i], "o", color=colour, markersize=9,
                 markeredgecolor=SURFACE, markeredgewidth=1.5, zorder=3)
-        ax.text(high + 0.012, i, f"{row['median_difference']:+.3f}  [{low:+.3f}, {high:+.3f}]   p={row['p_value']:.3f}",
+        ax.text(high + 0.012, i,
+                f"{row['point_estimate']:+.3f}  [{low:+.3f}, {high:+.3f}]   "
+                f"p={row['p_value']:.3f} ({row['test']})",
                 va="center", ha="left", fontsize=8, color=INK)
         labels.append(f"{row['contrast']}\n{row['outcome'].replace('_', ' ')}")
     for j, row in enumerate(pending, start=len(rows)):

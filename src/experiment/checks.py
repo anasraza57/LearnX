@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import ast
 import re
+import textwrap
 from typing import Any, Dict, List, Optional
 
 from ..agents.syllabus_planner import _as_hours, _total_hours
@@ -212,6 +213,24 @@ def negotiation_checks(record: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def _parse_ok(script: str) -> bool:
+    """
+    Whether a snippet is syntactically valid Python.
+
+    Two allowances, both for how tutorial code is written rather than how it runs:
+    the snippet is dedented, because blocks copied from the corpus keep its
+    indentation and would otherwise fail as "unexpected indent" (56 of 59 apparent
+    failures in one condition), and a comment-only body ("if x:" then
+    "# do something") is a teaching skeleton, so a statement stands in for it.
+    """
+    prepared = re.sub(r"^(\s+)#.*$", r"\1pass", textwrap.dedent(script), flags=re.MULTILINE)
+    try:
+        ast.parse(prepared)
+        return True
+    except SyntaxError:
+        return False
+
+
 def _script_from_block(block: str) -> Optional[str]:
     """
     The Python a block claims to contain. An interactive transcript contributes
@@ -264,9 +283,7 @@ def code_block_stats(text: str) -> Dict[str, int]:
         if script is None or not script.strip() or not LOOKS_LIKE_CODE.search(script):
             continue
         judged += 1
-        try:
-            ast.parse(re.sub(r"^(\s+)#.*$", r"\1pass", script, flags=re.MULTILINE))
-        except SyntaxError:
+        if not _parse_ok(script):
             failed += 1
             if DELIBERATE_ERROR.search(block):
                 deliberate += 1
@@ -286,11 +303,7 @@ def _code_parses(text: str) -> Optional[bool]:
         if not LOOKS_LIKE_CODE.search(script):
             continue  # interpreter output, not a program
         judged = True
-        try:
-            # A comment-only body ("if x:" then "# do something") is a teaching
-            # skeleton, not malformed code, so stand one in for the comment
-            ast.parse(re.sub(r"^(\s+)#.*$", r"\1pass", script, flags=re.MULTILINE))
-        except SyntaxError:
+        if not _parse_ok(script):
             return False
     return True if judged else None
 
@@ -301,7 +314,10 @@ def response_checks(record: Dict[str, Any]) -> Dict[str, Any]:
     threshold = record["corpus"]["similarity_threshold"]
     rows = []
     for module in record["modules"]:
-        strand = module_strand(module)
+        # Judged against the strand the module is about: measuring it against the
+        # modal strand of the module's own passages is circular, since uniformly
+        # wrong retrieval would score zero off-strand
+        strand = module_strand_by_wording(module)
         for lesson in module["lessons"]:
             passages = lesson.get("retrieved") or []
             sims = [p["similarity"] for p in passages]
@@ -314,11 +330,11 @@ def response_checks(record: Dict[str, Any]) -> Dict[str, Any]:
                 "topic": lesson.get("topic"),
                 "mode": lesson.get("mode"),
                 "no_passage_above_threshold": lesson.get("refused", False),
-                "low_confidence_retrieval": bool(sims) and max(sims) < threshold + NEAR_THRESHOLD_MARGIN,
+                "low_confidence_retrieval": (max(sims) < threshold + NEAR_THRESHOLD_MARGIN) if sims else None,
                 "off_strand_passages": sum(1 for p in passages if strand and p.get("strand") != strand),
                 "passages": len(passages),
-                "model_written_refusal": bool(not lesson.get("refused")
-                                              and REFUSAL_PATTERNS.search(lesson.get("content", ""))),
+                "model_written_refusal": (bool(REFUSAL_PATTERNS.search(lesson.get("content", "")))
+                                         if not lesson.get("refused") else None),
                 "truncated": call.get("finish_reason") == "length",
                 "citation_markers": len(markers),
                 "invalid_citation_markers": sum(1 for m in markers if not m["valid"]),
@@ -380,13 +396,15 @@ def run_metrics(record: Dict[str, Any]) -> Dict[str, Any]:
         "rates": {
             # Retrieval and grounding
             "no_passage_above_threshold": _rate(grounded, "no_passage_above_threshold"),
-            "low_confidence_retrieval": _rate(grounded, "low_confidence_retrieval"),
+            "low_confidence_retrieval": _rate([r for r in grounded if r["low_confidence_retrieval"] is not None],
+                                              "low_confidence_retrieval"),
             "off_strand_passage_rate": (
                 sum(r["off_strand_passages"] for r in grounded) / sum(r["passages"] for r in grounded)
                 if sum(r["passages"] for r in grounded) else None
             ),
             # Instruction
-            "model_written_refusal": _rate(responses, "model_written_refusal"),
+            "model_written_refusal": _rate([r for r in responses if r["model_written_refusal"] is not None],
+                                           "model_written_refusal"),
             "truncated_response": _rate(responses, "truncated"),
             # Per block: how often written code fails to parse
             "code_block_parse_failure": (
@@ -419,6 +437,20 @@ def run_metrics(record: Dict[str, Any]) -> Dict[str, Any]:
             "item_valid": _rate(items, "valid"),
             "item_placeholder": _rate(items, "placeholder"),
             "item_retrieval_failed": _rate([r for r in items if r["retrieval_attempted"]], "retrieval_failed"),
+        },
+        # Raw counts, so rates over items, blocks and markers can be pooled
+        # rather than averaged over scenarios
+        "pooled": {
+            "responses": len(responses),
+            "items": len(items),
+            "items_invalid": sum(1 for i in items if not i["valid"]),
+            "items_placeholder": sum(1 for i in items if i["placeholder"]),
+            "code_blocks": sum(r["code_blocks"] for r in responses),
+            "code_blocks_failing": sum(r["code_blocks_failing"] for r in responses),
+            "code_blocks_deliberate_errors": sum(r["code_blocks_deliberate_errors"] for r in responses),
+            "citation_markers": sum(r["citation_markers"] for r in responses),
+            "invalid_markers": sum(r["invalid_citation_markers"] for r in responses),
+            "responses_refused": sum(1 for r in responses if r["no_passage_above_threshold"]),
         },
         "cost": {
             "input_tokens": usage["input_tokens"],
