@@ -282,6 +282,9 @@ def run_one(
     }
     started = time.perf_counter()
     try:
+        if context["model"].get("base_url"):
+            record["model"]["local_at_run"] = verify_local_context(
+                context["model"]["base_url"], context["model"]["requested"])
         if condition.single_agent:
             run_single_agent(condition, scenario, context["model"]["requested"], store, record)
         else:
@@ -330,15 +333,48 @@ def failure_streak(streak: int, record: Dict[str, Any]) -> int:
     return streak + 1 if record.get("failed") else 0
 
 
+class LocalContextError(RuntimeError):
+    """The local server is offering a smaller context window than the runs need."""
+
+
+def verify_local_context(base_url: str, model: str) -> Dict[str, Any]:
+    """
+    Re-check the live context window. Checking once at startup is not enough: a
+    server restarted mid-run (by a cleanup step, or by the desktop app) comes back
+    with the 4k default, and prompts would then be truncated silently.
+    """
+    info = local_model_info(base_url, model)
+    if (info.get("context_length") or 0) < MIN_LOCAL_CONTEXT:
+        raise LocalContextError(
+            f"{model} is served with a {info.get('context_length')}-token context, below the "
+            f"{MIN_LOCAL_CONTEXT} these prompts need. Restart with "
+            f"OLLAMA_CONTEXT_LENGTH={MIN_LOCAL_CONTEXT} ollama serve and rerun; completed runs are skipped."
+        )
+    return info
+
+
 def local_model_info(base_url: str, model: str) -> Dict[str, Any]:
     """Loaded-model details from Ollama's native API (context window, digest, quantisation)."""
     import requests
 
     root = base_url.rstrip("/").removesuffix("/v1")
-    loaded = requests.get(f"{root}/api/ps", timeout=10).json().get("models", [])
     names = {model, f"{model}:latest"}
+
+    def loaded_entry():
+        for entry in requests.get(f"{root}/api/ps", timeout=10).json().get("models", []):
+            if entry.get("name") in names or entry.get("model") in names:
+                return entry
+        return None
+
+    if loaded_entry() is None:
+        # Nothing is loaded yet (a freshly started server), so load it with a
+        # one-token request and then read the window it came up with
+        requests.post(f"{root}/api/generate",
+                      json={"model": model, "prompt": "ok", "stream": False,
+                            "options": {"num_predict": 1}}, timeout=600)
+    loaded = [e for e in [loaded_entry()] if e]
     for entry in loaded:
-        if entry.get("name") in names or entry.get("model") in names:
+        if True:
             return {
                 "context_length": entry.get("context_length"),
                 "digest": entry.get("digest"),
@@ -420,12 +456,10 @@ def main() -> None:
     pre = preflight(args.model)
     local = None
     if args.base_url:
-        local = local_model_info(args.base_url, args.model)
-        if (local["context_length"] or 0) < MIN_LOCAL_CONTEXT:
-            sys.exit(
-                f"{args.model} is loaded with a {local['context_length']}-token context; at least "
-                f"{MIN_LOCAL_CONTEXT} is required. Restart with OLLAMA_CONTEXT_LENGTH={MIN_LOCAL_CONTEXT} ollama serve"
-            )
+        try:
+            local = verify_local_context(args.base_url, args.model)
+        except LocalContextError as error:
+            sys.exit(str(error))
     started_at = datetime.now(timezone.utc)
     context = {
         "model": {
