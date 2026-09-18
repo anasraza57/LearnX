@@ -197,6 +197,49 @@ class TestAgreement:
         assert report["dimensions"]["citation_correctness"]["raw_agreement"] == 1.0
         assert report["dimensions"]["supported_by_retrieved"]["status"] == "not rated"
 
+    @pytest.mark.parametrize("written,expected", [
+        ("supported", "supported"),
+        ("Supported", "supported"),
+        ("  supported  ", "supported"),
+        ("NOT_APPLICABLE", "not_applicable"),
+        ("not applicable", "not_applicable"),
+        ("not-applicable", "not_applicable"),
+        ("", ""),
+    ])
+    def test_how_a_rater_types_a_label_does_not_change_it(self, written, expected):
+        assert annotation._label(written, annotation.SUPPORT_LABELS,
+                                 "anas", "R001-C01", "claim_support") == expected
+
+    def test_a_label_outside_the_set_is_refused_not_counted(self):
+        """
+        An unrecognised label counted as a category of its own lowers the
+        agreement silently, which is the one thing a reliability figure must not
+        do. It names the rater, the claim and the value instead.
+        """
+        with pytest.raises(annotation.RatingError, match="suported"):
+            annotation._label("suported", annotation.SUPPORT_LABELS,
+                              "anas", "R001-C01", "claim_support")
+
+    def test_typing_differences_do_not_move_agreement(self, tmp_path):
+        responses = [_response(f"R{i:03d}", "A1") for i in range(5)]
+        sample = annotation.sample_claims(responses, claims_total=4, claims_per_response=2)
+        annotation.write_pack(sample, tmp_path, ["anas", "baidaa"], purpose="pilot")
+
+        for rater, written in (("anas", ["supported", "partial", "supported", "partial"]),
+                               ("baidaa", ["Supported", " partial ", "SUPPORTED", "partial"])):
+            path = tmp_path / f"ratings_{rater}.csv"
+            rows = list(csv.DictReader(path.open(encoding="utf-8")))
+            for row, label in zip(rows, written):
+                row["claim_support"] = label
+            with path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+                writer.writeheader()
+                writer.writerows(rows)
+
+        support = annotation.score_pack(tmp_path, ["anas", "baidaa"])["dimensions"]["claim_support"]
+        assert support["raw_agreement"] == 1.0
+        assert support["cohens_kappa"] == 1.0
+
     def test_score_pack_requires_two_raters(self, tmp_path):
         with pytest.raises(ValueError):
             annotation.score_pack(tmp_path, ["anas"])

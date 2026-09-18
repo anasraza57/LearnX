@@ -104,6 +104,10 @@ Please do not look up the key, and do not let a guess about the condition influe
 - Work in `ratings_<yourname>.csv`. Fill `claim_support`, `citation_correctness`,
   `supported_by_retrieved`, and use `rater_note` for anything the labels cannot express.
 - Do not reorder or delete rows; the claim ids join the two sheets.
+- Write the labels as the guide spells them. Capitals and stray spaces are forgiven, so "Supported"
+  and " supported " are the same label, but anything that is not a label at all is refused with the
+  claim named, rather than being counted as a category of its own and quietly lowering our agreement.
+- A half-finished sheet is fine. Agreement is computed over the claims we have both rated.
 - Keep a rough note of how long a batch takes. Sizing the main sample depends on it (D16).
 - If you find yourself unsure between two labels more than occasionally, stop and raise it: the guide
   is wrong, not you.

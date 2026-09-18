@@ -305,6 +305,32 @@ def _read_ratings(path: Path) -> Dict[str, Dict[str, str]]:
         return {row["claim_id"]: row for row in csv.DictReader(handle)}
 
 
+class RatingError(ValueError):
+    """A rating sheet contains a label that is not in the dimension's label set."""
+
+
+def _label(value: str, labels: Sequence[str], rater: str, claim_id: str, dimension: str) -> str:
+    """
+    One rater's cell, normalised and checked.
+
+    Case and stray spaces are forgiven, because two people typing into a
+    spreadsheet will produce "Supported" and " supported ". Anything else is
+    refused rather than counted: an unrecognised label would otherwise be
+    treated as a category of its own and silently lower the agreement. In the
+    pilot a capital letter, a typo and a pair of spaces moved kappa from 0.61
+    to 0.37 on their own.
+    """
+    cleaned = value.strip().lower().replace(" ", "_").replace("-", "_")
+    if not cleaned:
+        return ""
+    if cleaned not in labels:
+        raise RatingError(
+            f"{rater} rated {claim_id} {dimension} as {value!r}, which is not one of: "
+            + ", ".join(labels)
+        )
+    return cleaned
+
+
 def score_pack(pack_dir: Path, raters: Sequence[str]) -> Dict[str, Any]:
     """Agreement per dimension, with the confusion matrices and the disagreeing claims."""
     if len(raters) != 2:
@@ -313,12 +339,12 @@ def score_pack(pack_dir: Path, raters: Sequence[str]) -> Dict[str, Any]:
     shared = sorted(set(ratings[0]) & set(ratings[1]))
     key = {c["claim_id"]: c for c in json.loads((pack_dir / "key.json").read_text(encoding="utf-8"))["claims"]}
 
-    report: Dict[str, Any] = {"raters": list(raters), "claims_rated": len(shared), "dimensions": {}}
+    report: Dict[str, Any] = {"raters": list(raters), "claims_in_pack": len(shared), "dimensions": {}}
     for dimension, labels in (("claim_support", SUPPORT_LABELS),
                               ("citation_correctness", CITATION_LABELS),
                               ("supported_by_retrieved", ["yes", "no", "not_applicable"])):
-        first = [ratings[0][c].get(dimension, "").strip() for c in shared]
-        second = [ratings[1][c].get(dimension, "").strip() for c in shared]
+        first = [_label(ratings[0][c].get(dimension, ""), labels, raters[0], c, dimension) for c in shared]
+        second = [_label(ratings[1][c].get(dimension, ""), labels, raters[1], c, dimension) for c in shared]
         both = [(a, b, c) for a, b, c in zip(first, second, shared) if a and b]
         if not both:
             report["dimensions"][dimension] = {"status": "not rated"}
@@ -356,7 +382,10 @@ def main() -> None:
 
     if args.command == "score":
         pack = args.pack or ANNOTATION_DIR / "main"
-        report = score_pack(pack, args.raters)
+        try:
+            report = score_pack(pack, args.raters)
+        except RatingError as exc:
+            raise SystemExit(f"{exc}\n\nCorrect the sheet and run this again; nothing was written.")
         (pack / "agreement.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
         print(json.dumps({k: v for k, v in report.items() if k != "dimensions"}, indent=2))
         for dimension, result in report["dimensions"].items():
