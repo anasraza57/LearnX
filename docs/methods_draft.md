@@ -188,7 +188,14 @@ than ungrounded instruction.
 > bootstrap confidence interval and Cliff's delta; binary per-scenario outcomes use an exact McNemar
 > test; descriptive proportions use Wilson score intervals. The primary outcome and the predicted
 > direction of each contrast were fixed before the runs, and a contrast counts as supported only if
-> the 95% interval on the paired difference excludes zero in that direction. Sampling variation was
+> the 95% interval on the paired difference excludes zero in that direction.
+>
+> The primary outcome is a composite of seven planning constraints, and prerequisites are a schema
+> field, so a syllabus whose prerequisites are written as prose fails two of the seven for one
+> reason. The composite is reported as it was declared, and the primary contrast is also reported
+> under four alternative definitions of it, including one that judges schema validity without the
+> prerequisites field. The decision is the same under all five; the effect size is not, and is
+> therefore never quoted without saying which composite produced it. Sampling variation was
 > minimised by running every call at temperature 0 with a fixed seed, and the residual variation this
 > leaves is reported in §4.x rather than assumed away.
 
