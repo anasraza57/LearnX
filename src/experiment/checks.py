@@ -73,11 +73,24 @@ def _strand_from_keywords(text: str) -> Optional[str]:
     return best if scores[best] > 0 else None
 
 
+def module_strand_by_wording(module: Dict[str, Any]) -> Optional[str]:
+    """
+    The strand a module's title and topics describe.
+
+    Used for goal coverage, because it is the only rule available in every
+    condition: the no-retrieval condition has no passages to map a module by, and
+    scoring one condition by a different rule than the others made it look better
+    than them (0.92 against 0.83) purely by the change of rule.
+    """
+    return _strand_from_keywords(" ".join([module.get("title") or ""] + list(module.get("topics") or [])))
+
+
 def module_strand(module: Dict[str, Any]) -> Optional[str]:
     """
     The curriculum strand a generated module belongs to: the strand most of its
     retrieved passages came from, or, when it retrieved nothing, the strand its
-    title and topics read as.
+    title and topics read as. Used for retrieval measures, where what was actually
+    retrieved is the point.
     """
     counts: Dict[str, int] = {}
     for lesson in module.get("lessons", []):
@@ -132,9 +145,9 @@ def planning_checks(record: Dict[str, Any]) -> Dict[str, Any]:
     budget = record["scenario"]["total_hours"]
     hours = _total_hours(extracted)
 
-    # Modules carry the lessons and items in the record, keyed by the final syllabus
-    by_id = {m["module_id"]: m for m in record.get("modules", [])}
-    strands = {m.get("id"): module_strand(by_id.get(m.get("id"), m)) for m in modules}
+    # Goal coverage reads the syllabus itself, so every condition is judged the
+    # same way whether or not it retrieved anything
+    strands = {m.get("id"): module_strand_by_wording(m) for m in modules}
     goal_profile = record["scenario"]["factors"]["goal_profile"]
     covered = {s for s in strands.values() if s}
     if goal_profile == "broad":

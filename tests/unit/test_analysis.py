@@ -100,6 +100,15 @@ class TestPlanningChecks:
         assert checks["all_constraints_satisfied"] is False  # only one module
         assert checks["module_count_in_range"] is False
 
+    def test_goal_coverage_uses_the_same_rule_with_and_without_retrieval(self):
+        """A condition that retrieves nothing must not be judged by a softer rule."""
+        module = _module("m01-a", "Lists and dictionaries", ["Lists", "Dictionaries"], 10.0)
+        other = _module("m02-b", "Classes and inheritance", ["Classes"], 10.0)
+        grounded = _record([module, other], goal="narrow",
+                           lessons={"m01-a": [_lesson([("py04-oop", 0.6)])]})   # passages disagree
+        ungrounded = _record([module, other], goal="narrow")                     # no passages at all
+        assert planning_checks(grounded)["goal_covered"] == planning_checks(ungrounded)["goal_covered"]
+
     def test_module_strand_prefers_retrieved_passages_over_keywords(self):
         module = {"title": "Classes and objects", "topics": ["Inheritance"],
                   "lessons": [_lesson([("py03-data-structures", 0.6), ("py03-data-structures", 0.5)])]}

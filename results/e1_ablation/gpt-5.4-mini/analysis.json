@@ -25,10 +25,10 @@
           "m01-python-foundations-and-setup": "py01-basics",
           "m02-strings-input-and-basic-operations": "py01-basics",
           "m03-control-flow-and-boolean-logic": "py02-control-flow",
-          "m04-functions-and-code-reuse": "py04-oop",
+          "m04-functions-and-code-reuse": "py02-control-flow",
           "m05-core-data-structures-lists-tuples-dictionaries": "py03-data-structures",
           "m06-introduction-to-oop-classes-and-objects": "py04-oop",
-          "m07-review-and-mini-project": "py04-oop"
+          "m07-review-and-mini-project": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
@@ -112,7 +112,7 @@
         "module_strands": {
           "m01-python-basics-and-setup": "py01-basics",
           "m02-control-flow-and-tracing": "py02-control-flow",
-          "m03-functions-and-small-builds": "py01-basics",
+          "m03-functions-and-small-builds": "py02-control-flow",
           "m04-lists-dictionaries-and-iteration": "py03-data-structures",
           "m05-intro-to-classes-and-objects": "py04-oop",
           "m06-capstone-review-and-mini-project": "py02-control-flow"
@@ -200,7 +200,7 @@
           "m02-control-flow-and-basic-repetition": "py02-control-flow",
           "m03-lists-and-tuples-for-ordered-data": "py03-data-structures",
           "m04-dictionaries-and-sets-for-keyed-data": "py03-data-structures",
-          "m05-mini-project-lists-and-dictionaries": "py02-control-flow",
+          "m05-mini-project-lists-and-dictionaries": "py03-data-structures",
           "m06-mini-project-sets-and-review": "py03-data-structures"
         },
         "strands_covered": [
@@ -286,13 +286,12 @@
           "m03-lists-and-tuples-for-ordered-data": "py03-data-structures",
           "m04-dictionaries-and-sets-for-keyed-data": "py03-data-structures",
           "m05-files-and-simple-string-cleaning": "py01-basics",
-          "m06-mini-project-data-processing-workflow": "py04-oop"
+          "m06-mini-project-data-processing-workflow": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
           "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.5,
@@ -369,7 +368,7 @@
         "module_strands": {
           "m01-python-basics-and-setup": "py01-basics",
           "m02-control-flow-and-logic": "py02-control-flow",
-          "m03-functions-and-reuse": "py01-basics",
+          "m03-functions-and-reuse": "py02-control-flow",
           "m04-lists-tuples-and-strings": "py03-data-structures",
           "m05-dictionaries-files-and-imports": "py03-data-structures",
           "m06-intro-to-classes-and-objects": "py04-oop"
@@ -455,9 +454,9 @@
         "module_strands": {
           "m01-python-setup-and-first-programs": "py01-basics",
           "m02-control-flow-and-practice": "py02-control-flow",
-          "m03-functions-and-problem-decomposition": "py04-oop",
+          "m03-functions-and-problem-decomposition": "py02-control-flow",
           "m04-data-structures-and-collection-practice": "py03-data-structures",
-          "m05-files-and-exceptions": "py01-basics",
+          "m05-files-and-exceptions": "py02-control-flow",
           "m06-intro-oop-and-guided-mini-project": "py04-oop"
         },
         "strands_covered": [
@@ -629,13 +628,12 @@
           "m03-lists-and-tuples-for-small-data-sets": "py03-data-structures",
           "m04-dictionaries-for-organizing-and-counting": "py03-data-structures",
           "m05-sets-and-data-cleanup": "py03-data-structures",
-          "m06-practical-mini-projects-with-all-data-structures": "py04-oop"
+          "m06-practical-mini-projects-with-all-data-structures": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
           "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           6.0,
@@ -711,9 +709,9 @@
         "final_hours_over_budget": true,
         "module_strands": {
           "m01-python-foundations-refresher": "py01-basics",
-          "m02-control-flow-and-decision-making": "py03-data-structures",
+          "m02-control-flow-and-decision-making": "py02-control-flow",
           "m03-loops-and-repetition": "py02-control-flow",
-          "m04-functions-and-program-structure": "py04-oop",
+          "m04-functions-and-program-structure": "py02-control-flow",
           "m05-core-data-structures": "py03-data-structures",
           "m06-gentle-oop-introduction-and-review": "py04-oop"
         },
@@ -798,11 +796,11 @@
         "module_strands": {
           "m01-python-fast-review-and-tooling": "py01-basics",
           "m02-control-flow-and-iteration-practice": "py02-control-flow",
-          "m03-functions-and-problem-decomposition": "py01-basics",
+          "m03-functions-and-problem-decomposition": "py02-control-flow",
           "m04-data-structures-and-collection-patterns": "py03-data-structures",
-          "m05-files-exceptions-and-robust-programs": "py02-control-flow",
+          "m05-files-exceptions-and-robust-programs": "py01-basics",
           "m06-introductory-oop-in-python": "py04-oop",
-          "m07-narrow-mini-project-and-review": "py04-oop"
+          "m07-narrow-mini-project-and-review": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
@@ -894,12 +892,10 @@
           "m02-lists-and-tuples-for-ordered-data": "py03-data-structures",
           "m03-dictionaries-for-named-data": "py03-data-structures",
           "m04-sets-for-uniqueness-and-membership": "py03-data-structures",
-          "m05-combining-data-structures-in-small-scripts": "py01-basics",
-          "m06-mini-project-and-review": "py02-control-flow"
+          "m05-combining-data-structures-in-small-scripts": "py03-data-structures",
+          "m06-mini-project-and-review": null
         },
         "strands_covered": [
-          "py01-basics",
-          "py02-control-flow",
           "py03-data-structures"
         ],
         "hours_per_module": [
@@ -975,7 +971,7 @@
         "budget_hours": 20.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-structure-choice-and-collection-basics": "py04-oop",
+          "m01-structure-choice-and-collection-basics": "py03-data-structures",
           "m02-lists-and-tuples-for-sequence-work": "py03-data-structures",
           "m03-dictionaries-for-records-and-counting": "py03-data-structures",
           "m04-sets-for-cleanup-and-membership": "py03-data-structures",
@@ -983,8 +979,7 @@
           "m06-mini-project-and-review": "py03-data-structures"
         },
         "strands_covered": [
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.0,
@@ -1061,9 +1056,9 @@
         "module_strands": {
           "m01-python-foundations-review": "py01-basics",
           "m02-control-flow-and-boolean-logic": "py02-control-flow",
-          "m03-functions-and-program-structure": "py04-oop",
+          "m03-functions-and-program-structure": "py02-control-flow",
           "m04-core-data-structures-and-practice": "py03-data-structures",
-          "m05-light-file-handling-and-error-awareness": "py01-basics",
+          "m05-light-file-handling-and-error-awareness": null,
           "m06-introduction-to-oop-and-review-project": "py04-oop"
         },
         "strands_covered": [
@@ -1147,10 +1142,10 @@
         "module_strands": {
           "m01-diagnostic-refresher-and-python-basics": "py01-basics",
           "m02-control-flow-and-iteration": "py02-control-flow",
-          "m03-functions-scope-and-reuse": "py04-oop",
+          "m03-functions-scope-and-reuse": "py02-control-flow",
           "m04-data-structures-and-data-manipulation": "py03-data-structures",
           "m05-object-oriented-programming-foundations": "py04-oop",
-          "m06-final-project-command-line-task-tracker": "py04-oop"
+          "m06-final-project-command-line-task-tracker": "py02-control-flow"
         },
         "strands_covered": [
           "py01-basics",
@@ -1239,11 +1234,10 @@
           "m03-dictionaries-for-simple-data-models": "py03-data-structures",
           "m04-sets-for-uniqueness-and-membership": "py03-data-structures",
           "m05-simple-combinations-of-data-structures": "py03-data-structures",
-          "m06-guided-mini-projects-and-review": "py04-oop"
+          "m06-guided-mini-projects-and-review": "py03-data-structures"
         },
         "strands_covered": [
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           4.0,
@@ -1327,12 +1321,11 @@
           "m02-list-processing-and-comprehensions": "py03-data-structures",
           "m03-dictionaries-for-counting-and-grouping": "py03-data-structures",
           "m04-tuples-sets-and-record-cleaning": "py03-data-structures",
-          "m05-file-input-and-data-processing-workflows": "py02-control-flow",
+          "m05-file-input-and-data-processing-workflows": "py03-data-structures",
           "m06-capstone-mini-project-data-summary-script": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
-          "py02-control-flow",
           "py03-data-structures"
         ],
         "hours_per_module": [
@@ -1410,10 +1403,10 @@
         "module_strands": {
           "m01-python-basics-review": "py01-basics",
           "m02-control-flow-review": "py02-control-flow",
-          "m03-functions-and-scope": "py01-basics",
+          "m03-functions-and-scope": "py02-control-flow",
           "m04-data-structures-review": "py03-data-structures",
           "m05-oop-basics-and-simple-design": "py04-oop",
-          "m06-integration-practice-and-consolidation": "py04-oop"
+          "m06-integration-practice-and-consolidation": "py02-control-flow"
         },
         "strands_covered": [
           "py01-basics",
@@ -1483,7 +1476,7 @@
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
-        "goal_covered": false,
+        "goal_covered": true,
         "prerequisites_present": true,
         "prerequisites_resolvable": true,
         "prerequisites_acyclic": true,
@@ -1494,14 +1487,15 @@
         "budget_hours": 20.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-diagnostic-refresh-and-python-core": "py04-oop",
+          "m01-diagnostic-refresh-and-python-core": "py01-basics",
           "m02-control-flow-functions-and-practice-drills": "py02-control-flow",
           "m03-data-structures-and-collection-patterns": "py03-data-structures",
           "m04-files-exceptions-and-modules-for-real-programs": "py02-control-flow",
           "m05-object-oriented-python-beyond-basics": "py04-oop",
-          "m06-hands-on-integration-mini-project": "py04-oop"
+          "m06-hands-on-integration-mini-project": "py01-basics"
         },
         "strands_covered": [
+          "py01-basics",
           "py02-control-flow",
           "py03-data-structures",
           "py04-oop"
@@ -1514,8 +1508,8 @@
           4.0,
           4.0
         ],
-        "constraint_satisfaction_rate": 0.8571428571428571,
-        "all_constraints_satisfied": false
+        "constraint_satisfaction_rate": 1.0,
+        "all_constraints_satisfied": true
       },
       "negotiation": {
         "negotiation_enabled": true,
@@ -1590,11 +1584,11 @@
           "m03-dictionaries-for-labeled-data": "py03-data-structures",
           "m04-sets-for-unique-values-and-membership": "py03-data-structures",
           "m05-iteration-and-lightweight-comprehensions": "py03-data-structures",
-          "m06-mini-projects-data-organization-and-summary": "py04-oop"
+          "m06-mini-projects-data-organization-and-summary": "py01-basics"
         },
         "strands_covered": [
-          "py03-data-structures",
-          "py04-oop"
+          "py01-basics",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.0,
@@ -1669,16 +1663,16 @@
         "budget_hours": 20.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-choose-the-right-data-structure": "py03-data-structures",
+          "m01-choose-the-right-data-structure": "py02-control-flow",
           "m02-lists-and-tuples-for-small-data-tasks": "py03-data-structures",
           "m03-dictionaries-for-lookup-counting-and-grouping": "py03-data-structures",
           "m04-sets-for-deduplication-and-membership": "py03-data-structures",
           "m05-combining-data-structures-in-script-workflows": "py03-data-structures",
-          "m06-capstone-data-processing-mini-project": "py04-oop"
+          "m06-capstone-data-processing-mini-project": "py02-control-flow"
         },
         "strands_covered": [
-          "py03-data-structures",
-          "py04-oop"
+          "py02-control-flow",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           2.5,
@@ -1759,7 +1753,7 @@
           "m04-python-data-structures": "py03-data-structures",
           "m05-files-errors-and-input-validation": "py01-basics",
           "m06-intro-to-oop-in-python": "py04-oop",
-          "m07-integration-review-and-mini-project": "py04-oop"
+          "m07-integration-review-and-mini-project": null
         },
         "strands_covered": [
           "py01-basics",
@@ -1843,11 +1837,11 @@
         "module_strands": {
           "m01-python-diagnostic-and-rapid-refresher": "py01-basics",
           "m02-control-flow-and-boolean-logic": "py02-control-flow",
-          "m03-functions-and-decomposition": "py04-oop",
+          "m03-functions-and-decomposition": "py02-control-flow",
           "m04-core-data-structures-and-iteration": "py03-data-structures",
-          "m05-files-and-exceptions": "py02-control-flow",
+          "m05-files-and-exceptions": "py01-basics",
           "m06-object-oriented-programming-basics": "py04-oop",
-          "m07-integration-project-and-mastery-review": "py04-oop"
+          "m07-integration-project-and-mastery-review": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
@@ -1939,14 +1933,12 @@
           "m02-lists-and-tuples-for-ordered-data": "py03-data-structures",
           "m03-dictionaries-for-key-value-data": "py03-data-structures",
           "m04-sets-for-uniqueness-and-membership": "py03-data-structures",
-          "m05-combining-data-structures-in-practical-scripts": "py01-basics",
-          "m06-mini-projects-and-consolidation": "py04-oop"
+          "m05-combining-data-structures-in-practical-scripts": "py03-data-structures",
+          "m06-mini-projects-and-consolidation": "py03-data-structures"
         },
         "strands_covered": [
-          "py01-basics",
           "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           4.0,
@@ -2010,7 +2002,7 @@
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
-        "goal_covered": false,
+        "goal_covered": true,
         "prerequisites_present": true,
         "prerequisites_resolvable": false,
         "prerequisites_acyclic": true,
@@ -2024,16 +2016,16 @@
         "budget_hours": 40.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-data-structure-diagnostic-warmup": "py04-oop",
+          "m01-data-structure-diagnostic-warmup": "py02-control-flow",
           "m02-sequence-processing-and-records": "py03-data-structures",
           "m03-dictionaries-for-grouping-and-summary": "py03-data-structures",
-          "m04-sets-for-cleaning-and-comparison": "py04-oop",
-          "m05-reusable-data-processing-patterns": "py04-oop",
-          "m06-mini-projects-and-assessment": "py04-oop"
+          "m04-sets-for-cleaning-and-comparison": "py03-data-structures",
+          "m05-reusable-data-processing-patterns": "py02-control-flow",
+          "m06-mini-projects-and-assessment": "py02-control-flow"
         },
         "strands_covered": [
-          "py03-data-structures",
-          "py04-oop"
+          "py02-control-flow",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.5,
@@ -2043,7 +2035,7 @@
           9.0,
           9.5
         ],
-        "constraint_satisfaction_rate": 0.5714285714285714,
+        "constraint_satisfaction_rate": 0.7142857142857143,
         "all_constraints_satisfied": false
       },
       "negotiation": {
@@ -2110,7 +2102,7 @@
         "module_strands": {
           "m01-python-basics-and-setup": "py01-basics",
           "m02-control-flow-and-logic": "py02-control-flow",
-          "m03-functions-and-modularity": "py01-basics",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
           "m05-introduction-to-oop": "py04-oop"
         },
@@ -2444,9 +2436,9 @@
         "module_strands": {
           "m01-python-basics-and-setup": "py01-basics",
           "m02-control-flow-and-logic": "py02-control-flow",
-          "m03-functions-and-modularity": "py04-oop",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
-          "m05-working-with-files-and-errors": "py02-control-flow",
+          "m05-working-with-files-and-errors": null,
           "m06-introduction-to-oop": "py04-oop"
         },
         "strands_covered": [
@@ -2532,7 +2524,7 @@
           "m02-control-flow-and-iteration": "py02-control-flow",
           "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
-          "m05-files-errors-and-debugging": "py02-control-flow",
+          "m05-files-errors-and-debugging": "py01-basics",
           "m06-introduction-to-oop": "py04-oop"
         },
         "strands_covered": [
@@ -2603,7 +2595,7 @@
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
-        "goal_covered": false,
+        "goal_covered": true,
         "prerequisites_present": true,
         "prerequisites_resolvable": true,
         "prerequisites_acyclic": true,
@@ -2614,12 +2606,12 @@
         "budget_hours": 40.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-python-basics-and-setup": "py02-control-flow",
+          "m01-python-basics-and-setup": "py01-basics",
           "m02-variables-types-and-operators": "py01-basics",
           "m03-control-flow-and-basic-program-logic": "py02-control-flow",
           "m04-data-structures-lists-and-tuples": "py03-data-structures",
           "m05-data-structures-dictionaries-and-sets": "py03-data-structures",
-          "m06-small-practical-scripts-and-review": "py01-basics"
+          "m06-small-practical-scripts-and-review": "py03-data-structures"
         },
         "strands_covered": [
           "py01-basics",
@@ -2634,8 +2626,8 @@
           8.0,
           4.0
         ],
-        "constraint_satisfaction_rate": 0.8571428571428571,
-        "all_constraints_satisfied": false
+        "constraint_satisfaction_rate": 1.0,
+        "all_constraints_satisfied": true
       },
       "negotiation": {
         "negotiation_enabled": false,
@@ -2688,7 +2680,7 @@
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
-        "goal_covered": false,
+        "goal_covered": true,
         "prerequisites_present": true,
         "prerequisites_resolvable": true,
         "prerequisites_acyclic": true,
@@ -2702,15 +2694,14 @@
           "m01-python-basics-and-setup": "py01-basics",
           "m02-control-flow-and-repetition": "py02-control-flow",
           "m03-lists-tuples-and-basic-data-processing": "py03-data-structures",
-          "m04-dictionaries-and-sets": "py04-oop",
-          "m05-functions-and-modular-scripts": "py01-basics",
-          "m06-practical-data-structure-projects": "py04-oop"
+          "m04-dictionaries-and-sets": "py03-data-structures",
+          "m05-functions-and-modular-scripts": "py02-control-flow",
+          "m06-practical-data-structure-projects": "py03-data-structures"
         },
         "strands_covered": [
           "py01-basics",
           "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           6.0,
@@ -2720,8 +2711,8 @@
           6.0,
           7.0
         ],
-        "constraint_satisfaction_rate": 0.8571428571428571,
-        "all_constraints_satisfied": false
+        "constraint_satisfaction_rate": 1.0,
+        "all_constraints_satisfied": true
       },
       "negotiation": {
         "negotiation_enabled": false,
@@ -2787,9 +2778,9 @@
         "module_strands": {
           "m01-python-basics-and-environment": "py01-basics",
           "m02-control-flow-and-iteration": "py02-control-flow",
-          "m03-functions-and-modularity": "py01-basics",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
-          "m05-file-handling-and-exceptions": "py02-control-flow",
+          "m05-file-handling-and-exceptions": null,
           "m06-introduction-to-oop": "py04-oop"
         },
         "strands_covered": [
@@ -2873,10 +2864,10 @@
         "module_strands": {
           "m01-python-basics-and-environment": "py01-basics",
           "m02-control-flow-and-repetition": "py02-control-flow",
-          "m03-functions-and-modularity": "py01-basics",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
           "m05-oop-basics-in-python": "py04-oop",
-          "m06-practice-project-and-review": "py04-oop"
+          "m06-practice-project-and-review": null
         },
         "strands_covered": [
           "py01-basics",
@@ -2962,12 +2953,11 @@
           "m03-dictionaries-for-real-world-data": "py03-data-structures",
           "m04-sets-and-data-cleaning": "py03-data-structures",
           "m05-processing-data-with-loops-and-comprehensions": "py02-control-flow",
-          "m06-mini-project-organising-and-processing-data": "py04-oop"
+          "m06-mini-project-organising-and-processing-data": "py03-data-structures"
         },
         "strands_covered": [
           "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.5,
@@ -3046,13 +3036,12 @@
           "m02-list-and-tuple-processing": "py03-data-structures",
           "m03-dictionaries-for-real-data": "py03-data-structures",
           "m04-sets-and-data-cleaning": "py03-data-structures",
-          "m05-combining-data-structures-in-scripts": "py04-oop",
-          "m06-mini-project-and-review": "py01-basics"
+          "m05-combining-data-structures-in-scripts": "py03-data-structures",
+          "m06-mini-project-and-review": "py02-control-flow"
         },
         "strands_covered": [
-          "py01-basics",
-          "py03-data-structures",
-          "py04-oop"
+          "py02-control-flow",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           4.0,
@@ -3215,7 +3204,7 @@
         "module_strands": {
           "m01-python-basics-and-environment": "py01-basics",
           "m02-control-flow-and-iteration": "py02-control-flow",
-          "m03-functions-and-modularity": "py01-basics",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
           "m05-oop-and-project-practice": "py04-oop"
         },
@@ -3380,17 +3369,16 @@
         "budget_hours": 40.0,
         "final_hours_over_budget": false,
         "module_strands": {
-          "m01-python-data-structure-foundations": "py04-oop",
+          "m01-python-data-structure-foundations": "py03-data-structures",
           "m02-list-processing-and-iteration": "py03-data-structures",
           "m03-tuples-sets-and-data-cleanup": "py03-data-structures",
           "m04-dictionaries-and-key-value-modeling": "py03-data-structures",
-          "m05-combining-data-structures-in-scripts": "py01-basics",
-          "m06-practice-projects-and-review": "py04-oop"
+          "m05-combining-data-structures-in-scripts": "py03-data-structures",
+          "m06-practice-projects-and-review": "py02-control-flow"
         },
         "strands_covered": [
-          "py01-basics",
-          "py03-data-structures",
-          "py04-oop"
+          "py02-control-flow",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           6.0,
@@ -3467,7 +3455,7 @@
         "module_strands": {
           "m01-python-basics-and-environment": "py01-basics",
           "m02-control-flow-and-iteration": "py02-control-flow",
-          "m03-functions-and-modularity": "py01-basics",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
           "m05-files-errors-and-oop-introduction": "py04-oop"
         },
@@ -3551,7 +3539,7 @@
         "module_strands": {
           "m01-python-basics-and-environment": "py01-basics",
           "m02-control-flow-and-iteration": "py02-control-flow",
-          "m03-functions-and-modularity": "py04-oop",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
           "m05-files-exceptions-and-oop-basics": "py04-oop"
         },
@@ -3638,13 +3626,11 @@
           "m01-python-data-structures-overview": "py03-data-structures",
           "m02-working-with-lists-and-tuples": "py03-data-structures",
           "m03-dictionaries-for-key-value-data": "py03-data-structures",
-          "m04-sets-for-unique-items-and-membership": "py01-basics",
-          "m05-processing-data-with-comprehensions-and-loops": "py02-control-flow",
-          "m06-small-practical-scripts-project": "py02-control-flow"
+          "m04-sets-for-unique-items-and-membership": "py03-data-structures",
+          "m05-processing-data-with-comprehensions-and-loops": "py03-data-structures",
+          "m06-small-practical-scripts-project": "py03-data-structures"
         },
         "strands_covered": [
-          "py01-basics",
-          "py02-control-flow",
           "py03-data-structures"
         ],
         "hours_per_module": [
@@ -3720,17 +3706,15 @@
         "budget_hours": 20.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-python-data-structure-foundations": "py02-control-flow",
+          "m01-python-data-structure-foundations": "py03-data-structures",
           "m02-lists-and-tuples-in-practice": "py03-data-structures",
           "m03-dictionaries-for-key-value-data": "py03-data-structures",
           "m04-sets-for-uniqueness-and-membership": "py03-data-structures",
-          "m05-combining-data-structures-in-scripts": "py04-oop",
-          "m06-practical-data-structure-mini-projects": "py04-oop"
+          "m05-combining-data-structures-in-scripts": "py03-data-structures",
+          "m06-practical-data-structure-mini-projects": "py03-data-structures"
         },
         "strands_covered": [
-          "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.0,
@@ -3807,9 +3791,9 @@
         "module_strands": {
           "m01-python-foundations-and-environment": "py01-basics",
           "m02-control-flow-and-iteration": "py02-control-flow",
-          "m03-functions-and-modularity": "py01-basics",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
-          "m05-files-errors-and-exceptions": "py02-control-flow",
+          "m05-files-errors-and-exceptions": null,
           "m06-introduction-to-oop": "py04-oop"
         },
         "strands_covered": [
@@ -3893,9 +3877,9 @@
         "module_strands": {
           "m01-python-basics-and-environment": "py01-basics",
           "m02-control-flow-and-iteration": "py02-control-flow",
-          "m03-functions-and-modularity": "py01-basics",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
-          "m05-files-exceptions-and-comprehensions": "py02-control-flow",
+          "m05-files-exceptions-and-comprehensions": "py03-data-structures",
           "m06-object-oriented-programming": "py04-oop"
         },
         "strands_covered": [
@@ -3980,15 +3964,13 @@
           "m01-python-data-structure-foundations": "py03-data-structures",
           "m02-working-with-lists-and-tuples": "py03-data-structures",
           "m03-dictionaries-for-key-value-data": "py03-data-structures",
-          "m04-sets-for-unique-items-and-membership": "py01-basics",
+          "m04-sets-for-unique-items-and-membership": "py02-control-flow",
           "m05-processing-data-with-loops-and-comprehensions": "py02-control-flow",
-          "m06-small-practical-scripts-and-review": "py04-oop"
+          "m06-small-practical-scripts-and-review": "py03-data-structures"
         },
         "strands_covered": [
-          "py01-basics",
           "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           6.0,
@@ -4067,12 +4049,12 @@
           "m02-list-and-tuple-processing": "py03-data-structures",
           "m03-dictionaries-for-real-data": "py03-data-structures",
           "m04-sets-and-data-deduplication": "py03-data-structures",
-          "m05-combining-data-structures-in-scripts": "py04-oop",
-          "m06-practical-mini-projects-and-review": "py04-oop"
+          "m05-combining-data-structures-in-scripts": "py03-data-structures",
+          "m06-practical-mini-projects-and-review": "py02-control-flow"
         },
         "strands_covered": [
-          "py03-data-structures",
-          "py04-oop"
+          "py02-control-flow",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           6.0,
@@ -6245,13 +6227,13 @@
         "budget_hours": 20.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-python-setup-and-first-programs": "py02-control-flow",
+          "m01-python-setup-and-first-programs": "py01-basics",
           "m02-data-types-and-basic-operations": "py01-basics",
           "m03-control-flow-with-conditionals-and-loops": "py02-control-flow",
           "m04-functions-and-code-reuse": "py02-control-flow",
           "m05-core-data-structures": "py03-data-structures",
           "m06-introduction-to-object-oriented-programming": "py04-oop",
-          "m07-mini-project-and-review": "py04-oop"
+          "m07-mini-project-and-review": null
         },
         "strands_covered": [
           "py01-basics",
@@ -6337,7 +6319,7 @@
           "m02-control-flow-and-boolean-logic": "py02-control-flow",
           "m03-functions-and-modular-thinking": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
-          "m05-file-organization-and-basic-program-design": "py04-oop",
+          "m05-file-organization-and-basic-program-design": "py01-basics",
           "m06-object-oriented-programming-basics": "py04-oop"
         },
         "strands_covered": [
@@ -6424,12 +6406,11 @@
           "m03-tuples-and-immutable-data": "py03-data-structures",
           "m04-dictionaries-for-key-value-data": "py03-data-structures",
           "m05-sets-for-unique-items-and-membership": "py03-data-structures",
-          "m06-combining-data-structures-in-small-scripts": "py04-oop"
+          "m06-combining-data-structures-in-small-scripts": "py03-data-structures"
         },
         "strands_covered": [
           "py01-basics",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.0,
@@ -6590,12 +6571,12 @@
         "final_hours_over_budget": true,
         "module_strands": {
           "m01-python-foundations-and-setup": "py01-basics",
-          "m02-operators-input-and-basic-data-handling": "py03-data-structures",
+          "m02-operators-input-and-basic-data-handling": "py01-basics",
           "m03-control-flow-and-branching": "py02-control-flow",
           "m04-loops-and-repetition": "py02-control-flow",
           "m05-functions-and-modular-thinking": "py02-control-flow",
           "m06-data-structures-and-introduction-to-oop": "py03-data-structures",
-          "m07-practice-project-and-review": "py02-control-flow"
+          "m07-practice-project-and-review": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
@@ -6678,9 +6659,9 @@
         "module_strands": {
           "m01-python-foundations-and-first-programs": "py01-basics",
           "m02-control-flow-and-program-logic": "py02-control-flow",
-          "m03-functions-and-modular-thinking": "py01-basics",
+          "m03-functions-and-modular-thinking": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
-          "m05-file-handling-and-basic-program-design": "py04-oop",
+          "m05-file-handling-and-basic-program-design": "py01-basics",
           "m06-object-oriented-programming-basics": "py04-oop"
         },
         "strands_covered": [
@@ -6767,7 +6748,7 @@
           "m03-lists-and-basic-data-collection": "py03-data-structures",
           "m04-tuples-sets-and-data-organization": "py03-data-structures",
           "m05-dictionaries-for-key-value-data": "py03-data-structures",
-          "m06-combining-data-structures-in-small-scripts": "py01-basics"
+          "m06-combining-data-structures-in-small-scripts": "py03-data-structures"
         },
         "strands_covered": [
           "py01-basics",
@@ -6836,7 +6817,7 @@
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
-        "goal_covered": false,
+        "goal_covered": true,
         "prerequisites_present": true,
         "prerequisites_resolvable": true,
         "prerequisites_acyclic": true,
@@ -6851,14 +6832,13 @@
           "m02-control-flow-and-basic-problem-solving": "py02-control-flow",
           "m03-lists-and-tuples-for-sequence-data": "py03-data-structures",
           "m04-dictionaries-and-sets-for-organizing-data": "py03-data-structures",
-          "m05-file-input-and-data-processing-scripts": "py01-basics",
-          "m06-mini-projects-and-practical-data-structure-workflow": "py04-oop"
+          "m05-file-input-and-data-processing-scripts": "py03-data-structures",
+          "m06-mini-projects-and-practical-data-structure-workflow": "py03-data-structures"
         },
         "strands_covered": [
           "py01-basics",
           "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           5.0,
@@ -6868,8 +6848,8 @@
           7.0,
           7.0
         ],
-        "constraint_satisfaction_rate": 0.8571428571428571,
-        "all_constraints_satisfied": false
+        "constraint_satisfaction_rate": 1.0,
+        "all_constraints_satisfied": true
       },
       "negotiation": {
         "negotiation_enabled": false,
@@ -6935,10 +6915,10 @@
         "module_strands": {
           "m01-python-refresher-core-syntax": "py01-basics",
           "m02-control-flow-decision-making": "py02-control-flow",
-          "m03-functions-and-program-structure": "py01-basics",
+          "m03-functions-and-program-structure": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
           "m05-oop-basics": "py04-oop",
-          "m06-integration-practice-project": "py04-oop"
+          "m06-integration-practice-project": null
         },
         "strands_covered": [
           "py01-basics",
@@ -7021,11 +7001,11 @@
         "module_strands": {
           "m01-python-foundations-and-environment": "py01-basics",
           "m02-control-flow-and-program-logic": "py02-control-flow",
-          "m03-functions-and-modular-thinking": "py01-basics",
+          "m03-functions-and-modular-thinking": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
-          "m05-file-handling-and-exceptions": "py02-control-flow",
+          "m05-file-handling-and-exceptions": "py01-basics",
           "m06-introduction-to-oop": "py04-oop",
-          "m07-capstone-practice-project": "py04-oop"
+          "m07-capstone-practice-project": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
@@ -7112,11 +7092,11 @@
           "m03-dictionaries-for-key-value-data": "py03-data-structures",
           "m04-sets-for-uniqueness-and-membership": "py03-data-structures",
           "m05-processing-data-with-combined-structures": "py03-data-structures",
-          "m06-mini-project-data-organizer": "py04-oop"
+          "m06-mini-project-data-organizer": "py01-basics"
         },
         "strands_covered": [
-          "py03-data-structures",
-          "py04-oop"
+          "py01-basics",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.0,
@@ -7180,7 +7160,7 @@
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
-        "goal_covered": false,
+        "goal_covered": true,
         "prerequisites_present": true,
         "prerequisites_resolvable": true,
         "prerequisites_acyclic": true,
@@ -7191,18 +7171,16 @@
         "budget_hours": 20.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-python-data-structures-foundations": "py02-control-flow",
+          "m01-python-data-structures-foundations": "py03-data-structures",
           "m02-lists-and-tuples-for-sequence-processing": "py03-data-structures",
           "m03-dictionaries-for-key-value-data": "py03-data-structures",
-          "m04-sets-for-deduplication-and-membership": "py01-basics",
-          "m05-combining-data-structures-in-practical-scripts": "py04-oop",
-          "m06-mini-project-data-organizer": "py01-basics"
+          "m04-sets-for-deduplication-and-membership": "py02-control-flow",
+          "m05-combining-data-structures-in-practical-scripts": "py03-data-structures",
+          "m06-mini-project-data-organizer": "py02-control-flow"
         },
         "strands_covered": [
-          "py01-basics",
           "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.0,
@@ -7212,8 +7190,8 @@
           4.0,
           3.0
         ],
-        "constraint_satisfaction_rate": 0.8571428571428571,
-        "all_constraints_satisfied": false
+        "constraint_satisfaction_rate": 1.0,
+        "all_constraints_satisfied": true
       },
       "negotiation": {
         "negotiation_enabled": false,
@@ -7279,7 +7257,7 @@
         "module_strands": {
           "m01-python-foundations-refresher": "py01-basics",
           "m02-control-flow-and-problem-solving": "py02-control-flow",
-          "m03-functions-and-program-structure": "py01-basics",
+          "m03-functions-and-program-structure": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
           "m05-object-oriented-programming-basics": "py04-oop",
           "m06-integration-practice-and-review": "py02-control-flow"
@@ -7369,7 +7347,7 @@
           "m04-core-data-structures": "py03-data-structures",
           "m05-file-handling-and-exceptions": "py02-control-flow",
           "m06-object-oriented-programming-basics": "py04-oop",
-          "m07-integration-practice-mini-project": "py04-oop"
+          "m07-integration-practice-mini-project": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
@@ -7457,16 +7435,15 @@
         "final_hours_over_budget": true,
         "module_strands": {
           "m01-python-data-structures-review": "py03-data-structures",
-          "m02-list-processing-and-iteration": "py03-data-structures",
+          "m02-list-processing-and-iteration": "py02-control-flow",
           "m03-dictionaries-for-real-world-data": "py03-data-structures",
-          "m04-sets-and-data-deduplication": "py03-data-structures",
-          "m05-file-based-data-processing": "py01-basics",
-          "m06-mini-project-data-organization-script": "py04-oop"
+          "m04-sets-and-data-deduplication": "py02-control-flow",
+          "m05-file-based-data-processing": "py03-data-structures",
+          "m06-mini-project-data-organization-script": "py02-control-flow"
         },
         "strands_covered": [
-          "py01-basics",
-          "py03-data-structures",
-          "py04-oop"
+          "py02-control-flow",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           6.0,
@@ -7546,10 +7523,10 @@
           "m03-dictionaries-for-real-world-data": "py03-data-structures",
           "m04-sets-and-data-deduplication": "py03-data-structures",
           "m05-tuples-and-safe-data-organization": "py03-data-structures",
-          "m06-mini-project-data-processing-script": "py02-control-flow"
+          "m06-mini-project-data-processing-script": "py01-basics"
         },
         "strands_covered": [
-          "py02-control-flow",
+          "py01-basics",
           "py03-data-structures"
         ],
         "hours_per_module": [
@@ -7627,10 +7604,10 @@
         "module_strands": {
           "m01-python-basics-and-environment": "py01-basics",
           "m02-control-flow-and-iteration": "py02-control-flow",
-          "m03-functions-and-modularity": "py01-basics",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
           "m05-object-oriented-programming-basics": "py04-oop",
-          "m06-integration-practice-and-review": "py02-control-flow"
+          "m06-integration-practice-and-review": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
@@ -7716,7 +7693,7 @@
           "m03-functions-scope-decomposition": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
           "m05-oop-fundamentals": "py04-oop",
-          "m06-integration-mini-project": "py04-oop"
+          "m06-integration-mini-project": "py02-control-flow"
         },
         "strands_covered": [
           "py01-basics",
@@ -7802,11 +7779,10 @@
           "m03-dictionaries-for-key-value-data": "py03-data-structures",
           "m04-sets-for-uniqueness-and-membership": "py03-data-structures",
           "m05-combining-data-structures-in-small-scripts": "py03-data-structures",
-          "m06-practice-mini-projects-and-review": "py04-oop"
+          "m06-practice-mini-projects-and-review": "py03-data-structures"
         },
         "strands_covered": [
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.0,
@@ -7885,17 +7861,15 @@
         "budget_hours": 20.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-data-structures-refresh-and-selection": "py04-oop",
+          "m01-data-structures-refresh-and-selection": "py03-data-structures",
           "m02-lists-tuples-for-sequenced-data": "py03-data-structures",
           "m03-dictionaries-for-keyed-data": "py03-data-structures",
           "m04-sets-for-uniqueness-and-membership": "py03-data-structures",
-          "m05-combining-data-structures-in-small-scripts": "py04-oop",
-          "m06-mini-project-data-organizer": "py01-basics"
+          "m05-combining-data-structures-in-small-scripts": "py03-data-structures",
+          "m06-mini-project-data-organizer": "py03-data-structures"
         },
         "strands_covered": [
-          "py01-basics",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.0,
@@ -7976,7 +7950,7 @@
           "m04-core-data-structures": "py03-data-structures",
           "m05-working-with-strings-and-files": "py01-basics",
           "m06-introduction-to-oop": "py04-oop",
-          "m07-integration-practice-and-review": "py04-oop"
+          "m07-integration-practice-and-review": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
@@ -8144,17 +8118,15 @@
         "budget_hours": 40.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-python-data-structures-foundations": "py02-control-flow",
+          "m01-python-data-structures-foundations": "py03-data-structures",
           "m02-lists-and-tuples-for-sequences": "py03-data-structures",
           "m03-dictionaries-for-key-value-data": "py03-data-structures",
           "m04-sets-for-uniqueness-and-membership": "py03-data-structures",
           "m05-processing-data-with-loops-and-comprehensions": "py03-data-structures",
-          "m06-small-practical-scripts-and-mini-projects": "py04-oop"
+          "m06-small-practical-scripts-and-mini-projects": "py03-data-structures"
         },
         "strands_covered": [
-          "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           5.0,
@@ -8229,17 +8201,16 @@
         "budget_hours": 40.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-python-data-structures-foundations": "py04-oop",
+          "m01-python-data-structures-foundations": "py03-data-structures",
           "m02-lists-tuples-for-sequences": "py03-data-structures",
           "m03-dictionaries-for-key-value-data": "py03-data-structures",
           "m04-sets-for-uniqueness-and-membership": "py03-data-structures",
-          "m05-combining-data-structures-in-small-scripts": "py01-basics",
-          "m06-mini-projects-and-review": "py04-oop"
+          "m05-combining-data-structures-in-small-scripts": "py03-data-structures",
+          "m06-mini-projects-and-review": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           5.0,
@@ -8317,10 +8288,10 @@
           "m01-python-foundations-and-setup": "py01-basics",
           "m02-data-types-and-basic-operations": "py01-basics",
           "m03-control-flow-with-conditionals-and-loops": "py02-control-flow",
-          "m04-functions-and-modular-thinking": "py01-basics",
+          "m04-functions-and-modular-thinking": "py02-control-flow",
           "m05-core-data-structures": "py03-data-structures",
           "m06-introduction-to-object-oriented-programming": "py04-oop",
-          "m07-review-practice-and-mini-project": "py04-oop"
+          "m07-review-practice-and-mini-project": null
         },
         "strands_covered": [
           "py01-basics",
@@ -8406,7 +8377,7 @@
           "m02-control-flow-and-repetition": "py02-control-flow",
           "m03-functions-and-code-reuse": "py02-control-flow",
           "m04-data-structures-and-patterns": "py03-data-structures",
-          "m05-mini-project-python-practice-lab": "py04-oop",
+          "m05-mini-project-python-practice-lab": "py02-control-flow",
           "m06-introduction-to-oop-with-practice": "py04-oop"
         },
         "strands_covered": [
@@ -8574,11 +8545,11 @@
         "final_hours_over_budget": true,
         "module_strands": {
           "m01-python-basics-and-first-programs": "py01-basics",
-          "m02-lists-and-simple-data-processing": "py01-basics",
+          "m02-lists-and-simple-data-processing": "py03-data-structures",
           "m03-tuples-as-lightweight-records": "py03-data-structures",
           "m04-dictionaries-for-key-value-data": "py03-data-structures",
           "m05-sets-for-uniqueness-and-membership": "py03-data-structures",
-          "m06-mini-project-data-cleaning-summary": "py01-basics"
+          "m06-mini-project-data-cleaning-summary": "py03-data-structures"
         },
         "strands_covered": [
           "py01-basics",
@@ -8663,8 +8634,8 @@
           "m04-dictionaries-sets-and-functions": "py03-data-structures",
           "m05-light-file-handling-and-error-basics": "py01-basics",
           "m06-very-basic-object-oriented-programming": "py04-oop",
-          "m07-guided-practice-across-core-topics": "py04-oop",
-          "m08-final-review-and-mini-project": "py04-oop"
+          "m07-guided-practice-across-core-topics": "py03-data-structures",
+          "m08-final-review-and-mini-project": "py02-control-flow"
         },
         "strands_covered": [
           "py01-basics",
@@ -8749,11 +8720,11 @@
         "module_strands": {
           "m01-python-setup-and-first-code": "py01-basics",
           "m02-control-flow-and-repetition": "py02-control-flow",
-          "m03-functions-and-code-reuse": "py01-basics",
+          "m03-functions-and-code-reuse": "py02-control-flow",
           "m04-data-structures-and-patterns": "py03-data-structures",
-          "m05-files-errors-and-small-programs": "py04-oop",
+          "m05-files-errors-and-small-programs": "py02-control-flow",
           "m06-intro-to-oop-basics": "py04-oop",
-          "m07-capstone-review-and-build": "py04-oop"
+          "m07-capstone-review-and-build": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
@@ -8924,14 +8895,13 @@
           "m02-control-flow-for-small-programs": "py02-control-flow",
           "m03-lists-and-tuples-for-sequence-data": "py03-data-structures",
           "m04-dictionaries-and-sets-for-data-organization": "py03-data-structures",
-          "m05-functions-for-data-processing-scripts": "py01-basics",
-          "m06-data-structure-mini-projects-and-review": "py04-oop"
+          "m05-functions-for-data-processing-scripts": "py02-control-flow",
+          "m06-data-structure-mini-projects-and-review": "py02-control-flow"
         },
         "strands_covered": [
           "py01-basics",
           "py02-control-flow",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           6.0,
@@ -9008,9 +8978,9 @@
         "module_strands": {
           "m01-python-foundations-refresh": "py01-basics",
           "m02-control-flow-and-iteration": "py02-control-flow",
-          "m03-functions-and-modularity": "py01-basics",
+          "m03-functions-and-modularity": "py02-control-flow",
           "m04-core-data-structures": "py03-data-structures",
-          "m05-light-files-and-exceptions": "py01-basics",
+          "m05-light-files-and-exceptions": null,
           "m06-object-oriented-programming-basics": "py04-oop"
         },
         "strands_covered": [
@@ -9081,7 +9051,7 @@
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
-        "goal_covered": false,
+        "goal_covered": true,
         "prerequisites_present": true,
         "prerequisites_resolvable": true,
         "prerequisites_acyclic": true,
@@ -9092,14 +9062,15 @@
         "budget_hours": 20.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-core-refresh-control-flow": "py01-basics",
-          "m02-functions-scope": "py04-oop",
+          "m01-core-refresh-control-flow": "py02-control-flow",
+          "m02-functions-scope": "py02-control-flow",
           "m03-data-structures-iteration": "py03-data-structures",
           "m04-oop-fundamentals": "py04-oop",
-          "m05-integration-project-review": "py04-oop"
+          "m05-integration-project-review": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
+          "py02-control-flow",
           "py03-data-structures",
           "py04-oop"
         ],
@@ -9110,8 +9081,8 @@
           4.0,
           4.0
         ],
-        "constraint_satisfaction_rate": 0.8571428571428571,
-        "all_constraints_satisfied": false
+        "constraint_satisfaction_rate": 1.0,
+        "all_constraints_satisfied": true
       },
       "negotiation": {
         "negotiation_enabled": true,
@@ -9179,13 +9150,12 @@
           "m02-lists-and-tuples-for-ordered-data": "py03-data-structures",
           "m03-dictionaries-for-named-data": "py03-data-structures",
           "m04-sets-for-uniqueness-and-membership": "py03-data-structures",
-          "m05-combining-structures-in-small-scripts": "py01-basics",
-          "m06-guided-mini-project-data-organizer": "py04-oop"
+          "m05-combining-structures-in-small-scripts": "py03-data-structures",
+          "m06-guided-mini-project-data-organizer": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           1.5,
@@ -9262,14 +9232,13 @@
         "budget_hours": 20.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-data-structure-scenarios-and-fast-classification": "py02-control-flow",
+          "m01-data-structure-scenarios-and-fast-classification": "py03-data-structures",
           "m02-lists-and-tuples-for-ordered-data": "py03-data-structures",
           "m03-dictionaries-for-records-counts-and-lookups": "py03-data-structures",
           "m04-sets-for-deduplication-and-membership-checks": "py03-data-structures",
           "m05-mini-project-data-cleaning-summary-and-capstone": "py03-data-structures"
         },
         "strands_covered": [
-          "py02-control-flow",
           "py03-data-structures"
         ],
         "hours_per_module": [
@@ -9346,7 +9315,7 @@
         "module_strands": {
           "m01-python-basics-and-strings": "py01-basics",
           "m02-control-flow-and-repetition": "py02-control-flow",
-          "m03-functions-and-program-structure": "py04-oop",
+          "m03-functions-and-program-structure": "py02-control-flow",
           "m04-data-structures-and-iteration": "py03-data-structures",
           "m05-text-files-and-basic-processing": "py01-basics",
           "m06-oop-basics-in-python": "py04-oop"
@@ -9432,11 +9401,11 @@
         "module_strands": {
           "m01-python-refresh-and-drills": "py01-basics",
           "m02-control-flow-practice": "py02-control-flow",
-          "m03-functions-and-reuse": "py04-oop",
+          "m03-functions-and-reuse": "py02-control-flow",
           "m04-data-structures-and-patterns": "py03-data-structures",
           "m05-files-exceptions-and-robustness": "py02-control-flow",
           "m06-oop-basics": "py04-oop",
-          "m07-capstone-build-and-refine": "py04-oop"
+          "m07-capstone-build-and-refine": "py02-control-flow"
         },
         "strands_covered": [
           "py01-basics",
@@ -9518,7 +9487,7 @@
         "budget_hours": 40.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-python-data-structures-foundations": "py01-basics",
+          "m01-python-data-structures-foundations": "py03-data-structures",
           "m02-lists-and-tuples-for-ordered-data": "py03-data-structures",
           "m03-dictionaries-for-key-value-data": "py03-data-structures",
           "m04-sets-for-unique-items-and-membership": "py03-data-structures",
@@ -9526,7 +9495,6 @@
           "m06-guided-mini-project-data-organizer": "py03-data-structures"
         },
         "strands_covered": [
-          "py01-basics",
           "py03-data-structures"
         ],
         "hours_per_module": [
@@ -9591,7 +9559,7 @@
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
-        "goal_covered": false,
+        "goal_covered": true,
         "prerequisites_present": true,
         "prerequisites_resolvable": false,
         "prerequisites_acyclic": true,
@@ -9621,15 +9589,15 @@
           "m01-core-data-structures-refresher": "py03-data-structures",
           "m02-lists-tuples-ordered-data": "py03-data-structures",
           "m03-dictionaries-lookup-counting-grouping": "py03-data-structures",
-          "m04-sets-data-cleaning-workflows": "py01-basics",
-          "m05-combining-data-structures-practical-scripts": "py04-oop",
-          "m06-mini-project-part-1-design-build": "py04-oop",
-          "m07-mini-project-part-2-refine-test-present": "py01-basics"
+          "m04-sets-data-cleaning-workflows": "py02-control-flow",
+          "m05-combining-data-structures-practical-scripts": "py03-data-structures",
+          "m06-mini-project-part-1-design-build": "py01-basics",
+          "m07-mini-project-part-2-refine-test-present": "py02-control-flow"
         },
         "strands_covered": [
           "py01-basics",
-          "py03-data-structures",
-          "py04-oop"
+          "py02-control-flow",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           4.0,
@@ -9640,7 +9608,7 @@
           4.0,
           4.0
         ],
-        "constraint_satisfaction_rate": 0.5714285714285714,
+        "constraint_satisfaction_rate": 0.7142857142857143,
         "all_constraints_satisfied": false
       },
       "negotiation": {
@@ -9793,7 +9761,7 @@
         "module_strands": {
           "m01-python-diagnostic-and-rapid-refresh": "py01-basics",
           "m02-control-flow-and-code-tracing": "py02-control-flow",
-          "m03-functions-and-problem-decomposition": "py04-oop",
+          "m03-functions-and-problem-decomposition": "py02-control-flow",
           "m04-core-data-structures-and-iteration": "py03-data-structures",
           "m05-file-io-and-exception-handling": "py02-control-flow",
           "m06-oop-basics-and-simple-class-design": "py04-oop"
@@ -9881,14 +9849,14 @@
         "module_strands": {
           "m01-data-structure-selection-basics": "py03-data-structures",
           "m02-lists-and-tuples-for-ordered-data": "py03-data-structures",
-          "m03-dictionaries-for-mapping-and-counting": "py03-data-structures",
+          "m03-dictionaries-for-mapping-and-counting": "py02-control-flow",
           "m04-sets-for-uniqueness-and-comparison": "py03-data-structures",
           "m05-processing-data-with-loops-and-filtering": "py03-data-structures",
-          "m06-small-script-consolidation-project": "py04-oop"
+          "m06-small-script-consolidation-project": "py03-data-structures"
         },
         "strands_covered": [
-          "py03-data-structures",
-          "py04-oop"
+          "py02-control-flow",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           2.5,
@@ -9965,17 +9933,16 @@
         "budget_hours": 20.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-structure-selection-through-scenarios": "py04-oop",
+          "m01-structure-selection-through-scenarios": "py03-data-structures",
           "m02-lists-and-tuples-for-ordered-data": "py03-data-structures",
           "m03-dictionaries-for-records-and-lookups": "py03-data-structures",
-          "m04-sets-for-uniqueness-and-comparison": "py01-basics",
+          "m04-sets-for-uniqueness-and-comparison": "py03-data-structures",
           "m05-nested-structures-for-realistic-data": "py03-data-structures",
-          "m06-mini-project-build-and-review": "py04-oop"
+          "m06-mini-project-build-and-review": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
-          "py03-data-structures",
-          "py04-oop"
+          "py03-data-structures"
         ],
         "hours_per_module": [
           3.5,
@@ -10055,7 +10022,7 @@
           "m03-functions-and-code-organization": "py02-control-flow",
           "m04-data-structures-and-iteration": "py03-data-structures",
           "m05-object-oriented-programming-basics": "py04-oop",
-          "m06-integration-mini-project-contact-book": "py04-oop"
+          "m06-integration-mini-project-contact-book": "py02-control-flow"
         },
         "strands_covered": [
           "py01-basics",
@@ -10138,11 +10105,11 @@
         "module_strands": {
           "m01-rapid-diagnostic-python-refresh": "py01-basics",
           "m02-control-flow-with-edge-cases": "py02-control-flow",
-          "m03-functions-decomposition-and-reuse": "py04-oop",
+          "m03-functions-decomposition-and-reuse": "py02-control-flow",
           "m04-data-structures-and-data-modeling": "py03-data-structures",
           "m05-files-exceptions-and-text-processing": "py02-control-flow",
           "m06-intro-oop-and-refactoring": "py04-oop",
-          "m07-capstone-cli-tool": "py04-oop"
+          "m07-capstone-cli-tool": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
@@ -10229,16 +10196,16 @@
         "budget_hours": 40.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-core-data-structure-selection": "py01-basics",
+          "m01-core-data-structure-selection": "py02-control-flow",
           "m02-lists-and-tuples-in-practical-scripts": "py03-data-structures",
           "m03-dictionaries-for-records-lookups-and-counting": "py03-data-structures",
-          "m04-sets-for-deduplication-and-membership": "py01-basics",
+          "m04-sets-for-deduplication-and-membership": "py02-control-flow",
           "m05-iteration-filtering-and-simple-aggregation": "py03-data-structures",
-          "m06-mini-project-data-organizer": "py01-basics",
+          "m06-mini-project-data-organizer": "py02-control-flow",
           "m07-review-practice-and-application-check": null
         },
         "strands_covered": [
-          "py01-basics",
+          "py02-control-flow",
           "py03-data-structures"
         ],
         "hours_per_module": [
@@ -10304,7 +10271,7 @@
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
-        "goal_covered": false,
+        "goal_covered": true,
         "prerequisites_present": true,
         "prerequisites_resolvable": false,
         "prerequisites_acyclic": true,
@@ -10318,17 +10285,17 @@
         "budget_hours": 40.0,
         "final_hours_over_budget": true,
         "module_strands": {
-          "m01-fast-start-data-structure-recall": "py04-oop",
+          "m01-fast-start-data-structure-recall": "py03-data-structures",
           "m02-lists-tuples-sequence-processing": "py03-data-structures",
-          "m03-dictionaries-for-lookup-and-counting": "py01-basics",
-          "m04-sets-for-cleaning-and-comparison": "py01-basics",
+          "m03-dictionaries-for-lookup-and-counting": "py03-data-structures",
+          "m04-sets-for-cleaning-and-comparison": "py02-control-flow",
           "m05-mixed-structures-and-data-modeling": "py03-data-structures",
-          "m06-capstone-mini-projects": "py04-oop"
+          "m06-capstone-mini-projects": "py01-basics"
         },
         "strands_covered": [
           "py01-basics",
-          "py03-data-structures",
-          "py04-oop"
+          "py02-control-flow",
+          "py03-data-structures"
         ],
         "hours_per_module": [
           5.0,
@@ -10338,7 +10305,7 @@
           7.0,
           8.0
         ],
-        "constraint_satisfaction_rate": 0.5714285714285714,
+        "constraint_satisfaction_rate": 0.7142857142857143,
         "all_constraints_satisfied": false
       },
       "negotiation": {
@@ -10438,15 +10405,15 @@
         "median_second": 1.0,
         "median_difference": 0.0,
         "mean_difference": -0.08333333333333333,
-        "ties": 10,
-        "cliffs_delta": -0.3645833333333333,
+        "ties": 11,
+        "cliffs_delta": -0.3854166666666667,
         "difference_ci": [
           -0.1428571428571429,
           0.0
         ],
         "direction_predicted": "higher",
-        "wilcoxon_statistic": 16.5,
-        "p_value": 0.02065852787095259,
+        "wilcoxon_statistic": 10.0,
+        "p_value": 0.011066885214094484,
         "supported": false
       },
       {
@@ -11056,19 +11023,19 @@
       },
       "goal_covered": {
         "A1": {
-          "rate": 0.8333333333333334,
+          "rate": 0.9166666666666666,
           "n": 24,
           "wilson_ci": [
-            0.6414692935030095,
-            0.9332132367136705
+            0.741511978067893,
+            0.9768411847029567
           ]
         },
         "A2": {
-          "rate": 0.8333333333333334,
+          "rate": 0.9166666666666666,
           "n": 24,
           "wilson_ci": [
-            0.6414692935030095,
-            0.9332132367136705
+            0.741511978067893,
+            0.9768411847029567
           ]
         },
         "A3": {
@@ -11080,19 +11047,19 @@
           ]
         },
         "A4": {
-          "rate": 0.875,
+          "rate": 0.9583333333333334,
           "n": 24,
           "wilson_ci": [
-            0.6899611872949993,
-            0.9565566591987655
+            0.7975819352134406,
+            0.9926065438344942
           ]
         },
         "A5": {
-          "rate": 0.7916666666666666,
+          "rate": 0.9166666666666666,
           "n": 24,
           "wilson_ci": [
-            0.5952954674681133,
-            0.9075517464714814
+            0.741511978067893,
+            0.9768411847029567
           ]
         }
       },
@@ -11266,19 +11233,19 @@
       },
       "all_constraints_satisfied": {
         "A1": {
-          "rate": 0.4166666666666667,
+          "rate": 0.4583333333333333,
           "n": 24,
           "wilson_ci": [
-            0.24467602609811764,
-            0.6116533413477124
+            0.2789133373121099,
+            0.6492513464108051
           ]
         },
         "A2": {
-          "rate": 0.7083333333333334,
+          "rate": 0.7916666666666666,
           "n": 24,
           "wilson_ci": [
-            0.5083230633550337,
-            0.8508535180303913
+            0.5952954674681133,
+            0.9075517464714814
           ]
         },
         "A3": {
@@ -11290,19 +11257,19 @@
           ]
         },
         "A4": {
-          "rate": 0.625,
+          "rate": 0.7083333333333334,
           "n": 24,
           "wilson_ci": [
-            0.42709962442674276,
-            0.7884063244045122
+            0.5083230633550337,
+            0.8508535180303913
           ]
         },
         "A5": {
-          "rate": 0.4583333333333333,
+          "rate": 0.5,
           "n": 24,
           "wilson_ci": [
-            0.2789133373121099,
-            0.6492513464108051
+            0.3142742581957335,
+            0.6857257418042665
           ]
         }
       }
@@ -12014,21 +11981,64 @@
           "kind": "binary",
           "scenarios_compared": 24,
           "status": "computed",
-          "proportion_first": 0.8333333333333334,
-          "proportion_second": 0.8333333333333334,
+          "proportion_first": 0.9166666666666666,
+          "proportion_second": 0.9166666666666666,
           "ci_first": [
-            0.6414692935030095,
-            0.9332132367136705
+            0.741511978067893,
+            0.9768411847029567
           ],
           "ci_second": [
-            0.6414692935030095,
-            0.9332132367136705
+            0.741511978067893,
+            0.9768411847029567
           ],
           "mcnemar": {
-            "both": 18,
+            "both": 21,
+            "only_first": 1,
+            "only_second": 1,
+            "neither": 1,
+            "discordant": 2,
+            "p_value": 1.0
+          },
+          "direction_predicted": "higher",
+          "n_pairs": 24,
+          "median_first": 1.0,
+          "median_second": 1.0,
+          "median_difference": 0.0,
+          "mean_difference": 0.0,
+          "ties": 22,
+          "cliffs_delta": 0.0,
+          "difference_ci": [
+            0.0,
+            0.0
+          ],
+          "wilcoxon_statistic": 1.5,
+          "p_value": 1.0,
+          "supported": false
+        },
+        "A3": {
+          "conditions": [
+            "A1",
+            "A3"
+          ],
+          "outcome": "goal_covered",
+          "kind": "binary",
+          "scenarios_compared": 24,
+          "status": "computed",
+          "proportion_first": 0.9166666666666666,
+          "proportion_second": 0.9166666666666666,
+          "ci_first": [
+            0.741511978067893,
+            0.9768411847029567
+          ],
+          "ci_second": [
+            0.741511978067893,
+            0.9768411847029567
+          ],
+          "mcnemar": {
+            "both": 20,
             "only_first": 2,
             "only_second": 2,
-            "neither": 2,
+            "neither": 0,
             "discordant": 4,
             "p_value": 1.0
           },
@@ -12048,49 +12058,6 @@
           "p_value": 1.0,
           "supported": false
         },
-        "A3": {
-          "conditions": [
-            "A1",
-            "A3"
-          ],
-          "outcome": "goal_covered",
-          "kind": "binary",
-          "scenarios_compared": 24,
-          "status": "computed",
-          "proportion_first": 0.8333333333333334,
-          "proportion_second": 0.9166666666666666,
-          "ci_first": [
-            0.6414692935030095,
-            0.9332132367136705
-          ],
-          "ci_second": [
-            0.741511978067893,
-            0.9768411847029567
-          ],
-          "mcnemar": {
-            "both": 18,
-            "only_first": 2,
-            "only_second": 4,
-            "neither": 0,
-            "discordant": 6,
-            "p_value": 0.6875
-          },
-          "direction_predicted": "higher",
-          "n_pairs": 24,
-          "median_first": 1.0,
-          "median_second": 1.0,
-          "median_difference": 0.0,
-          "mean_difference": -0.08333333333333333,
-          "ties": 18,
-          "cliffs_delta": -0.08333333333333333,
-          "difference_ci": [
-            0.0,
-            0.0
-          ],
-          "wilcoxon_statistic": 7.0,
-          "p_value": 0.4142161782425253,
-          "supported": false
-        },
         "A4": {
           "conditions": [
             "A1",
@@ -12100,22 +12067,22 @@
           "kind": "binary",
           "scenarios_compared": 24,
           "status": "computed",
-          "proportion_first": 0.8333333333333334,
-          "proportion_second": 0.875,
+          "proportion_first": 0.9166666666666666,
+          "proportion_second": 0.9583333333333334,
           "ci_first": [
-            0.6414692935030095,
-            0.9332132367136705
+            0.741511978067893,
+            0.9768411847029567
           ],
           "ci_second": [
-            0.6899611872949993,
-            0.9565566591987655
+            0.7975819352134406,
+            0.9926065438344942
           ],
           "mcnemar": {
-            "both": 17,
-            "only_first": 3,
-            "only_second": 4,
+            "both": 21,
+            "only_first": 1,
+            "only_second": 2,
             "neither": 0,
-            "discordant": 7,
+            "discordant": 3,
             "p_value": 1.0
           },
           "direction_predicted": "higher",
@@ -12124,14 +12091,14 @@
           "median_second": 1.0,
           "median_difference": 0.0,
           "mean_difference": -0.041666666666666664,
-          "ties": 17,
+          "ties": 21,
           "cliffs_delta": -0.041666666666666664,
           "difference_ci": [
             0.0,
             0.0
           ],
-          "wilcoxon_statistic": 12.0,
-          "p_value": 0.7054569861112734,
+          "wilcoxon_statistic": 2.0,
+          "p_value": 0.5637028616507731,
           "supported": false
         },
         "A5": {
@@ -12143,22 +12110,22 @@
           "kind": "binary",
           "scenarios_compared": 24,
           "status": "computed",
-          "proportion_first": 0.8333333333333334,
-          "proportion_second": 0.7916666666666666,
+          "proportion_first": 0.9166666666666666,
+          "proportion_second": 0.9166666666666666,
           "ci_first": [
-            0.6414692935030095,
-            0.9332132367136705
+            0.741511978067893,
+            0.9768411847029567
           ],
           "ci_second": [
-            0.5952954674681133,
-            0.9075517464714814
+            0.741511978067893,
+            0.9768411847029567
           ],
           "mcnemar": {
-            "both": 16,
-            "only_first": 4,
-            "only_second": 3,
-            "neither": 1,
-            "discordant": 7,
+            "both": 20,
+            "only_first": 2,
+            "only_second": 2,
+            "neither": 0,
+            "discordant": 4,
             "p_value": 1.0
           },
           "direction_predicted": "higher",
@@ -12166,15 +12133,15 @@
           "median_first": 1.0,
           "median_second": 1.0,
           "median_difference": 0.0,
-          "mean_difference": 0.041666666666666664,
-          "ties": 17,
-          "cliffs_delta": 0.041666666666666664,
+          "mean_difference": 0.0,
+          "ties": 20,
+          "cliffs_delta": 0.0,
           "difference_ci": [
             0.0,
             0.0
           ],
-          "wilcoxon_statistic": 12.0,
-          "p_value": 0.7054569861112734,
+          "wilcoxon_statistic": 5.0,
+          "p_value": 1.0,
           "supported": false
         }
       },
@@ -12884,38 +12851,38 @@
           "kind": "binary",
           "scenarios_compared": 24,
           "status": "computed",
-          "proportion_first": 0.4166666666666667,
-          "proportion_second": 0.7083333333333334,
+          "proportion_first": 0.4583333333333333,
+          "proportion_second": 0.7916666666666666,
           "ci_first": [
-            0.24467602609811764,
-            0.6116533413477124
+            0.2789133373121099,
+            0.6492513464108051
           ],
           "ci_second": [
-            0.5083230633550337,
-            0.8508535180303913
+            0.5952954674681133,
+            0.9075517464714814
           ],
           "mcnemar": {
-            "both": 7,
-            "only_first": 3,
+            "both": 9,
+            "only_first": 2,
             "only_second": 10,
-            "neither": 4,
-            "discordant": 13,
-            "p_value": 0.09228515625
+            "neither": 3,
+            "discordant": 12,
+            "p_value": 0.03857421875
           },
           "direction_predicted": "higher",
           "n_pairs": 24,
           "median_first": 0.0,
           "median_second": 1.0,
           "median_difference": 0.0,
-          "mean_difference": -0.2916666666666667,
-          "ties": 11,
-          "cliffs_delta": -0.2916666666666667,
+          "mean_difference": -0.3333333333333333,
+          "ties": 12,
+          "cliffs_delta": -0.3333333333333333,
           "difference_ci": [
             -1.0,
             0.0
           ],
-          "wilcoxon_statistic": 21.0,
-          "p_value": 0.05220363534131467,
+          "wilcoxon_statistic": 13.0,
+          "p_value": 0.020921335337794018,
           "supported": false
         },
         "A3": {
@@ -12927,38 +12894,38 @@
           "kind": "binary",
           "scenarios_compared": 24,
           "status": "computed",
-          "proportion_first": 0.4166666666666667,
+          "proportion_first": 0.4583333333333333,
           "proportion_second": 0.5,
           "ci_first": [
-            0.24467602609811764,
-            0.6116533413477124
+            0.2789133373121099,
+            0.6492513464108051
           ],
           "ci_second": [
             0.3142742581957335,
             0.6857257418042665
           ],
           "mcnemar": {
-            "both": 4,
+            "both": 5,
             "only_first": 6,
-            "only_second": 8,
+            "only_second": 7,
             "neither": 6,
-            "discordant": 14,
-            "p_value": 0.79052734375
+            "discordant": 13,
+            "p_value": 1.0
           },
           "direction_predicted": "higher",
           "n_pairs": 24,
           "median_first": 0.0,
           "median_second": 0.5,
           "median_difference": 0.0,
-          "mean_difference": -0.08333333333333333,
-          "ties": 10,
-          "cliffs_delta": -0.08333333333333333,
+          "mean_difference": -0.041666666666666664,
+          "ties": 11,
+          "cliffs_delta": -0.041666666666666664,
           "difference_ci": [
-            -1.0,
+            -0.5,
             0.0
           ],
-          "wilcoxon_statistic": 45.0,
-          "p_value": 0.5929800980174267,
+          "wilcoxon_statistic": 42.0,
+          "p_value": 0.7815112949987133,
           "supported": false
         },
         "A4": {
@@ -12970,38 +12937,38 @@
           "kind": "binary",
           "scenarios_compared": 24,
           "status": "computed",
-          "proportion_first": 0.4166666666666667,
-          "proportion_second": 0.625,
+          "proportion_first": 0.4583333333333333,
+          "proportion_second": 0.7083333333333334,
           "ci_first": [
-            0.24467602609811764,
-            0.6116533413477124
+            0.2789133373121099,
+            0.6492513464108051
           ],
           "ci_second": [
-            0.42709962442674276,
-            0.7884063244045122
+            0.5083230633550337,
+            0.8508535180303913
           ],
           "mcnemar": {
-            "both": 6,
-            "only_first": 4,
-            "only_second": 9,
+            "both": 9,
+            "only_first": 2,
+            "only_second": 8,
             "neither": 5,
-            "discordant": 13,
-            "p_value": 0.266845703125
+            "discordant": 10,
+            "p_value": 0.109375
           },
           "direction_predicted": "higher",
           "n_pairs": 24,
           "median_first": 0.0,
           "median_second": 1.0,
           "median_difference": 0.0,
-          "mean_difference": -0.20833333333333334,
-          "ties": 11,
-          "cliffs_delta": -0.20833333333333334,
+          "mean_difference": -0.25,
+          "ties": 14,
+          "cliffs_delta": -0.25,
           "difference_ci": [
             -1.0,
             0.0
           ],
-          "wilcoxon_statistic": 28.0,
-          "p_value": 0.16551785869747015,
+          "wilcoxon_statistic": 11.0,
+          "p_value": 0.05777957112359726,
           "supported": false
         },
         "A5": {
@@ -13013,28 +12980,28 @@
           "kind": "binary",
           "scenarios_compared": 24,
           "status": "computed",
-          "proportion_first": 0.4166666666666667,
-          "proportion_second": 0.4583333333333333,
+          "proportion_first": 0.4583333333333333,
+          "proportion_second": 0.5,
           "ci_first": [
-            0.24467602609811764,
-            0.6116533413477124
-          ],
-          "ci_second": [
             0.2789133373121099,
             0.6492513464108051
           ],
+          "ci_second": [
+            0.3142742581957335,
+            0.6857257418042665
+          ],
           "mcnemar": {
-            "both": 5,
+            "both": 6,
             "only_first": 5,
             "only_second": 6,
-            "neither": 8,
+            "neither": 7,
             "discordant": 11,
             "p_value": 1.0
           },
           "direction_predicted": "higher",
           "n_pairs": 24,
           "median_first": 0.0,
-          "median_second": 0.0,
+          "median_second": 0.5,
           "median_difference": 0.0,
           "mean_difference": -0.041666666666666664,
           "ties": 13,
@@ -13299,11 +13266,11 @@
         "unit": "scenario",
         "rates": {
           "A1": {
-            "mean": 0.16666666666666666,
+            "mean": 0.08333333333333333,
             "n": 24
           },
           "A2": {
-            "mean": 0.16666666666666666,
+            "mean": 0.08333333333333333,
             "n": 24
           },
           "A3": {
@@ -13311,11 +13278,11 @@
             "n": 24
           },
           "A4": {
-            "mean": 0.125,
+            "mean": 0.041666666666666664,
             "n": 24
           },
           "A5": {
-            "mean": 0.20833333333333334,
+            "mean": 0.08333333333333333,
             "n": 24
           }
         }

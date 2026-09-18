@@ -16,7 +16,7 @@ Runs: 120 across conditions A1, A2, A3, A4, A5. Unit of analysis: the scenario (
 
 | Contrast | Isolates | Outcome | Median A | Median B | Median difference | 95% CI | Cliff's delta | p | Supported |
 |---|---|---|---|---|---|---|---|---|---|
-| A1 vs A2 | agent decomposition | constraint_satisfaction_rate | 0.857 | 1.000 | 0.000 | [-0.143, +0.000] | -0.365 | 0.021 | no (predicted higher) |
+| A1 vs A2 | agent decomposition | constraint_satisfaction_rate | 0.857 | 1.000 | 0.000 | [-0.143, +0.000] | -0.385 | 0.011 | no (predicted higher) |
 | A1 vs A3 | retrieval grounding | unsupported_claim_rate | pending E3 annotation | | | | | | |
 | A1 vs A4 | the negotiation protocol | time_budget_satisfied | 1.000 | 1.000 | 0.000 | [+0.000, +0.000] | 0.125 | 0.083 | no (predicted higher) |
 | | | proportions | 1.000 [+0.862, +1.000] | 0.875 [+0.690, +0.957] | McNemar exact | discordant 3 (3 vs 0) | | 0.250 | |
@@ -49,12 +49,12 @@ Runs: 120 across conditions A1, A2, A3, A4, A5. Unit of analysis: the scenario (
 | extraction_parsed | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] |
 | time_budget_satisfied | 1.00 [+0.86, +1.00] | 0.96 [+0.80, +0.99] | 1.00 [+0.86, +1.00] | 0.88 [+0.69, +0.96] | 1.00 [+0.86, +1.00] |
 | module_count_in_range | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] |
-| goal_covered | 0.83 [+0.64, +0.93] | 0.83 [+0.64, +0.93] | 0.92 [+0.74, +0.98] | 0.88 [+0.69, +0.96] | 0.79 [+0.60, +0.91] |
+| goal_covered | 0.92 [+0.74, +0.98] | 0.92 [+0.74, +0.98] | 0.92 [+0.74, +0.98] | 0.96 [+0.80, +0.99] | 0.92 [+0.74, +0.98] |
 | prerequisites_present | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] |
 | prerequisites_resolvable | 0.75 [+0.55, +0.88] | 0.96 [+0.80, +0.99] | 0.75 [+0.55, +0.88] | 0.92 [+0.74, +0.98] | 0.75 [+0.55, +0.88] |
 | prerequisites_acyclic | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] |
 | final_hours_over_budget | 1.00 [+0.86, +1.00] | 0.92 [+0.74, +0.98] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] |
-| all_constraints_satisfied | 0.42 [+0.24, +0.61] | 0.71 [+0.51, +0.85] | 0.50 [+0.31, +0.69] | 0.62 [+0.43, +0.79] | 0.46 [+0.28, +0.65] |
+| all_constraints_satisfied | 0.46 [+0.28, +0.65] | 0.79 [+0.60, +0.91] | 0.50 [+0.31, +0.69] | 0.71 [+0.51, +0.85] | 0.50 [+0.31, +0.69] |
 
 ## Planning checks against A1, paired by scenario (exact McNemar)
 
@@ -64,12 +64,12 @@ Runs: 120 across conditions A1, A2, A3, A4, A5. Unit of analysis: the scenario (
 | extraction_parsed | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 |
 | time_budget_satisfied | 1.00 vs 0.96, discordant 1/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 0.88, discordant 3/0, p=0.250 | 1.00 vs 1.00, discordant 0/0, p=1.000 |
 | module_count_in_range | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 |
-| goal_covered | 0.83 vs 0.83, discordant 2/2, p=1.000 | 0.83 vs 0.92, discordant 2/4, p=0.688 | 0.83 vs 0.88, discordant 3/4, p=1.000 | 0.83 vs 0.79, discordant 4/3, p=1.000 |
+| goal_covered | 0.92 vs 0.92, discordant 1/1, p=1.000 | 0.92 vs 0.92, discordant 2/2, p=1.000 | 0.92 vs 0.96, discordant 1/2, p=1.000 | 0.92 vs 0.92, discordant 2/2, p=1.000 |
 | prerequisites_present | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 |
 | prerequisites_resolvable | 0.75 vs 0.96, discordant 0/5, p=0.062 | 0.75 vs 0.75, discordant 2/2, p=1.000 | 0.75 vs 0.92, discordant 1/5, p=0.219 | 0.75 vs 0.75, discordant 2/2, p=1.000 |
 | prerequisites_acyclic | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 |
 | final_hours_over_budget | 1.00 vs 0.92, discordant 2/0, p=0.500 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 |
-| all_constraints_satisfied | 0.42 vs 0.71, discordant 3/10, p=0.092 | 0.42 vs 0.50, discordant 6/8, p=0.791 | 0.42 vs 0.62, discordant 4/9, p=0.267 | 0.42 vs 0.46, discordant 5/6, p=1.000 |
+| all_constraints_satisfied | 0.46 vs 0.79, discordant 2/10, p=0.039 | 0.46 vs 0.50, discordant 6/7, p=1.000 | 0.46 vs 0.71, discordant 2/8, p=0.109 | 0.46 vs 0.50, discordant 5/6, p=1.000 |
 
 ## Negotiation
 
@@ -90,7 +90,7 @@ Each row is a failure mode from the taxonomy. Values are the mean of the per-sce
 | Planning | Time budget not satisfied | per scenario | 0.000 | 0.042 | 0.000 | 0.125 | 0.000 |
 | Planning | Prerequisites unresolvable | per scenario | 0.250 | 0.042 | 0.250 | 0.083 | 0.250 |
 | Planning | Prerequisite graph cyclic | per scenario | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
-| Planning | Stated goal uncovered | per scenario | 0.167 | 0.167 | 0.083 | 0.125 | 0.208 |
+| Planning | Stated goal uncovered | per scenario | 0.083 | 0.083 | 0.083 | 0.042 | 0.083 |
 | Planning | Final syllabus over budget after repair | per scenario | 1.000 | 0.917 | 1.000 | 1.000 | 1.000 |
 | Negotiation | No revision occurred | per scenario | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
 | Negotiation | Round limit without approval | per scenario | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
