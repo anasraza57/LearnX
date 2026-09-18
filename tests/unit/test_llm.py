@@ -108,6 +108,40 @@ class TestRequestParameters:
         assert payload["seed"] == config.model.random_seed
         assert chat.callbacks[0].request_params["temperature"] == 0.0
 
+    @pytest.mark.parametrize("model", ["gpt-5.4-mini", "gpt-4o-mini", "gpt-3.5-turbo"])
+    def test_api_requests_carry_the_output_cap(self, model, model_config):
+        model_config.api_key = "test"
+        model_config.max_tokens = 8192
+        chat = make_chat_model("instructor", temperature=0.2, model_name=model)
+        payload = chat._get_request_payload([HumanMessage(content="hi")])
+        # langchain renames the field; either spelling is the cap arriving
+        assert payload.get("max_completion_tokens") or payload.get("max_tokens") == 8192
+
+    def test_local_requests_carry_max_tokens_not_the_renamed_field(self, model_config):
+        """
+        Ollama's OpenAI-compatible endpoint honours max_tokens and ignores
+        max_completion_tokens, which is what langchain renames the field to. Sent
+        under the wrong name the cap is a silent no-op, and a model that fails to
+        terminate then generates until it fills its context window.
+        """
+        model_config.api_key = "ollama"
+        model_config.base_url = "http://localhost:11434/v1"
+        model_config.max_tokens = 8192
+        chat = make_chat_model("advocate", temperature=0.2, model_name="mistral-7b-32k")
+        payload = chat._get_request_payload([HumanMessage(content="hi")])
+        assert payload["extra_body"]["max_tokens"] == 8192
+        assert "max_completion_tokens" not in payload
+
+    def test_a_cap_that_would_not_be_sent_is_an_error(self, model_config, monkeypatch):
+        model_config.api_key = "test"
+        model_config.max_tokens = 8192
+        monkeypatch.setattr("src.llm._request_params",
+                            lambda chat: {"temperature": 0.2, "seed": None,
+                                          "reasoning_effort": None, "top_p": None,
+                                          "output_cap": None})
+        with pytest.raises(DeterminismError, match="output cap"):
+            make_chat_model("instructor", temperature=0.2, model_name="gpt-4o-mini")
+
     def test_unsendable_temperature_is_an_error(self, model_config):
         model_config.deterministic = True
         model_config.supports_temperature = True

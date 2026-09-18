@@ -223,7 +223,13 @@ def _request_params(chat: ChatOpenAI) -> Optional[Dict[str, Any]]:
     payload = chat._get_request_payload([HumanMessage(content="ping")])
     if not isinstance(payload, dict):  # a mocked client in tests
         return None
-    return {key: payload.get(key) for key in ("temperature", "seed", "reasoning_effort", "top_p")}
+    params = {key: payload.get(key) for key in ("temperature", "seed", "reasoning_effort", "top_p")}
+    # langchain sends the cap as max_completion_tokens, which OpenAI accepts and
+    # Ollama silently ignores, so both spellings are inspected.
+    params["output_cap"] = (payload.get("max_tokens")
+                           or payload.get("max_completion_tokens")
+                           or (payload.get("extra_body") or {}).get("max_tokens"))
+    return params
 
 
 def make_chat_model(
@@ -255,6 +261,13 @@ def make_chat_model(
         "timeout": config.model.request_timeout,
         "max_retries": 0,  # retried by tracked_invoke, so every attempt is recorded
     }
+    # Ollama's OpenAI-compatible endpoint honours max_tokens and ignores
+    # max_completion_tokens, which is what langchain renames the field to. The cap
+    # is therefore set through model_kwargs for a local backend, verified below.
+    if config.model.base_url:
+        kwargs["extra_body"] = {"max_tokens": config.model.max_tokens}
+    else:
+        kwargs["max_tokens"] = config.model.max_tokens
     if config.model.base_url:
         kwargs["base_url"] = config.model.base_url
     if config.model.supports_temperature:
@@ -270,6 +283,12 @@ def make_chat_model(
         # explicitly off; "none" is the documented default for the mini models
         chat = ChatOpenAI(**kwargs, reasoning_effort="none")
         params = _request_params(chat)
+    if params is not None and params.get("output_cap") != config.model.max_tokens:
+        raise DeterminismError(
+            f"{model}: the output cap of {config.model.max_tokens} tokens would not be sent "
+            f"(request carries {params.get('output_cap')!r}). Without it a model that fails to "
+            f"terminate generates until it fills its context window."
+        )
     if params is not None and "temperature" in kwargs and params["temperature"] != kwargs["temperature"]:
         raise DeterminismError(
             f"{model}: temperature {kwargs['temperature']} would not be sent (request has {params['temperature']})."

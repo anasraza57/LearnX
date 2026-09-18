@@ -276,7 +276,7 @@ Run fast tests only:
 ```bash
 pytest tests/unit/test_config.py tests/unit/test_validation.py tests/unit/test_learner_profile_validation.py tests/unit/test_rag_instructor.py tests/unit/test_assessment_generator.py tests/unit/test_grading_agent.py tests/unit/test_quiz_session.py tests/unit/test_assessment_schemas.py tests/unit/test_orchestrator.py tests/unit/test_syllabus_planner.py tests/unit/test_evaluation_metrics.py tests/unit/test_ab_testing.py --no-cov -q
 ```
-**Result:** 385 of 421 tests pass in about three minutes.
+**Result:** 390 of 426 tests pass in about three minutes.
 
 36 tests fail, and they were failing before this revision began: they assert
 interfaces the code has since moved on from, such as a `Citation.relevance_score`

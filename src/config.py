@@ -48,7 +48,13 @@ class ModelConfig:
     project: Optional[str] = field(default_factory=lambda: os.getenv("OPENAI_PROJECT"))
 
     temperature: float = 0.7
-    max_tokens: int = 2000
+    # Upper bound on a single completion, sent with every request. Generous on
+    # purpose: the largest completion in the 9,159 recorded E1 calls was 3,921
+    # tokens and none exceeded 4,096, so this cannot change a well-behaved run.
+    # It exists because a local model that fails to terminate will otherwise
+    # generate until it fills its context window. A call stopped by the cap is
+    # recorded with finish_reason "length" and counted per run, never silently.
+    max_tokens: int = 8192
 
     # Backend capabilities. Some models reject any non-default temperature;
     # set LLM_SUPPORTS_TEMPERATURE=false for those so the parameter is omitted.
