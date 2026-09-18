@@ -572,8 +572,9 @@ def backend_report(arms: List[Tuple[str, str]], condition: str = "A1") -> Tuple[
              "The architecture, corpus, scenarios and prompts are identical across these arms; only "
              "the model differs. Paired by scenario. Not pre-registered: reported descriptively.", "",
              "## Coverage", "",
-             "| Backend | Scenarios | Responses | Items | API cost (USD) | Median latency (s) | Runs failed |",
-             "|---|---|---|---|---|---|---|"]
+             "| Backend | Scenarios | Responses | Items | API cost (USD) | Median latency (s) | "
+             "Calls stopped by the cap | Runs failed |",
+             "|---|---|---|---|---|---|---|---|"]
     summary: Dict[str, Any] = {"condition": condition, "arms": {}, "measures": {}, "against_first": {}}
     for label in labels:
         subset = [r for r in runs if r["condition"] == label]
@@ -586,10 +587,14 @@ def backend_report(arms: List[Tuple[str, str]], condition: str = "A1") -> Tuple[
             "items": sum(r["counts"]["items"] for r in subset),
             "cost_usd": sum(costs) if costs else None,
             "median_latency_s": statistics.median(latencies) if latencies else None,
+            # A local model that fails to terminate is stopped by the cap, and an
+            # arm with truncated artefacts is not comparable with one without
+            "calls_truncated": sum(r["pooled"].get("calls_truncated", 0) for r in subset),
         }
         summary["arms"][label] = entry
         lines.append(f"| {label} | {entry['scenarios']} | {entry['responses']} | {entry['items']} | "
-                     f"{_fmt(entry['cost_usd'], 2)} | {_fmt(entry['median_latency_s'], 1)} | 0 |")
+                     f"{_fmt(entry['cost_usd'], 2)} | {_fmt(entry['median_latency_s'], 1)} | "
+                     f"{entry['calls_truncated']} | 0 |")
 
     # Planning checks are pass/fail per scenario, so they are proportions with a
     # Wilson interval. The rest are per-scenario rates, summarised by median.
