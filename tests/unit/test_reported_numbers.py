@@ -9,6 +9,7 @@ figures from the stored analysis and assert that the documents still say them.
 They skip when the analysis output is absent, so a fresh clone still passes.
 """
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -123,6 +124,40 @@ class TestPlanningClaims:
         text = _text("results")
         assert "exceeded the budget in every run" in text
         assert "61 to 83 hours" in text
+
+
+class TestRunProvenance:
+    """
+    Every arm must have run against the same corpus and scenario set, or the
+    comparisons between them mean nothing. Each manifest records the hash of both,
+    so drift is detectable rather than assumed absent.
+    """
+
+    @staticmethod
+    def _sha(path):
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def test_recorded_inputs_still_match_the_files_on_disk(self):
+        manifests = sorted(ROOT.glob("results/*/*/run_manifest_*.json"))
+        if not manifests:
+            pytest.skip("no runs in this checkout")
+        checked = 0
+        for manifest in manifests:
+            record = json.loads(manifest.read_text(encoding="utf-8"))
+            report = ROOT / "data" / "corpus" / "python_v1" / "index_report.json"
+            recorded = (record.get("corpus") or {}).get("index_report_sha256")
+            if recorded and report.exists():
+                assert recorded == self._sha(report), \
+                    f"{manifest.name} ran against a different corpus index than the one on disk"
+                checked += 1
+            scenario_set = record.get("scenario_set") or {}
+            path = ROOT / scenario_set.get("path", "data/scenarios/scenarios_v1.json")
+            if scenario_set.get("sha256") and path.exists():
+                assert scenario_set["sha256"] == self._sha(path), \
+                    f"{manifest.name} ran against a different scenario set than the one on disk"
+                checked += 1
+        if not checked:
+            pytest.skip("no manifest recorded a hash that could be checked")
 
 
 class TestDocumentHygiene:
