@@ -105,7 +105,8 @@ than ungrounded instruction.
 > responses carried a single inline citation, and nor did any of the 919 responses in the ungrounded
 > condition. With the instruction, all 831 answered responses carried at least one marker, 16,474 in
 > total, a median of 19 per response. Of those, 5 (0.03%) pointed outside the set of passages
-> supplied; the rest referred to a passage that existed.
+> supplied, all five in a single response citing a source numbered 6 when it had been given five;
+> every other marker referred to a passage that existed.
 >
 > Whether a cited passage in fact supports the claim attached to it is not decidable automatically and
 > is measured by the two-rater study in §3.6.

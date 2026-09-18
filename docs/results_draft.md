@@ -69,7 +69,9 @@ the stored records. 120 runs, five conditions over 24 scenarios, one model
 >
 > The citation instruction produces attribution: with it, all 831 answered responses carried inline
 > citations, 16,474 markers in total, a median of 19 per response, of which five (0.03%) pointed
-> outside the passages supplied. Without it, none of the 814 answered responses carried a single
+> outside the passages supplied. Those five are one response in one scenario repeatedly citing a
+> source numbered 6 when five passages had been given to it, which is the hallucinated attribution
+> that checking markers against the supplied set exists to catch. Without it, none of the 814 answered responses carried a single
 > marker, though the system still appended its list of retrieved sources. Whether those citations are
 > correct is the annotation study's question, not this one's.
 >
