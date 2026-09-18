@@ -412,6 +412,10 @@ def main() -> None:
     parser.add_argument("--reasoning-effort", help="passed through for reasoning models")
     parser.add_argument("--nondeterministic", action="store_true", help="use deployment temperatures (not for E1/E2)")
     parser.add_argument("--timeout", type=float, help="per-request timeout in seconds (default 60 API, 900 local)")
+    parser.add_argument("--max-tokens", type=int,
+                        help="cap on a single completion (default 8192). Lower it for a backend "
+                             "whose context window cannot hold the prompt plus the cap: A1 prompts "
+                             "reach about 9,000 tokens, so a 16k model needs roughly 6144")
     parser.add_argument("--allow-dirty", action="store_true", help="run with uncommitted code changes")
     parser.add_argument("--dry-run", action="store_true", help="list the work and exit")
     args = parser.parse_args()
@@ -425,6 +429,8 @@ def main() -> None:
     config.model.reasoning_effort = args.reasoning_effort
     config.model.deterministic = not args.nondeterministic
     config.model.request_timeout = args.timeout or (900.0 if args.base_url else 60.0)
+    if args.max_tokens:
+        config.model.max_tokens = args.max_tokens
 
     scenario_set, scenario_sha = scenarios.load(args.scenario_set)
     wanted = set(args.scenarios or [s["scenario_id"] for s in scenario_set["scenarios"]])
@@ -470,6 +476,7 @@ def main() -> None:
             "seed": config.model.random_seed if config.model.deterministic else None,
             "reasoning_effort": args.reasoning_effort,
             "request_timeout_s": config.model.request_timeout,
+            "max_output_tokens": config.model.max_tokens,
             "local": local,
             "pricing": PRICING.get(args.model),
             "pricing_date": PRICING_DATE,
