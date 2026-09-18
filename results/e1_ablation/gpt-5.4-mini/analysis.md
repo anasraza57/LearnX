@@ -46,6 +46,7 @@ Runs: 120 across conditions A1, A2, A3, A4, A5. Unit of analysis: the scenario (
 | Check | A1 | A2 | A3 | A4 | A5 |
 |---|---|---|---|---|---|
 | schema_valid_as_extracted | 0.54 [+0.35, +0.72] | 0.96 [+0.80, +0.99] | 0.58 [+0.39, +0.76] | 0.71 [+0.51, +0.85] | 0.54 [+0.35, +0.72] |
+| schema_valid_ignoring_prerequisites | 0.96 [+0.80, +0.99] | 0.96 [+0.80, +0.99] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] |
 | extraction_parsed | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] |
 | time_budget_satisfied | 1.00 [+0.86, +1.00] | 0.96 [+0.80, +0.99] | 1.00 [+0.86, +1.00] | 0.88 [+0.69, +0.96] | 1.00 [+0.86, +1.00] |
 | module_count_in_range | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] | 1.00 [+0.86, +1.00] |
@@ -58,9 +59,12 @@ Runs: 120 across conditions A1, A2, A3, A4, A5. Unit of analysis: the scenario (
 
 ## Planning checks against A1, paired by scenario (exact McNemar)
 
+These are descriptive: the composite in the contrasts table is the pre-registered outcome, and the p-values below are not corrected for the number of checks.
+
 | Check | A1 vs A2 | A1 vs A3 | A1 vs A4 | A1 vs A5 |
 |---|---|---|---|---|
 | schema_valid_as_extracted | 0.54 vs 0.96, discordant 0/10, p=0.002 | 0.54 vs 0.58, discordant 4/5, p=1.000 | 0.54 vs 0.71, discordant 2/6, p=0.289 | 0.54 vs 0.54, discordant 4/4, p=1.000 |
+| schema_valid_ignoring_prerequisites | 0.96 vs 0.96, discordant 1/1, p=1.000 | 0.96 vs 1.00, discordant 0/1, p=1.000 | 0.96 vs 1.00, discordant 0/1, p=1.000 | 0.96 vs 1.00, discordant 0/1, p=1.000 |
 | extraction_parsed | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 |
 | time_budget_satisfied | 1.00 vs 0.96, discordant 1/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 0.88, discordant 3/0, p=0.250 | 1.00 vs 1.00, discordant 0/0, p=1.000 |
 | module_count_in_range | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 | 1.00 vs 1.00, discordant 0/0, p=1.000 |
@@ -108,7 +112,7 @@ Each row is a failure mode from the taxonomy. Values are the mean of the per-sce
 | Negotiation | No revision occurred | per scenario | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
 | Negotiation | Round limit without approval | per scenario | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
 | Negotiation | Role inversion suspected | per scenario | 0.042 | 0.000 | 0.000 | 0.000 | 0.042 |
-| Response | Canned refusal (nothing retrieved) | per response | 0.118 | 0.089 | n/a | 0.070 | 0.107 |
+| Response | Canned refusal (the retrieval failure above) | per response | 0.118 | 0.089 | n/a | 0.070 | 0.107 |
 | Response | Refusal written by the model | per response | 0.116 | 0.013 | 0.000 | 0.096 | 0.102 |
 | Response | Truncated at the token limit | per response | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
 | Response | Code block that does not parse | per code block | 0.002 | 0.002 | 0.022 | 0.006 | 0.007 |

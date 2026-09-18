@@ -81,7 +81,9 @@ FAILURE_TAXONOMY = [
     ("Negotiation", "No revision occurred", ("negotiation", "no_revision_occurred"), "scenario"),
     ("Negotiation", "Round limit without approval", ("negotiation", "max_rounds_without_approval"), "scenario"),
     ("Negotiation", "Role inversion suspected", ("negotiation", "roles_inverted_suspected"), "scenario"),
-    ("Response", "Canned refusal (nothing retrieved)", ("rates", "no_passage_above_threshold"), "response"),
+    # Same measure as the retrieval row above, shown here for the stage view: the
+    # stage totals must not be added together
+    ("Response", "Canned refusal (the retrieval failure above)", ("rates", "no_passage_above_threshold"), "response"),
     ("Response", "Refusal written by the model", ("rates", "model_written_refusal"), "response"),
     ("Response", "Truncated at the token limit", ("rates", "truncated_response"), "response"),
     ("Response", "Code block that does not parse", ("rates", "code_block_parse_failure"), "code block"),
@@ -222,14 +224,16 @@ def load_runs(experiment: str, model: str, results_dir: Path = RESULTS_DIR) -> L
 def compare(runs: List[Dict[str, Any]], first: str, second: str, outcome: str, direction: str,
             kind: str = "rate") -> Dict[str, Any]:
     """One contrast on one outcome, paired by scenario."""
-    by_condition = {c: {r["scenario_id"]: r for r in runs if r["condition"] == c} for c in (first, second)}
+    # Keyed by scenario and repeat, so a repeated run is never silently dropped
+    by_condition = {c: {(r["scenario_id"], r.get("repeat", 1)): r for r in runs if r["condition"] == c}
+                    for c in (first, second)}
     shared = sorted(set(by_condition[first]) & set(by_condition[second]))
     pairs = []
-    for scenario in shared:
-        a = _outcome_value(by_condition[first][scenario], outcome)
-        b = _outcome_value(by_condition[second][scenario], outcome)
+    for key in shared:
+        a = _outcome_value(by_condition[first][key], outcome)
+        b = _outcome_value(by_condition[second][key], outcome)
         if a is not None and b is not None:
-            pairs.append((scenario, float(a), float(b)))
+            pairs.append((f"{key[0]}r{key[1]}", float(a), float(b)))
 
     header = {"conditions": [first, second], "outcome": outcome, "kind": kind,
               "scenarios_compared": len(pairs)}
@@ -350,7 +354,8 @@ def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str
 
     lines += ["", "## Planning checks by condition", "",
               "| Check | " + " | ".join(conditions) + " |", "|---" * (len(conditions) + 1) + "|"]
-    checks = ["schema_valid_as_extracted", "extraction_parsed", "time_budget_satisfied",
+    checks = ["schema_valid_as_extracted", "schema_valid_ignoring_prerequisites",
+              "extraction_parsed", "time_budget_satisfied",
               "module_count_in_range", "goal_covered", "prerequisites_present",
               "prerequisites_resolvable", "prerequisites_acyclic", "final_hours_over_budget",
               "all_constraints_satisfied"]
@@ -372,6 +377,8 @@ def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str
     others = [c for c in conditions if c != "A1"]
     if "A1" in conditions and others:
         lines += ["", "## Planning checks against A1, paired by scenario (exact McNemar)", "",
+                  "These are descriptive: the composite in the contrasts table is the pre-registered "
+                  "outcome, and the p-values below are not corrected for the number of checks.", "",
                   "| Check | " + " | ".join(f"A1 vs {c}" for c in others) + " |",
                   "|---" * (len(others) + 1) + "|"]
         summary["planning_contrasts"] = {}

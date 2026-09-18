@@ -157,8 +157,13 @@ def planning_checks(record: Dict[str, Any]) -> Dict[str, Any]:
         on_goal = [s for s in strands.values() if s == NARROW_GOAL_STRAND]
         goal_covered = bool(modules) and len(on_goal) / len(modules) >= NARROW_GOAL_MIN_SHARE
 
+    # The prerequisites field is where the multi-agent path loses fidelity, so
+    # validity with and without it are reported separately: without this the
+    # composite counts one failure mode twice (it also fails the resolvable check)
+    schema_errors = planning.get("schema_errors_as_extracted") or []
     checks = {
         "schema_valid_as_extracted": bool(planning.get("schema_valid_as_extracted")),
+        "schema_valid_ignoring_prerequisites": not [e for e in schema_errors if "prerequisites" not in e],
         "extraction_parsed": not planning.get("extraction_fallback", False),
         "time_budget_satisfied": bool(
             modules and BUDGET_MIN_FRACTION * budget <= hours <= BUDGET_MAX_FRACTION * budget

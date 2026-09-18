@@ -8,6 +8,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -108,6 +109,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -206,6 +208,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -303,6 +306,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -400,6 +404,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -498,6 +503,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -596,6 +602,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -693,6 +700,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -790,6 +798,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -888,6 +897,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -988,6 +998,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -1089,6 +1100,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -1184,6 +1196,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -1282,6 +1295,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": false,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -1380,6 +1394,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -1478,6 +1493,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -1579,6 +1595,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -1677,6 +1694,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -1775,6 +1793,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -1877,6 +1896,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -1973,6 +1993,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -2073,6 +2094,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -2173,6 +2195,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -2275,6 +2298,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -2374,6 +2398,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -2470,6 +2495,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -2566,6 +2592,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -2661,6 +2688,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -2756,6 +2784,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -2854,6 +2883,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -2952,6 +2982,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -3049,6 +3080,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -3146,6 +3178,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -3244,6 +3277,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": false,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -3342,6 +3376,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -3438,6 +3473,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": false,
         "module_count_in_range": true,
@@ -3534,6 +3570,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -3632,6 +3669,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -3728,6 +3766,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -3823,6 +3862,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -3919,6 +3959,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4015,6 +4056,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4111,6 +4153,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4208,6 +4251,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4303,6 +4347,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4401,6 +4446,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4499,6 +4545,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4595,6 +4642,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4691,6 +4739,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4789,6 +4838,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4887,6 +4937,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -4984,6 +5035,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -5081,6 +5133,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -5181,6 +5234,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -5279,6 +5333,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -5376,6 +5431,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -5475,6 +5531,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -5570,6 +5627,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -5668,6 +5726,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -5774,6 +5833,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -5875,6 +5935,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -5975,6 +6036,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -6075,6 +6137,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -6178,6 +6241,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -6280,6 +6344,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -6378,6 +6443,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -6476,6 +6542,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -6573,6 +6640,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -6679,6 +6747,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -6779,6 +6848,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -6877,6 +6947,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -6979,6 +7050,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -7077,6 +7149,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -7177,6 +7250,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -7275,6 +7349,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -7371,6 +7446,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -7468,6 +7544,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": false,
         "module_count_in_range": true,
@@ -7567,6 +7644,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -7665,6 +7743,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -7762,6 +7841,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -7859,6 +7939,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -7957,6 +8038,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": false,
         "module_count_in_range": true,
@@ -8057,6 +8139,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -8153,6 +8236,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -8249,6 +8333,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -8347,6 +8432,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": false,
         "module_count_in_range": true,
@@ -8447,6 +8533,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -8548,6 +8635,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -8644,6 +8732,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -8742,6 +8831,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -8840,6 +8930,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -8935,6 +9026,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -9034,6 +9126,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -9134,6 +9227,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -9232,6 +9326,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -9327,6 +9422,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -9423,6 +9519,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -9523,6 +9620,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -9621,6 +9719,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -9718,6 +9817,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -9814,6 +9914,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -9916,6 +10017,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -10016,6 +10118,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -10113,6 +10216,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -10210,6 +10314,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -10308,6 +10413,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -10404,6 +10510,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -10500,6 +10607,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -10595,6 +10703,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -10693,6 +10802,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -10793,6 +10903,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -10888,6 +10999,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -11003,6 +11115,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -11101,6 +11214,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -11199,6 +11313,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -11297,6 +11412,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -11395,6 +11511,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": true,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -11493,6 +11610,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -11593,6 +11711,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -11696,6 +11815,7 @@
       "failed": false,
       "planning": {
         "schema_valid_as_extracted": false,
+        "schema_valid_ignoring_prerequisites": true,
         "extraction_parsed": true,
         "time_budget_satisfied": true,
         "module_count_in_range": true,
@@ -12341,6 +12461,48 @@
           ]
         }
       },
+      "schema_valid_ignoring_prerequisites": {
+        "A1": {
+          "rate": 0.9583333333333334,
+          "n": 24,
+          "wilson_ci": [
+            0.7975819352134406,
+            0.9926065438344942
+          ]
+        },
+        "A2": {
+          "rate": 0.9583333333333334,
+          "n": 24,
+          "wilson_ci": [
+            0.7975819352134406,
+            0.9926065438344942
+          ]
+        },
+        "A3": {
+          "rate": 1.0,
+          "n": 24,
+          "wilson_ci": [
+            0.8620237953250198,
+            1.0
+          ]
+        },
+        "A4": {
+          "rate": 1.0,
+          "n": 24,
+          "wilson_ci": [
+            0.8620237953250198,
+            1.0
+          ]
+        },
+        "A5": {
+          "rate": 1.0,
+          "n": 24,
+          "wilson_ci": [
+            0.8620237953250198,
+            1.0
+          ]
+        }
+      },
       "extraction_parsed": {
         "A1": {
           "rate": 1.0,
@@ -12903,6 +13065,192 @@
           "wilcoxon_statistic": null,
           "p_value": 1.0,
           "point_estimate": 0.0,
+          "supported": false,
+          "test": "exact McNemar"
+        }
+      },
+      "schema_valid_ignoring_prerequisites": {
+        "A2": {
+          "conditions": [
+            "A1",
+            "A2"
+          ],
+          "outcome": "schema_valid_ignoring_prerequisites",
+          "kind": "binary",
+          "scenarios_compared": 24,
+          "status": "computed",
+          "proportion_first": 0.9583333333333334,
+          "proportion_second": 0.9583333333333334,
+          "ci_first": [
+            0.7975819352134406,
+            0.9926065438344942
+          ],
+          "ci_second": [
+            0.7975819352134406,
+            0.9926065438344942
+          ],
+          "mcnemar": {
+            "both": 22,
+            "only_first": 1,
+            "only_second": 1,
+            "neither": 0,
+            "discordant": 2,
+            "p_value": 1.0
+          },
+          "direction_predicted": "higher",
+          "n_pairs": 24,
+          "median_first": 1.0,
+          "median_second": 1.0,
+          "median_difference": 0.0,
+          "mean_difference": 0.0,
+          "summary_statistic": "mean",
+          "ties": 22,
+          "cliffs_delta_unpaired": 0.0,
+          "difference_ci": [
+            -0.125,
+            0.125
+          ],
+          "wilcoxon_statistic": null,
+          "p_value": 1.0,
+          "point_estimate": 0.0,
+          "supported": false,
+          "test": "exact McNemar"
+        },
+        "A3": {
+          "conditions": [
+            "A1",
+            "A3"
+          ],
+          "outcome": "schema_valid_ignoring_prerequisites",
+          "kind": "binary",
+          "scenarios_compared": 24,
+          "status": "computed",
+          "proportion_first": 0.9583333333333334,
+          "proportion_second": 1.0,
+          "ci_first": [
+            0.7975819352134406,
+            0.9926065438344942
+          ],
+          "ci_second": [
+            0.8620237953250198,
+            1.0
+          ],
+          "mcnemar": {
+            "both": 23,
+            "only_first": 0,
+            "only_second": 1,
+            "neither": 0,
+            "discordant": 1,
+            "p_value": 1.0
+          },
+          "direction_predicted": "higher",
+          "n_pairs": 24,
+          "median_first": 1.0,
+          "median_second": 1.0,
+          "median_difference": 0.0,
+          "mean_difference": -0.041666666666666664,
+          "summary_statistic": "mean",
+          "ties": 23,
+          "cliffs_delta_unpaired": -0.041666666666666664,
+          "difference_ci": [
+            -0.125,
+            0.0
+          ],
+          "wilcoxon_statistic": null,
+          "p_value": 1.0,
+          "point_estimate": -0.041666666666666664,
+          "supported": false,
+          "test": "exact McNemar"
+        },
+        "A4": {
+          "conditions": [
+            "A1",
+            "A4"
+          ],
+          "outcome": "schema_valid_ignoring_prerequisites",
+          "kind": "binary",
+          "scenarios_compared": 24,
+          "status": "computed",
+          "proportion_first": 0.9583333333333334,
+          "proportion_second": 1.0,
+          "ci_first": [
+            0.7975819352134406,
+            0.9926065438344942
+          ],
+          "ci_second": [
+            0.8620237953250198,
+            1.0
+          ],
+          "mcnemar": {
+            "both": 23,
+            "only_first": 0,
+            "only_second": 1,
+            "neither": 0,
+            "discordant": 1,
+            "p_value": 1.0
+          },
+          "direction_predicted": "higher",
+          "n_pairs": 24,
+          "median_first": 1.0,
+          "median_second": 1.0,
+          "median_difference": 0.0,
+          "mean_difference": -0.041666666666666664,
+          "summary_statistic": "mean",
+          "ties": 23,
+          "cliffs_delta_unpaired": -0.041666666666666664,
+          "difference_ci": [
+            -0.125,
+            0.0
+          ],
+          "wilcoxon_statistic": null,
+          "p_value": 1.0,
+          "point_estimate": -0.041666666666666664,
+          "supported": false,
+          "test": "exact McNemar"
+        },
+        "A5": {
+          "conditions": [
+            "A1",
+            "A5"
+          ],
+          "outcome": "schema_valid_ignoring_prerequisites",
+          "kind": "binary",
+          "scenarios_compared": 24,
+          "status": "computed",
+          "proportion_first": 0.9583333333333334,
+          "proportion_second": 1.0,
+          "ci_first": [
+            0.7975819352134406,
+            0.9926065438344942
+          ],
+          "ci_second": [
+            0.8620237953250198,
+            1.0
+          ],
+          "mcnemar": {
+            "both": 23,
+            "only_first": 0,
+            "only_second": 1,
+            "neither": 0,
+            "discordant": 1,
+            "p_value": 1.0
+          },
+          "direction_predicted": "higher",
+          "n_pairs": 24,
+          "median_first": 1.0,
+          "median_second": 1.0,
+          "median_difference": 0.0,
+          "mean_difference": -0.041666666666666664,
+          "summary_statistic": "mean",
+          "ties": 23,
+          "cliffs_delta_unpaired": -0.041666666666666664,
+          "difference_ci": [
+            -0.125,
+            0.0
+          ],
+          "wilcoxon_statistic": null,
+          "p_value": 1.0,
+          "point_estimate": -0.041666666666666664,
           "supported": false,
           "test": "exact McNemar"
         }
@@ -15087,7 +15435,7 @@
       },
       {
         "stage": "Response",
-        "mode": "Canned refusal (nothing retrieved)",
+        "mode": "Canned refusal (the retrieval failure above)",
         "unit": "response",
         "rates": {
           "A1": {

@@ -45,23 +45,26 @@ the stored records. 120 runs, five conditions over 24 scenarios, one model
 | Module count in range | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
 | Prerequisite graph acyclic | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
 | All constraints satisfied | 0.46 | 0.79 | 0.50 | 0.71 | 0.50 |
+| Schema valid ignoring prerequisites | 0.96 | 0.96 | 1.00 | 1.00 | 1.00 |
 
 > Paired by scenario, the full architecture is worse than the single agent on schema validity (0.54
 > against 0.96, ten discordant pairs all in the same direction, exact McNemar p = 0.002) and on
 > prerequisite resolvability (0.75 against 0.96, p = 0.062), and indistinguishable on everything else.
 >
-> The failures are of one kind. Of the eleven syllabi the full architecture produced that failed the
-> schema, ten failed on the prerequisites field alone: the extraction step copies prose out of the
-> negotiation ("Comfort with variables and assignment", "Basic Python syntax") into a field the schema
-> defines as module identifiers. Excluding prerequisites, the two conditions are indistinguishable,
-> both valid in 23 scenarios of 24. The single agent, which writes its syllabus as JSON directly, never
-> produced such a failure.
+> The failures are of one kind. The extraction step copies prose out of the negotiation ("Comfort
+> with variables and assignment", "Basic Python syntax") into a field the schema defines as module
+> identifiers. Scored while ignoring that one field, every condition is valid in 23 or 24 scenarios of
+> 24 and they are indistinguishable from one another:
+
+> Put differently, prerequisites are the **only** field on which the extraction step fails the schema
+> at all. Invalid prerequisites appear in 10 of 24 runs under the full architecture, 11 without the
+> citation instruction, 10 without retrieval and 7 without negotiation, the last lower because a
+> single-shot plan gives the extractor less prose to transcribe. The single agent, which writes its
+> syllabus as JSON directly, produced none in 24 runs.
 >
-> This is a cost of the handoff rather than of decomposition as such, and it appears in every condition
-> that negotiates in free text before extracting (A1 ten of 24, A5 eleven, A3 ten, A4 seven, the last
-> lower because a single-shot plan gives the extractor less prose to transcribe). It is also
-> addressable within the architecture: validating the syllabus at the handoff, which §3.4 of the
-> submitted manuscript already claimed the system did, is exactly the missing step.
+> This is a cost of the handoff rather than of decomposition as such, and it is addressable within the
+> architecture: validating the syllabus at the handoff, which §3.4 of the submitted manuscript already
+> claimed the system did, is exactly the missing step.
 
 ### What the architecture does provide
 
