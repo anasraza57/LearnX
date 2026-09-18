@@ -44,8 +44,8 @@ A prerequisite written as prose fails the schema and the prerequisite checks ali
 | off_strand_passage_rate | 0.438 | 0.425 | n/a | 0.430 | 0.476 |
 | model_written_refusal | 0.098 | 0.000 | 0.000 | 0.094 | 0.090 |
 | response_without_citation | 0.000 | 0.000 | 1.000 | 0.000 | 1.000 |
-| invalid_citation_marker_rate | 0.000 | 0.000 | n/a | 0.000 | n/a |
-| citations_per_response | 19.349 | 15.333 | 0.000 | 20.613 | 0.000 |
+| invalid_citation_marker_rate | 0.000 | 0.000 | 1.000 | 0.000 | n/a |
+| citations_per_response | 18.048 | 14.274 | 0.000 | 19.351 | 0.000 |
 | code_blocks_per_response | 1.477 | 3.350 | 22.488 | 1.789 | 2.923 |
 | code_block_parse_failure | 0.000 | 0.000 | 0.020 | 0.000 | 0.007 |
 | response_with_broken_code | 0.000 | 0.000 | 0.205 | 0.000 | 0.033 |
@@ -101,8 +101,8 @@ Runs with negotiation enabled: 72. Approved: 72. Reached the round limit without
 | Placeholder items | 4 (0.42%) | 0 (0.00%) | 0 (0.00%) | 1 (0.11%) | 0 (0.00%) |
 | Code blocks written | 1558 | 2315 | 20283 | 1698 | 2630 |
 | Code blocks that do not parse | 3 (0.19%) | 4 (0.17%) | 442 (2.18%) | 11 (0.65%) | 21 (0.80%) |
-| Citation markers emitted | 16474 | 10244 | 0 | 17224 | 0 |
-| Citation markers pointing outside the passages | 5 (0.03%) | 10 (0.10%) | 0 | 15 (0.09%) | 0 |
+| Citation markers emitted | 15261 | 9305 | 8 | 16031 | 0 |
+| Citation markers pointing outside the passages | 5 (0.03%) | 9 (0.10%) | 8 (100.00%) | 14 (0.09%) | 0 |
 | Calls stopped by the token cap | 0 | 0 | 0 | 0 | 0 |
 |   of those, in planning | 0 | 0 | 0 | 0 | 0 |
 

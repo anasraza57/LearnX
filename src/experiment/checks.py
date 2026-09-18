@@ -20,6 +20,7 @@ import statistics
 import textwrap
 from typing import Any, Dict, List, Optional
 
+from ..agents.rag_instructor import extract_inline_citations
 from ..agents.syllabus_planner import _as_hours, _total_hours
 from .corpus import STRANDS
 
@@ -328,7 +329,10 @@ def response_checks(record: Dict[str, Any]) -> Dict[str, Any]:
             passages = lesson.get("retrieved") or []
             sims = [p["similarity"] for p in passages]
             call = calls.get(lesson.get("call_id")) or {}
-            markers = lesson.get("inline_citations") or []
+            # Recomputed from the response rather than read from the record, so
+            # that every arm is measured by the rule documented here whenever it
+            # ran, and a later correction to the rule applies to all of them
+            markers = extract_inline_citations(lesson.get("content", "") or "", len(passages))
             code_ok = _code_parses(lesson.get("content", ""))
             code = code_block_stats(lesson.get("content", ""))
             rows.append({

@@ -66,7 +66,8 @@ class TestHeadlineContrast:
             assert p_value in text, f"{name} does not quote p = {p_value}"
 
     def test_no_document_still_quotes_a_superseded_figure(self):
-        superseded = ["-0.365", "p = 0.021", "0.365", "100% schema-valid"]
+        superseded = ["-0.365", "p = 0.021", "0.365", "100% schema-valid",
+                      "16,474", "10,244", "17,224"]
         for name in DOCUMENTS:
             text = _text(name)
             for stale in superseded:
@@ -99,12 +100,15 @@ class TestPooledRates:
         assert "12.2%" in _text("methods")
 
     def test_citation_marker_totals_match(self, runs):
-        assert _pooled(runs, "A1", "citation_markers") == 16474
+        assert _pooled(runs, "A1", "citation_markers") == 15261
         assert _pooled(runs, "A1", "invalid_markers") == 5
-        assert _pooled(runs, "A3", "citation_markers") == 0
+        # Without the citation instruction the model emits no marker at all; without
+        # retrieval it emits a handful that cannot refer to anything
         assert _pooled(runs, "A5", "citation_markers") == 0
+        assert _pooled(runs, "A3", "citation_markers") == 8
+        assert _pooled(runs, "A3", "invalid_markers") == 8
         for name in ("handoff", "results", "methods"):
-            assert "16,474" in _text(name)
+            assert "15,261" in _text(name)
 
 
 class TestPlanningClaims:

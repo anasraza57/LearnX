@@ -103,10 +103,29 @@ INLINE_CITATION_PATTERN = re.compile(
 # Code is masked before matching so list literals such as [1, 2, 3] are not read as citations
 CODE_SPAN_PATTERN = re.compile(r"```.*?(?:```|\Z)|~~~.*?(?:~~~|\Z)|`[^`\n]*`", re.DOTALL)
 
+# A model often appends its own list of sources, one per line, as "[1] https://...".
+# Those are a bibliography, not an inline attribution: an inline citation follows
+# the statement it supports and so never opens a line. A marker that opens a line
+# and is followed by a source rather than by punctuation is therefore masked too.
+REFERENCE_ENTRY_PATTERN = re.compile(
+    r"^[ \t]*\[\d+(?:\s*[-–,;]\s*\d+)*\][ \t]+(?=[^\s.,;:!?)\]])", re.MULTILINE
+)
+
+# The citation instruction shows the forms [1] and [2, 3]. A bracket enumerating
+# three or more values is a list in prose, such as "the last three elements
+# [9, 16, 25]", far more often than a citation of three sources at once. A range
+# such as [1-3] is citation syntax and is not covered by this.
+MAX_ENUMERATED_IN_A_CITATION = 2
+
 
 def _mask_code(text: str) -> str:
     """Blank out fenced and inline code, preserving character offsets."""
     return CODE_SPAN_PATTERN.sub(lambda m: re.sub(r"[^\n]", " ", m.group(0)), text)
+
+
+def _mask_reference_entries(text: str) -> str:
+    """Blank out line-opening markers that head a source list, preserving offsets."""
+    return REFERENCE_ENTRY_PATTERN.sub(lambda m: " " * len(m.group(0)), text)
 
 CITATION_INSTRUCTION = """**Citation requirements:**
 - Every factual statement that relies on the context must end with the number of the source that supports it, in square brackets, e.g. [1] or [2, 3]. The numbers refer to the [Source N] labels above.
@@ -196,9 +215,12 @@ def extract_inline_citations(answer: str, num_passages: int) -> List[Dict[str, A
     it refers to a passage that exists (1..num_passages).
     """
     found = []
-    for match in INLINE_CITATION_PATTERN.finditer(_mask_code(answer)):
+    for match in INLINE_CITATION_PATTERN.finditer(_mask_reference_entries(_mask_code(answer))):
         numbers: List[int] = []
-        for part in re.split(r"\s*[,;]\s*", match.group(1)):
+        parts = re.split(r"\s*[,;]\s*", match.group(1))
+        if len(parts) > MAX_ENUMERATED_IN_A_CITATION:
+            continue  # a bracketed list of values, not an attribution
+        for part in parts:
             bounds = [int(n) for n in re.findall(r"\d+", part)]
             if len(bounds) == 2 and bounds[0] < bounds[1] <= bounds[0] + 20:
                 numbers.extend(range(bounds[0], bounds[1] + 1))  # a range such as 1-3

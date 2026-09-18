@@ -104,12 +104,20 @@ than ungrounded instruction.
 >
 > The instruction is what produces attribution. Without it the system emits only a list of retrieved
 > sources appended to the response: under the ablation that removes it, none of the 814 answered
-> responses carried a single inline citation, and nor did any of the 919 responses in the ungrounded
-> condition. With the instruction, all 831 answered responses carried at least one marker, 16,474 in
-> total, a median of 19 per response. Of those, 5 (0.03%) pointed outside the set of passages
-> supplied, all five in a single response citing a source numbered 6 when it had been given five;
-> every other marker referred to a passage that existed. The other citing conditions produce such
-> markers at a similar rate (0.10% and 0.09%).
+> responses carried a single inline citation, and in the ungrounded condition only one response of
+> 919 did, with eight bracketed numbers and no passages behind them. With the instruction, all 831
+> answered responses carried at least one marker, 15,261 in total, a median of 18 per response. Of
+> those, 5 (0.03%) pointed outside the set of passages supplied, all five in a single response citing
+> a source numbered 6 when it had been given five; every other marker referred to a passage that
+> existed. The other citing conditions produce such markers at a similar rate (0.10% and 0.09%).
+>
+> A marker is counted only where it is an attribution. Two forms are excluded by rule, because both
+> would otherwise be read as citations pointing nowhere: a bracket opening a line and followed by a
+> source, which is the bibliography a model sometimes appends rather than an inline attribution, and a
+> bracket holding three or more numbers, which in prose is a list of values such as "the last three
+> elements [9, 16, 25]" far more often than a citation of three sources at once. Code spans and fenced
+> blocks are masked before matching. The measure is recomputed from the response text for every run,
+> so a change to this rule applies to every condition and backend alike.
 >
 > Whether a cited passage in fact supports the claim attached to it is not decidable automatically and
 > is measured by the two-rater study in §3.6.

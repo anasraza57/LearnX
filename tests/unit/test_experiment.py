@@ -49,6 +49,34 @@ class TestInlineCitations:
         found = extract_inline_citations("a [1-3] b [2; 4] c [Source 5: Data types] ~~~\nx = [9]\n~~~", 5)
         assert [c["passage_index"] for c in found] == [1, 2, 3, 2, 4, 5]
 
+    def test_a_trailing_source_list_is_not_an_inline_citation(self):
+        """
+        A model often appends its own bibliography. Read as inline citations those
+        markers point at passages that were never supplied: one Mistral response
+        produced 72 "invalid" markers this way, all of them a list of URLs.
+        """
+        answer = (
+            "Packages group modules [1].\n\n"
+            "Sources:\n"
+            "[1] https://docs.python.org/3.11/tutorial/modules.html\n"
+            "[2] https://docs.python.org/3.11/tutorial/modules.html#packages\n"
+            "[6] https://docs.python.org/3.11/tutorial/modules.html#more\n"
+        )
+        found = extract_inline_citations(answer, 5)
+        assert [(c["passage_index"], c["valid"]) for c in found] == [(1, True)]
+
+    def test_a_marker_opening_a_wrapped_line_is_still_a_citation(self):
+        # The rule keys on a source following the marker, not on position alone
+        found = extract_inline_citations("a statement that wraps\n[3]. And the next.", 5)
+        assert [c["passage_index"] for c in found] == [3]
+
+    def test_a_bracketed_list_of_values_is_not_a_citation(self):
+        answer = "The slice returns the last three elements of the list [9, 16, 25]."
+        assert extract_inline_citations(answer, 5) == []
+        # but a range and a pair are citation syntax
+        assert [c["passage_index"] for c in extract_inline_citations("x [1-3] y [2, 4].", 5)] == \
+            [1, 2, 3, 2, 4]
+
     def test_unterminated_code_block_is_masked(self):
         assert extract_inline_citations("Text [1]\n```python\nx = [2]\n", 2) == [
             {"marker": "[1]", "offset": 5, "passage_index": 1, "valid": True}
