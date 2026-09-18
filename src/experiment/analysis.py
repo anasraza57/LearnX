@@ -56,7 +56,8 @@ PRIMARY_CONTRASTS = [
 SECONDARY_OUTCOMES = [
     "no_passage_above_threshold", "low_confidence_retrieval", "off_strand_passage_rate",
     "model_written_refusal", "response_without_citation", "invalid_citation_marker_rate",
-    "citations_per_response", "code_parse_failure", "item_valid", "item_placeholder",
+    "citations_per_response", "code_blocks_per_response", "code_block_parse_failure",
+    "response_with_broken_code", "item_valid", "item_placeholder",
     "item_retrieval_failed",
 ]
 
@@ -307,6 +308,29 @@ def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str
             summary["planning"][check][condition] = {"rate": rate, "n": len(values), "wilson_ci": interval}
             cells.append(f"{_fmt(rate, 2)} {_fmt(interval, 2)}" if rate is not None else "n/a")
         lines.append(f"| {check} | " + " | ".join(cells) + " |")
+
+    # Each planning check against A1, paired by scenario. The pre-registered
+    # outcome is a composite, so this shows which component drives a difference
+    # and whether one failure mode is being counted by more than one check.
+    others = [c for c in conditions if c != "A1"]
+    if "A1" in conditions and others:
+        lines += ["", "## Planning checks against A1, paired by scenario (exact McNemar)", "",
+                  "| Check | " + " | ".join(f"A1 vs {c}" for c in others) + " |",
+                  "|---" * (len(others) + 1) + "|"]
+        summary["planning_contrasts"] = {}
+        for check in checks:
+            cells = []
+            summary["planning_contrasts"][check] = {}
+            for other in others:
+                result = compare(runs, "A1", other, check, "higher", kind="binary")
+                summary["planning_contrasts"][check][other] = result
+                if result["status"] != "computed":
+                    cells.append("n/a")
+                    continue
+                m = result["mcnemar"]
+                cells.append(f"{result['proportion_first']:.2f} vs {result['proportion_second']:.2f}, "
+                             f"discordant {m['only_first']}/{m['only_second']}, p={m['p_value']:.3f}")
+            lines.append(f"| {check} | " + " | ".join(cells) + " |")
 
     negotiation = [r for r in runs if r["negotiation"]["negotiation_enabled"]]
     if negotiation:

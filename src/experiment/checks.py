@@ -227,6 +227,39 @@ LOOKS_LIKE_CODE = re.compile(
 )
 
 
+# A block whose comments say the code is wrong on purpose ("# not allowed") is a
+# teaching counter-example, not a defect, and is counted separately.
+DELIBERATE_ERROR = re.compile(
+    r"#[^\n]*\b(not allowed|invalid|error|wrong|fails?|don't|do not|never|bad|incorrect|won't work)\b"
+    r"|\b(this (is )?(wrong|invalid)|would (fail|error)|causes? an error)\b",
+    re.IGNORECASE,
+)
+
+
+def code_block_stats(text: str) -> Dict[str, int]:
+    """
+    Count the Python blocks in a response and how many fail to parse.
+
+    Reported per block rather than per response: a response holding twenty
+    examples is more likely to contain one broken block than a response holding
+    one, so a per-response rate measures how much code was written as much as
+    how often it breaks.
+    """
+    judged = failed = deliberate = 0
+    for block in CODE_BLOCK.findall(text or ""):
+        script = _script_from_block(block)
+        if script is None or not script.strip() or not LOOKS_LIKE_CODE.search(script):
+            continue
+        judged += 1
+        try:
+            ast.parse(re.sub(r"^(\s+)#.*$", r"\1pass", script, flags=re.MULTILINE))
+        except SyntaxError:
+            failed += 1
+            if DELIBERATE_ERROR.search(block):
+                deliberate += 1
+    return {"blocks": judged, "failing": failed, "deliberate": deliberate}
+
+
 def _code_parses(text: str) -> Optional[bool]:
     """
     False if any Python block in the text fails to parse; None if the text has
@@ -262,6 +295,7 @@ def response_checks(record: Dict[str, Any]) -> Dict[str, Any]:
             call = calls.get(lesson.get("call_id")) or {}
             markers = lesson.get("inline_citations") or []
             code_ok = _code_parses(lesson.get("content", ""))
+            code = code_block_stats(lesson.get("content", ""))
             rows.append({
                 "module_id": module["module_id"],
                 "topic": lesson.get("topic"),
@@ -277,6 +311,9 @@ def response_checks(record: Dict[str, Any]) -> Dict[str, Any]:
                 "invalid_citation_markers": sum(1 for m in markers if not m["valid"]),
                 "no_citation": not markers,
                 "code_parses": code_ok,
+                "code_blocks": code["blocks"],
+                "code_blocks_failing": code["failing"],
+                "code_blocks_deliberate_errors": code["deliberate"],
                 "latency_s": call.get("latency_s"),
                 "retrieval_s": lesson.get("retrieval_s"),
                 "output_tokens": call.get("output_tokens"),
@@ -338,7 +375,21 @@ def run_metrics(record: Dict[str, Any]) -> Dict[str, Any]:
             # Instruction
             "model_written_refusal": _rate(responses, "model_written_refusal"),
             "truncated_response": _rate(responses, "truncated"),
-            "code_parse_failure": (
+            # Per block: how often written code fails to parse
+            "code_block_parse_failure": (
+                sum(r["code_blocks_failing"] for r in responses) / sum(r["code_blocks"] for r in responses)
+                if sum(r["code_blocks"] for r in responses) else None
+            ),
+            "code_block_deliberate_error_share": (
+                sum(r["code_blocks_deliberate_errors"] for r in responses)
+                / sum(r["code_blocks_failing"] for r in responses)
+                if sum(r["code_blocks_failing"] for r in responses) else None
+            ),
+            # How much code was written at all, which differs sharply by condition
+            "code_blocks_per_response": (
+                sum(r["code_blocks"] for r in responses) / len(responses) if responses else None
+            ),
+            "response_with_broken_code": (
                 1 - _rate([r for r in responses if r["code_parses"] is not None], "code_parses")
                 if any(r["code_parses"] is not None for r in responses) else None
             ),
