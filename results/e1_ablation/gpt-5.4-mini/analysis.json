@@ -89,7 +89,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 887,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 127134,
@@ -188,7 +190,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 555,
         "invalid_markers": 0,
-        "responses_refused": 5
+        "responses_refused": 5,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 84742,
@@ -286,7 +290,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 637,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 91266,
@@ -384,7 +390,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 679,
         "invalid_markers": 0,
-        "responses_refused": 7
+        "responses_refused": 7,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 107464,
@@ -483,7 +491,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 891,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 112252,
@@ -582,7 +592,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 622,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 109457,
@@ -680,7 +692,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 760,
         "invalid_markers": 5,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 99152,
@@ -778,7 +792,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 472,
         "invalid_markers": 0,
-        "responses_refused": 8
+        "responses_refused": 8,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 88049,
@@ -877,7 +893,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 861,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 94398,
@@ -978,7 +996,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 714,
         "invalid_markers": 0,
-        "responses_refused": 7
+        "responses_refused": 7,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 112366,
@@ -1080,7 +1100,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 673,
         "invalid_markers": 0,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 83057,
@@ -1176,7 +1198,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 455,
         "invalid_markers": 0,
-        "responses_refused": 8
+        "responses_refused": 8,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 78834,
@@ -1275,7 +1299,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 925,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 118893,
@@ -1374,7 +1400,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 799,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 112889,
@@ -1473,7 +1501,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 538,
         "invalid_markers": 0,
-        "responses_refused": 8
+        "responses_refused": 8,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 81680,
@@ -1575,7 +1605,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 497,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 89106,
@@ -1674,7 +1706,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 790,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 92854,
@@ -1773,7 +1807,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 760,
         "invalid_markers": 0,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 105147,
@@ -1876,7 +1912,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 512,
         "invalid_markers": 0,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 75618,
@@ -1973,7 +2011,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 495,
         "invalid_markers": 0,
-        "responses_refused": 6
+        "responses_refused": 6,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 81915,
@@ -2074,7 +2114,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 802,
         "invalid_markers": 0,
-        "responses_refused": 7
+        "responses_refused": 7,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 96058,
@@ -2175,7 +2217,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 1044,
         "invalid_markers": 0,
-        "responses_refused": 17
+        "responses_refused": 17,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 132736,
@@ -2278,7 +2322,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 685,
         "invalid_markers": 0,
-        "responses_refused": 5
+        "responses_refused": 5,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 85568,
@@ -2378,7 +2424,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 421,
         "invalid_markers": 0,
-        "responses_refused": 11
+        "responses_refused": 11,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 83035,
@@ -2475,7 +2523,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 444,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 180861,
@@ -2572,7 +2622,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 416,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 214580,
@@ -2668,7 +2720,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 357,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 198356,
@@ -2764,7 +2818,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 354,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 183176,
@@ -2863,7 +2919,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 552,
         "invalid_markers": 0,
-        "responses_refused": 5
+        "responses_refused": 5,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 306308,
@@ -2962,7 +3020,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 458,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 287467,
@@ -3060,7 +3120,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 555,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 265240,
@@ -3158,7 +3220,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 419,
         "invalid_markers": 0,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 279769,
@@ -3257,7 +3321,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 511,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 235541,
@@ -3356,7 +3422,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 459,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 270142,
@@ -3453,7 +3521,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 427,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 252821,
@@ -3550,7 +3620,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 334,
         "invalid_markers": 0,
-        "responses_refused": 4
+        "responses_refused": 4,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 235585,
@@ -3649,7 +3721,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 545,
         "invalid_markers": 3,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 236725,
@@ -3746,7 +3820,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 371,
         "invalid_markers": 0,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 181865,
@@ -3842,7 +3918,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 364,
         "invalid_markers": 2,
-        "responses_refused": 4
+        "responses_refused": 4,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 252846,
@@ -3939,7 +4017,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 312,
         "invalid_markers": 0,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 208003,
@@ -4036,7 +4116,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 425,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 183897,
@@ -4133,7 +4215,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 441,
         "invalid_markers": 1,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 189364,
@@ -4231,7 +4315,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 404,
         "invalid_markers": 0,
-        "responses_refused": 5
+        "responses_refused": 5,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 233195,
@@ -4327,7 +4413,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 314,
         "invalid_markers": 0,
-        "responses_refused": 6
+        "responses_refused": 6,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 212863,
@@ -4426,7 +4514,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 603,
         "invalid_markers": 2,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 240836,
@@ -4525,7 +4615,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 448,
         "invalid_markers": 2,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 244264,
@@ -4622,7 +4714,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 370,
         "invalid_markers": 0,
-        "responses_refused": 6
+        "responses_refused": 6,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 215266,
@@ -4719,7 +4813,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 361,
         "invalid_markers": 0,
-        "responses_refused": 5
+        "responses_refused": 5,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 238567,
@@ -4818,7 +4914,9 @@
         "code_blocks_deliberate_errors": 3,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 46546,
@@ -4917,7 +5015,9 @@
         "code_blocks_deliberate_errors": 3,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 49295,
@@ -5015,7 +5115,9 @@
         "code_blocks_deliberate_errors": 2,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 49909,
@@ -5113,7 +5215,9 @@
         "code_blocks_deliberate_errors": 5,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 45523,
@@ -5214,7 +5318,9 @@
         "code_blocks_deliberate_errors": 7,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 66645,
@@ -5313,7 +5419,9 @@
         "code_blocks_deliberate_errors": 1,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 63093,
@@ -5411,7 +5519,9 @@
         "code_blocks_deliberate_errors": 4,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 48403,
@@ -5511,7 +5621,9 @@
         "code_blocks_deliberate_errors": 3,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 52175,
@@ -5607,7 +5719,9 @@
         "code_blocks_deliberate_errors": 6,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 48786,
@@ -5706,7 +5820,9 @@
         "code_blocks_deliberate_errors": 4,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 44301,
@@ -5813,7 +5929,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 45649,
@@ -5915,7 +6033,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 43112,
@@ -6016,7 +6136,9 @@
         "code_blocks_deliberate_errors": 7,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 49000,
@@ -6117,7 +6239,9 @@
         "code_blocks_deliberate_errors": 6,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 48581,
@@ -6221,7 +6345,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 44132,
@@ -6324,7 +6450,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 47298,
@@ -6423,7 +6551,9 @@
         "code_blocks_deliberate_errors": 4,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 43028,
@@ -6522,7 +6652,9 @@
         "code_blocks_deliberate_errors": 3,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 45637,
@@ -6620,7 +6752,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 47548,
@@ -6727,7 +6861,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 43118,
@@ -6828,7 +6964,9 @@
         "code_blocks_deliberate_errors": 3,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 51671,
@@ -6927,7 +7065,9 @@
         "code_blocks_deliberate_errors": 1,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 65130,
@@ -7030,7 +7170,9 @@
         "code_blocks_deliberate_errors": 1,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 44624,
@@ -7129,7 +7271,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 49241,
@@ -7230,7 +7374,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 1024,
         "invalid_markers": 2,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 107028,
@@ -7329,7 +7475,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 716,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 81778,
@@ -7426,7 +7574,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 588,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 74260,
@@ -7524,7 +7674,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 640,
         "invalid_markers": 2,
-        "responses_refused": 0
+        "responses_refused": 0,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 81681,
@@ -7624,7 +7776,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 900,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 92579,
@@ -7723,7 +7877,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 665,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 80676,
@@ -7821,7 +7977,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 757,
         "invalid_markers": 0,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 77184,
@@ -7919,7 +8077,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 667,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 89781,
@@ -8018,7 +8178,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 721,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 74510,
@@ -8119,7 +8281,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 773,
         "invalid_markers": 2,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 87334,
@@ -8216,7 +8380,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 673,
         "invalid_markers": 0,
-        "responses_refused": 6
+        "responses_refused": 6,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 67853,
@@ -8313,7 +8479,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 573,
         "invalid_markers": 0,
-        "responses_refused": 5
+        "responses_refused": 5,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 69166,
@@ -8412,7 +8580,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 825,
         "invalid_markers": 2,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 77840,
@@ -8513,7 +8683,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 810,
         "invalid_markers": 0,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 90758,
@@ -8615,7 +8787,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 557,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 63381,
@@ -8712,7 +8886,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 596,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 74206,
@@ -8811,7 +8987,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 840,
         "invalid_markers": 3,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 79031,
@@ -8910,7 +9088,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 712,
         "invalid_markers": 2,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 75647,
@@ -9006,7 +9186,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 722,
         "invalid_markers": 0,
-        "responses_refused": 4
+        "responses_refused": 4,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 73995,
@@ -9106,7 +9288,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 558,
         "invalid_markers": 0,
-        "responses_refused": 7
+        "responses_refused": 7,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 69041,
@@ -9207,7 +9391,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 1006,
         "invalid_markers": 2,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 96292,
@@ -9306,7 +9492,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 796,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 80168,
@@ -9402,7 +9590,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 567,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 71982,
@@ -9499,7 +9689,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 538,
         "invalid_markers": 0,
-        "responses_refused": 6
+        "responses_refused": 6,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 67735,
@@ -9600,7 +9792,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 114640,
@@ -9699,7 +9893,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 106043,
@@ -9797,7 +9993,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 89924,
@@ -9894,7 +10092,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 4
+        "responses_refused": 4,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 87393,
@@ -9997,7 +10197,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 6
+        "responses_refused": 6,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 114261,
@@ -10098,7 +10300,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 100221,
@@ -10196,7 +10400,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 113600,
@@ -10294,7 +10500,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 4
+        "responses_refused": 4,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 110805,
@@ -10393,7 +10601,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 91119,
@@ -10490,7 +10700,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 88213,
@@ -10587,7 +10799,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 6
+        "responses_refused": 6,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 80429,
@@ -10683,7 +10897,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 4
+        "responses_refused": 4,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 64749,
@@ -10782,7 +10998,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 113208,
@@ -10883,7 +11101,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 4
+        "responses_refused": 4,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 96949,
@@ -10979,7 +11199,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 4
+        "responses_refused": 4,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 88345,
@@ -11095,7 +11317,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 9
+        "responses_refused": 9,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 97790,
@@ -11194,7 +11418,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 9
+        "responses_refused": 9,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 76327,
@@ -11293,7 +11519,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 3
+        "responses_refused": 3,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 105589,
@@ -11392,7 +11620,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 1
+        "responses_refused": 1,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 93019,
@@ -11491,7 +11721,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 10
+        "responses_refused": 10,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 87388,
@@ -11590,7 +11822,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 2
+        "responses_refused": 2,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 97258,
@@ -11691,7 +11925,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 5
+        "responses_refused": 5,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 113199,
@@ -11795,7 +12031,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 10
+        "responses_refused": 10,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 99027,
@@ -11896,7 +12134,9 @@
         "code_blocks_deliberate_errors": 0,
         "citation_markers": 0,
         "invalid_markers": 0,
-        "responses_refused": 6
+        "responses_refused": 6,
+        "calls_truncated": 0,
+        "calls_truncated_planning": 0
       },
       "cost": {
         "input_tokens": 77104,
@@ -15051,6 +15291,40 @@
         "A5": {
           "count": 0,
           "of": 0
+        }
+      },
+      "calls_truncated": {
+        "A1": {
+          "count": 0
+        },
+        "A2": {
+          "count": 0
+        },
+        "A3": {
+          "count": 0
+        },
+        "A4": {
+          "count": 0
+        },
+        "A5": {
+          "count": 0
+        }
+      },
+      "calls_truncated_planning": {
+        "A1": {
+          "count": 0
+        },
+        "A2": {
+          "count": 0
+        },
+        "A3": {
+          "count": 0
+        },
+        "A4": {
+          "count": 0
+        },
+        "A5": {
+          "count": 0
         }
       }
     },

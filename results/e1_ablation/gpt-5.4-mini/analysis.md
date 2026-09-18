@@ -91,6 +91,8 @@ Runs with negotiation enabled: 72. Approved: 72. Reached the round limit without
 | Code blocks that do not parse | 3 (0.19%) | 4 (0.17%) | 442 (2.18%) | 11 (0.65%) | 21 (0.80%) |
 | Citation markers emitted | 16474 | 10244 | 0 | 17224 | 0 |
 | Citation markers pointing outside the passages | 5 (0.03%) | 10 (0.10%) | 0 | 15 (0.09%) | 0 |
+| Calls stopped by the token cap | 0 | 0 | 0 | 0 | 0 |
+|   of those, in planning | 0 | 0 | 0 | 0 | 0 |
 
 ## E4 failure taxonomy: rates by stage
 

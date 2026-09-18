@@ -432,6 +432,11 @@ def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str
         ("Code blocks that do not parse", "block", "code_blocks_failing", "code_blocks"),
         ("Citation markers emitted", "marker", "citation_markers", None),
         ("Citation markers pointing outside the passages", "marker", "invalid_markers", "citation_markers"),
+        # A call the token cap stopped. Nonzero means some artefact was cut off
+        # mid-generation, so a schema failure in that run may be the cap rather
+        # than the model.
+        ("Calls stopped by the token cap", "call", "calls_truncated", None),
+        ("  of those, in planning", "call", "calls_truncated_planning", None),
     ]:
         cells = []
         summary["pooled"][num] = {}

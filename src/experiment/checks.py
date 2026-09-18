@@ -457,6 +457,15 @@ def run_metrics(record: Dict[str, Any]) -> Dict[str, Any]:
             "citation_markers": sum(r["citation_markers"] for r in responses),
             "invalid_markers": sum(r["invalid_citation_markers"] for r in responses),
             "responses_refused": sum(1 for r in responses if r["no_passage_above_threshold"]),
+            # Every call, not only instruction: a planning call stopped by the token
+            # cap yields a truncated syllabus, which must not be read as the planner
+            # failing the schema. Zero on a backend that terminates on its own.
+            "calls_truncated": sum(1 for c in record["usage"]["calls"]
+                                   if c.get("finish_reason") == "length"),
+            "calls_truncated_planning": sum(
+                1 for c in record["usage"]["calls"]
+                if c.get("finish_reason") == "length"
+                and c.get("agent") in ("advocate", "designer", "extractor")),
         },
         "cost": {
             "input_tokens": usage["input_tokens"],
