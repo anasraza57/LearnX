@@ -22,7 +22,7 @@ the stored records. 120 runs, five conditions over 24 scenarios, one model
 > Decomposition (full architecture against the single-agent baseline) was predicted to raise
 > curriculum constraint satisfaction. It did not: the median scenario scored 0.86 under the full
 > architecture and 1.00 under the single agent, with the paired difference running against the
-> prediction (Cliff's delta -0.37, p = 0.011). The negotiation protocol was predicted to raise time
+> prediction (Cliff's delta -0.39, p = 0.011). The negotiation protocol was predicted to raise time
 > budget satisfaction; the full architecture satisfied the budget in 24 scenarios of 24 and the
 > single-shot condition in 21, but with only three discordant pairs this is not a detectable
 > difference (exact McNemar p = 0.250).
@@ -95,8 +95,9 @@ the stored records. 120 runs, five conditions over 24 scenarios, one model
 > **Every syllabus ends over its time budget.** The agents produce syllabi that fit: the extracted
 > syllabus satisfied the budget in 24 scenarios of 24 under the full architecture. The system then
 > rescales module hours towards the budget and afterwards raises any module whose hours look low for
-> its topic count, without rescaling again. The result exceeded the budget in 100% of runs in four of
-> the five conditions, typically by a factor of three (20 hours becoming 57 to 75). A repair step
+> its topic count, without rescaling again. The result exceeded the budget in every run of four of
+> the five conditions (22 of 24 in the fifth), by a median factor of 3.1 under the full
+> architecture: a 20 hour budget came back as 61 to 83 hours. A repair step
 > intended to make estimates realistic reliably destroys the constraint the planner satisfied.
 
 ---
