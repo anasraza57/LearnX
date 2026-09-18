@@ -1,0 +1,1385 @@
+{
+  "condition": "A1",
+  "arms": {
+    "gpt-5.4-mini": {
+      "scenarios": 24,
+      "responses": 946,
+      "items": 946,
+      "cost_usd": 6.114560699999999,
+      "median_latency_s": 4.2249874164990615,
+      "calls_truncated": 0
+    },
+    "gpt-4o-mini": {
+      "scenarios": 24,
+      "responses": 534,
+      "items": 534,
+      "cost_usd": 0.56934015,
+      "median_latency_s": 10.071703249996062,
+      "calls_truncated": 0
+    },
+    "gpt-3.5-turbo": {
+      "scenarios": 24,
+      "responses": 474,
+      "items": 474,
+      "cost_usd": 1.2108465000000002,
+      "median_latency_s": 3.2719263960025273,
+      "calls_truncated": 0
+    },
+    "mistral-7b-32k": {
+      "scenarios": 24,
+      "responses": 649,
+      "items": 649,
+      "cost_usd": null,
+      "median_latency_s": 14.797990427250625,
+      "calls_truncated": 2
+    },
+    "gemma3-4b-32k": {
+      "scenarios": 24,
+      "responses": 530,
+      "items": 530,
+      "cost_usd": null,
+      "median_latency_s": 11.695487854245584,
+      "calls_truncated": 0
+    }
+  },
+  "measures": {
+    "schema_valid_as_extracted": {
+      "gpt-5.4-mini": {
+        "rate": 0.5416666666666666,
+        "n": 24,
+        "wilson_ci": [
+          0.3507486535891948,
+          0.72108666268789
+        ]
+      },
+      "gpt-4o-mini": {
+        "rate": 0.75,
+        "n": 24,
+        "wilson_ci": [
+          0.55100555994846,
+          0.8800063377140499
+        ]
+      },
+      "gpt-3.5-turbo": {
+        "rate": 0.8333333333333334,
+        "n": 24,
+        "wilson_ci": [
+          0.6414692935030095,
+          0.9332132367136705
+        ]
+      },
+      "mistral-7b-32k": {
+        "rate": 0.4166666666666667,
+        "n": 24,
+        "wilson_ci": [
+          0.24467602609811764,
+          0.6116533413477124
+        ]
+      },
+      "gemma3-4b-32k": {
+        "rate": 0.25,
+        "n": 24,
+        "wilson_ci": [
+          0.11999366228595004,
+          0.44899444005154004
+        ]
+      }
+    },
+    "extraction_parsed": {
+      "gpt-5.4-mini": {
+        "rate": 1.0,
+        "n": 24,
+        "wilson_ci": [
+          0.8620237953250198,
+          1.0
+        ]
+      },
+      "gpt-4o-mini": {
+        "rate": 1.0,
+        "n": 24,
+        "wilson_ci": [
+          0.8620237953250198,
+          1.0
+        ]
+      },
+      "gpt-3.5-turbo": {
+        "rate": 1.0,
+        "n": 24,
+        "wilson_ci": [
+          0.8620237953250198,
+          1.0
+        ]
+      },
+      "mistral-7b-32k": {
+        "rate": 1.0,
+        "n": 24,
+        "wilson_ci": [
+          0.8620237953250198,
+          1.0
+        ]
+      },
+      "gemma3-4b-32k": {
+        "rate": 1.0,
+        "n": 24,
+        "wilson_ci": [
+          0.8620237953250198,
+          1.0
+        ]
+      }
+    },
+    "time_budget_satisfied": {
+      "gpt-5.4-mini": {
+        "rate": 1.0,
+        "n": 24,
+        "wilson_ci": [
+          0.8620237953250198,
+          1.0
+        ]
+      },
+      "gpt-4o-mini": {
+        "rate": 0.7916666666666666,
+        "n": 24,
+        "wilson_ci": [
+          0.5952954674681133,
+          0.9075517464714814
+        ]
+      },
+      "gpt-3.5-turbo": {
+        "rate": 0.7916666666666666,
+        "n": 24,
+        "wilson_ci": [
+          0.5952954674681133,
+          0.9075517464714814
+        ]
+      },
+      "mistral-7b-32k": {
+        "rate": 0.375,
+        "n": 24,
+        "wilson_ci": [
+          0.21159367559548778,
+          0.5729003755732572
+        ]
+      },
+      "gemma3-4b-32k": {
+        "rate": 0.5,
+        "n": 24,
+        "wilson_ci": [
+          0.3142742581957335,
+          0.6857257418042665
+        ]
+      }
+    },
+    "prerequisites_resolvable": {
+      "gpt-5.4-mini": {
+        "rate": 0.75,
+        "n": 24,
+        "wilson_ci": [
+          0.55100555994846,
+          0.8800063377140499
+        ]
+      },
+      "gpt-4o-mini": {
+        "rate": 0.7916666666666666,
+        "n": 24,
+        "wilson_ci": [
+          0.5952954674681133,
+          0.9075517464714814
+        ]
+      },
+      "gpt-3.5-turbo": {
+        "rate": 0.875,
+        "n": 24,
+        "wilson_ci": [
+          0.6899611872949993,
+          0.9565566591987655
+        ]
+      },
+      "mistral-7b-32k": {
+        "rate": 0.625,
+        "n": 24,
+        "wilson_ci": [
+          0.42709962442674276,
+          0.7884063244045122
+        ]
+      },
+      "gemma3-4b-32k": {
+        "rate": 0.625,
+        "n": 24,
+        "wilson_ci": [
+          0.42709962442674276,
+          0.7884063244045122
+        ]
+      }
+    },
+    "goal_covered": {
+      "gpt-5.4-mini": {
+        "rate": 0.9166666666666666,
+        "n": 24,
+        "wilson_ci": [
+          0.741511978067893,
+          0.9768411847029567
+        ]
+      },
+      "gpt-4o-mini": {
+        "rate": 0.7916666666666666,
+        "n": 24,
+        "wilson_ci": [
+          0.5952954674681133,
+          0.9075517464714814
+        ]
+      },
+      "gpt-3.5-turbo": {
+        "rate": 0.625,
+        "n": 24,
+        "wilson_ci": [
+          0.42709962442674276,
+          0.7884063244045122
+        ]
+      },
+      "mistral-7b-32k": {
+        "rate": 0.4583333333333333,
+        "n": 24,
+        "wilson_ci": [
+          0.2789133373121099,
+          0.6492513464108051
+        ]
+      },
+      "gemma3-4b-32k": {
+        "rate": 0.8333333333333334,
+        "n": 24,
+        "wilson_ci": [
+          0.6414692935030095,
+          0.9332132367136705
+        ]
+      }
+    },
+    "all_constraints_satisfied": {
+      "gpt-5.4-mini": {
+        "rate": 0.4583333333333333,
+        "n": 24,
+        "wilson_ci": [
+          0.2789133373121099,
+          0.6492513464108051
+        ]
+      },
+      "gpt-4o-mini": {
+        "rate": 0.4583333333333333,
+        "n": 24,
+        "wilson_ci": [
+          0.2789133373121099,
+          0.6492513464108051
+        ]
+      },
+      "gpt-3.5-turbo": {
+        "rate": 0.4166666666666667,
+        "n": 24,
+        "wilson_ci": [
+          0.24467602609811764,
+          0.6116533413477124
+        ]
+      },
+      "mistral-7b-32k": {
+        "rate": 0.041666666666666664,
+        "n": 24,
+        "wilson_ci": [
+          0.0073934561655057685,
+          0.20241806478655938
+        ]
+      },
+      "gemma3-4b-32k": {
+        "rate": 0.08333333333333333,
+        "n": 24,
+        "wilson_ci": [
+          0.023158815297043306,
+          0.25848802193210685
+        ]
+      }
+    },
+    "no_passage_above_threshold": {
+      "gpt-5.4-mini": {
+        "median": 0.09285714285714286,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 0.09166666666666667,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.018518518518518517,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.058333333333333334,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 0.0,
+        "n": 24
+      }
+    },
+    "low_confidence_retrieval": {
+      "gpt-5.4-mini": {
+        "median": 0.17647058823529413,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 0.1111111111111111,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.08571428571428572,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.10838709677419354,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 0.0625,
+        "n": 24
+      }
+    },
+    "off_strand_passage_rate": {
+      "gpt-5.4-mini": {
+        "median": 0.44365519792822794,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 0.38149688149688155,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.33758116883116884,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.3244774477447745,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 0.32425253274030147,
+        "n": 24
+      }
+    },
+    "model_written_refusal": {
+      "gpt-5.4-mini": {
+        "median": 0.09838709677419355,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.0,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 0.0,
+        "n": 24
+      }
+    },
+    "response_without_citation": {
+      "gpt-5.4-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 0.4173913043478261,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.054093567251461985,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.10818713450292397,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 0.0,
+        "n": 24
+      }
+    },
+    "invalid_citation_marker_rate": {
+      "gpt-5.4-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.0,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.003246753246753247,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 0.0,
+        "n": 24
+      }
+    },
+    "citations_per_response": {
+      "gpt-5.4-mini": {
+        "median": 18.04786862334032,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 1.562608695652174,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 4.15587044534413,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 4.842261904761905,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 12.26794871794872,
+        "n": 24
+      }
+    },
+    "code_blocks_per_response": {
+      "gpt-5.4-mini": {
+        "median": 1.476923076923077,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 3.452651515151515,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.675,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 2.0,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 1.9354166666666668,
+        "n": 24
+      }
+    },
+    "code_block_parse_failure": {
+      "gpt-5.4-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.0,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 0.02020408163265306,
+        "n": 24
+      }
+    },
+    "response_with_broken_code": {
+      "gpt-5.4-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.0,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 0.04653679653679654,
+        "n": 24
+      }
+    },
+    "item_valid": {
+      "gpt-5.4-mini": {
+        "median": 1.0,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 1.0,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 1.0,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.9166666666666666,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 1.0,
+        "n": 24
+      }
+    },
+    "item_placeholder": {
+      "gpt-5.4-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 0.0,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.0,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.017857142857142856,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 0.0,
+        "n": 24
+      }
+    },
+    "item_retrieval_failed": {
+      "gpt-5.4-mini": {
+        "median": 0.16869918699186992,
+        "n": 24
+      },
+      "gpt-4o-mini": {
+        "median": 0.08166666666666667,
+        "n": 24
+      },
+      "gpt-3.5-turbo": {
+        "median": 0.025,
+        "n": 24
+      },
+      "mistral-7b-32k": {
+        "median": 0.063894523326572,
+        "n": 24
+      },
+      "gemma3-4b-32k": {
+        "median": 0.015151515151515152,
+        "n": 24
+      }
+    }
+  },
+  "against_first": {
+    "constraint_satisfaction_rate": {
+      "gpt-4o-mini": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-4o-mini"
+        ],
+        "outcome": "constraint_satisfaction_rate",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.8571428571428571,
+        "median_second": 0.8571428571428571,
+        "median_difference": 0.0,
+        "mean_difference": 0.01190476190476191,
+        "summary_statistic": "median",
+        "ties": 14,
+        "cliffs_delta_unpaired": 0.020833333333333332,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 22.0,
+        "p_value": 0.5655707358352986,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "gpt-3.5-turbo": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-3.5-turbo"
+        ],
+        "outcome": "constraint_satisfaction_rate",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.8571428571428571,
+        "median_second": 0.8571428571428571,
+        "median_difference": 0.0,
+        "mean_difference": 0.01190476190476191,
+        "summary_statistic": "median",
+        "ties": 10,
+        "cliffs_delta_unpaired": 0.041666666666666664,
+        "difference_ci": [
+          0.0,
+          0.0714285714285714
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 42.5,
+        "p_value": 0.5227971668428854,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "mistral-7b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral-7b-32k"
+        ],
+        "outcome": "constraint_satisfaction_rate",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.8571428571428571,
+        "median_second": 0.7142857142857143,
+        "median_difference": 0.1428571428571429,
+        "mean_difference": 0.19642857142857142,
+        "summary_statistic": "median",
+        "ties": 5,
+        "cliffs_delta_unpaired": 0.6545138888888888,
+        "difference_ci": [
+          0.14285714285714285,
+          0.2857142857142857
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 5.5,
+        "p_value": 0.00026572061098232305,
+        "point_estimate": 0.1428571428571429,
+        "supported": true
+      },
+      "gemma3-4b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gemma3-4b-32k"
+        ],
+        "outcome": "constraint_satisfaction_rate",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.8571428571428571,
+        "median_second": 0.7142857142857143,
+        "median_difference": 0.14285714285714285,
+        "mean_difference": 0.14285714285714288,
+        "summary_statistic": "median",
+        "ties": 5,
+        "cliffs_delta_unpaired": 0.5364583333333334,
+        "difference_ci": [
+          0.0,
+          0.2857142857142857
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 21.5,
+        "p_value": 0.0028176114402267928,
+        "point_estimate": 0.14285714285714285,
+        "supported": false
+      }
+    },
+    "schema_valid_as_extracted": {
+      "gpt-4o-mini": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-4o-mini"
+        ],
+        "outcome": "schema_valid_as_extracted",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 1.0,
+        "median_difference": 0.0,
+        "mean_difference": -0.20833333333333334,
+        "summary_statistic": "median",
+        "ties": 17,
+        "cliffs_delta_unpaired": -0.20833333333333334,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 4.0,
+        "p_value": 0.05878172135535887,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "gpt-3.5-turbo": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-3.5-turbo"
+        ],
+        "outcome": "schema_valid_as_extracted",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 1.0,
+        "median_difference": 0.0,
+        "mean_difference": -0.2916666666666667,
+        "summary_statistic": "median",
+        "ties": 15,
+        "cliffs_delta_unpaired": -0.2916666666666667,
+        "difference_ci": [
+          -1.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 5.0,
+        "p_value": 0.019630657257290667,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "mistral-7b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral-7b-32k"
+        ],
+        "outcome": "schema_valid_as_extracted",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 0.0,
+        "median_difference": 0.0,
+        "mean_difference": 0.125,
+        "summary_statistic": "median",
+        "ties": 11,
+        "cliffs_delta_unpaired": 0.125,
+        "difference_ci": [
+          0.0,
+          1.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 35.0,
+        "p_value": 0.40538055645894233,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "gemma3-4b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gemma3-4b-32k"
+        ],
+        "outcome": "schema_valid_as_extracted",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 0.0,
+        "median_difference": 0.5,
+        "mean_difference": 0.2916666666666667,
+        "summary_statistic": "median",
+        "ties": 7,
+        "cliffs_delta_unpaired": 0.2916666666666667,
+        "difference_ci": [
+          0.0,
+          1.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 45.0,
+        "p_value": 0.0895550744136426,
+        "point_estimate": 0.5,
+        "supported": false
+      }
+    },
+    "time_budget_satisfied": {
+      "gpt-4o-mini": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-4o-mini"
+        ],
+        "outcome": "time_budget_satisfied",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 1.0,
+        "median_difference": 0.0,
+        "mean_difference": 0.20833333333333334,
+        "summary_statistic": "median",
+        "ties": 19,
+        "cliffs_delta_unpaired": 0.20833333333333334,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 0.025347318677468256,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "gpt-3.5-turbo": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-3.5-turbo"
+        ],
+        "outcome": "time_budget_satisfied",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 1.0,
+        "median_difference": 0.0,
+        "mean_difference": 0.20833333333333334,
+        "summary_statistic": "median",
+        "ties": 19,
+        "cliffs_delta_unpaired": 0.20833333333333334,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 0.025347318677468256,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "mistral-7b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral-7b-32k"
+        ],
+        "outcome": "time_budget_satisfied",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 0.0,
+        "median_difference": 1.0,
+        "mean_difference": 0.625,
+        "summary_statistic": "median",
+        "ties": 9,
+        "cliffs_delta_unpaired": 0.625,
+        "difference_ci": [
+          0.0,
+          1.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 0.00010751117672950054,
+        "point_estimate": 1.0,
+        "supported": false
+      },
+      "gemma3-4b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gemma3-4b-32k"
+        ],
+        "outcome": "time_budget_satisfied",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 0.5,
+        "median_difference": 0.5,
+        "mean_difference": 0.5,
+        "summary_statistic": "median",
+        "ties": 12,
+        "cliffs_delta_unpaired": 0.5,
+        "difference_ci": [
+          0.0,
+          1.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 0.0005320055051392492,
+        "point_estimate": 0.5,
+        "supported": false
+      }
+    },
+    "no_passage_above_threshold": {
+      "gpt-4o-mini": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-4o-mini"
+        ],
+        "outcome": "no_passage_above_threshold",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.09285714285714286,
+        "median_second": 0.09166666666666667,
+        "median_difference": 0.024099883855981417,
+        "mean_difference": 0.022652177337238844,
+        "summary_statistic": "median",
+        "ties": 0,
+        "cliffs_delta_unpaired": 0.14930555555555555,
+        "difference_ci": [
+          -0.036821705426356585,
+          0.06419172932330826
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 114.0,
+        "p_value": 0.3036564375695774,
+        "point_estimate": 0.024099883855981417,
+        "supported": false
+      },
+      "gpt-3.5-turbo": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-3.5-turbo"
+        ],
+        "outcome": "no_passage_above_threshold",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.09285714285714286,
+        "median_second": 0.018518518518518517,
+        "median_difference": 0.06988416988416989,
+        "mean_difference": 0.09142245027417845,
+        "summary_statistic": "median",
+        "ties": 0,
+        "cliffs_delta_unpaired": 0.8072916666666666,
+        "difference_ci": [
+          0.027777777777777776,
+          0.12073170731707318
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.812588280620125e-05,
+        "point_estimate": 0.06988416988416989,
+        "supported": true
+      },
+      "mistral-7b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral-7b-32k"
+        ],
+        "outcome": "no_passage_above_threshold",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.09285714285714286,
+        "median_second": 0.058333333333333334,
+        "median_difference": 0.03103864734299517,
+        "mean_difference": 0.05545130791067306,
+        "summary_statistic": "median",
+        "ties": 0,
+        "cliffs_delta_unpaired": 0.4027777777777778,
+        "difference_ci": [
+          0.004065040650406526,
+          0.07463369963369962
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 59.0,
+        "p_value": 0.007920503616333008,
+        "point_estimate": 0.03103864734299517,
+        "supported": true
+      },
+      "gemma3-4b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gemma3-4b-32k"
+        ],
+        "outcome": "no_passage_above_threshold",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.09285714285714286,
+        "median_second": 0.0,
+        "median_difference": 0.09285714285714286,
+        "mean_difference": 0.10438777783291998,
+        "summary_statistic": "median",
+        "ties": 0,
+        "cliffs_delta_unpaired": 0.8611111111111112,
+        "difference_ci": [
+          0.054804804804804805,
+          0.16666666666666666
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 6.0,
+        "p_value": 3.8626433794839045e-05,
+        "point_estimate": 0.09285714285714286,
+        "supported": true
+      }
+    },
+    "citations_per_response": {
+      "gpt-4o-mini": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-4o-mini"
+        ],
+        "outcome": "citations_per_response",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 18.04786862334032,
+        "median_second": 1.562608695652174,
+        "median_difference": 16.44268048128342,
+        "mean_difference": 16.574957734246208,
+        "summary_statistic": "median",
+        "ties": 0,
+        "cliffs_delta_unpaired": 1.0,
+        "difference_ci": [
+          14.916666666666668,
+          17.998267008985877
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.1920928955078125e-07,
+        "point_estimate": 16.44268048128342,
+        "supported": true
+      },
+      "gpt-3.5-turbo": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-3.5-turbo"
+        ],
+        "outcome": "citations_per_response",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 18.04786862334032,
+        "median_second": 4.15587044534413,
+        "median_difference": 13.779447570708744,
+        "mean_difference": 14.012717716853432,
+        "summary_statistic": "median",
+        "ties": 0,
+        "cliffs_delta_unpaired": 1.0,
+        "difference_ci": [
+          11.958333333333334,
+          16.213533834586464
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.1920928955078125e-07,
+        "point_estimate": 13.779447570708744,
+        "supported": true
+      },
+      "mistral-7b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral-7b-32k"
+        ],
+        "outcome": "citations_per_response",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 18.04786862334032,
+        "median_second": 4.842261904761905,
+        "median_difference": 13.158755720114517,
+        "mean_difference": 13.366740951123449,
+        "summary_statistic": "median",
+        "ties": 0,
+        "cliffs_delta_unpaired": 1.0,
+        "difference_ci": [
+          12.040476190476191,
+          15.367647058823529
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.1920928955078125e-07,
+        "point_estimate": 13.158755720114517,
+        "supported": true
+      },
+      "gemma3-4b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gemma3-4b-32k"
+        ],
+        "outcome": "citations_per_response",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 18.04786862334032,
+        "median_second": 12.26794871794872,
+        "median_difference": 5.678419952210276,
+        "mean_difference": 5.937851492414965,
+        "summary_statistic": "median",
+        "ties": 0,
+        "cliffs_delta_unpaired": 0.9722222222222222,
+        "difference_ci": [
+          4.4,
+          7.074999999999999
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.1920928955078125e-07,
+        "point_estimate": 5.678419952210276,
+        "supported": true
+      }
+    },
+    "item_valid": {
+      "gpt-4o-mini": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-4o-mini"
+        ],
+        "outcome": "item_valid",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 1.0,
+        "median_difference": 0.0,
+        "mean_difference": -0.004183673094321809,
+        "summary_statistic": "median",
+        "ties": 20,
+        "cliffs_delta_unpaired": -0.16666666666666666,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 0.06788915486182899,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "gpt-3.5-turbo": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-3.5-turbo"
+        ],
+        "outcome": "item_valid",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 1.0,
+        "median_difference": 0.0,
+        "mean_difference": 0.014675976028485216,
+        "summary_statistic": "median",
+        "ties": 13,
+        "cliffs_delta_unpaired": 0.1736111111111111,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 10.0,
+        "p_value": 0.03976760532307577,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "mistral-7b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral-7b-32k"
+        ],
+        "outcome": "item_valid",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 0.9166666666666666,
+        "median_difference": 0.08333333333333337,
+        "mean_difference": 0.09341019308578519,
+        "summary_statistic": "median",
+        "ties": 0,
+        "cliffs_delta_unpaired": 1.0,
+        "difference_ci": [
+          0.06666666666666665,
+          0.13043478260869568
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 0.0,
+        "p_value": 1.8054603545387428e-05,
+        "point_estimate": 0.08333333333333337,
+        "supported": true
+      },
+      "gemma3-4b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gemma3-4b-32k"
+        ],
+        "outcome": "item_valid",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 1.0,
+        "median_second": 1.0,
+        "median_difference": 0.0,
+        "mean_difference": 0.004605691136218892,
+        "summary_statistic": "median",
+        "ties": 16,
+        "cliffs_delta_unpaired": 0.027777777777777776,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 10.0,
+        "p_value": 0.2626182904425206,
+        "point_estimate": 0.0,
+        "supported": false
+      }
+    },
+    "code_block_parse_failure": {
+      "gpt-4o-mini": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-4o-mini"
+        ],
+        "outcome": "code_block_parse_failure",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.0,
+        "median_second": 0.0,
+        "median_difference": 0.0,
+        "mean_difference": -0.0007020061075536241,
+        "summary_statistic": "median",
+        "ties": 19,
+        "cliffs_delta_unpaired": -0.001736111111111111,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 7.0,
+        "p_value": 0.892738400944348,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "gpt-3.5-turbo": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gpt-3.5-turbo"
+        ],
+        "outcome": "code_block_parse_failure",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.0,
+        "median_second": 0.0,
+        "median_difference": 0.0,
+        "mean_difference": -0.007287940920075123,
+        "summary_statistic": "median",
+        "ties": 20,
+        "cliffs_delta_unpaired": 0.03125,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 3.0,
+        "p_value": 0.4652088184521418,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "mistral-7b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "mistral-7b-32k"
+        ],
+        "outcome": "code_block_parse_failure",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.0,
+        "median_second": 0.0,
+        "median_difference": 0.0,
+        "mean_difference": -0.0012741212966419634,
+        "summary_statistic": "median",
+        "ties": 18,
+        "cliffs_delta_unpaired": -0.04513888888888889,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 8.0,
+        "p_value": 0.6001794871405538,
+        "point_estimate": 0.0,
+        "supported": false
+      },
+      "gemma3-4b-32k": {
+        "conditions": [
+          "gpt-5.4-mini",
+          "gemma3-4b-32k"
+        ],
+        "outcome": "code_block_parse_failure",
+        "kind": "rate",
+        "scenarios_compared": 24,
+        "status": "computed",
+        "test": "Wilcoxon signed-rank",
+        "n_pairs": 24,
+        "median_first": 0.0,
+        "median_second": 0.02020408163265306,
+        "median_difference": -0.016666666666666666,
+        "mean_difference": -0.01853376522104489,
+        "summary_statistic": "median",
+        "ties": 9,
+        "cliffs_delta_unpaired": -0.5138888888888888,
+        "difference_ci": [
+          -0.024390243902439025,
+          0.0
+        ],
+        "direction_predicted": "higher",
+        "wilcoxon_statistic": 1.0,
+        "p_value": 0.0008052762369668133,
+        "point_estimate": -0.016666666666666666,
+        "supported": false
+      }
+    }
+  }
+}

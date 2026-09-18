@@ -191,63 +191,85 @@ the stored records. 120 runs, five conditions over 24 scenarios, one model
 ## 4.x Model backends (E2)
 
 > The architecture, corpus, scenarios, prompts and retrieval parameters are held identical and only
-> the model is varied. These contrasts were not pre-registered with a decision rule, so they are
-> reported descriptively, with intervals to show what the 24 scenarios can and cannot separate.
+> the model is varied, across two proprietary generations, two open-weight families and a current
+> model in each tier. These contrasts were not pre-registered with a decision rule, so they are
+> reported descriptively, with intervals to show what 24 scenarios can and cannot separate. No run
+> failed in any arm.
 
-| Measure | gpt-5.4-mini | Mistral 7B |
-|---|---|---|
-| Schema valid as extracted | 0.54 | 0.42 |
-| Time budget satisfied | 1.00 | 0.38 |
-| Goal covered | 0.92 | 0.46 |
-| Prerequisites resolvable | 0.75 | 0.62 |
-| All constraints satisfied | 0.46 | 0.04 |
-| Citations per response (median) | 18.0 | 4.8 |
-| Responses carrying no citation | 0.000 | 0.108 |
-| Markers outside the supplied passages (pooled) | 0.03% | 0.95% |
-| Assessment items valid | 1.00 | 0.92 |
-| Responses finding nothing above the threshold | 0.093 | 0.058 |
-| Retrieval crossing strands | 0.444 | 0.324 |
-| Code blocks per response (median) | 1.5 | 2.0 |
-| Code blocks failing to parse | 0.00% | 0.00% |
-| Median response latency | 4.2 s | 14.8 s |
-| Responses produced over 24 scenarios | 946 | 649 |
+| | gpt-5.4-mini | gpt-4o-mini | gpt-3.5-turbo | Mistral 7B | Gemma 3 4B |
+|---|---|---|---|---|---|
+| Tier | proprietary, current | proprietary, mid | proprietary, older | open-weight, older | open-weight, current |
+| Cost for 24 scenarios | $6.11 | $0.57 | $1.21 | no API cost | no API cost |
+| Schema valid as extracted | 0.54 | 0.75 | 0.83 | 0.42 | 0.25 |
+| Time budget satisfied | 1.00 | 0.79 | 0.79 | 0.38 | 0.50 |
+| Prerequisites resolvable | 0.75 | 0.79 | 0.88 | 0.62 | 0.62 |
+| Goal covered | 0.92 | 0.79 | 0.62 | 0.46 | 0.83 |
+| All constraints satisfied | 0.46 | 0.46 | 0.42 | 0.04 | 0.08 |
+| Citations per response | 18.0 | 1.6 | 4.2 | 4.8 | 12.3 |
+| Responses carrying no citation | 0.000 | 0.417 | 0.054 | 0.108 | 0.000 |
+| Responses finding nothing to retrieve | 0.093 | 0.092 | 0.019 | 0.058 | 0.000 |
+| Code blocks per response | 1.5 | 3.5 | 0.7 | 2.0 | 1.9 |
+| Code blocks failing to parse | 0.000 | 0.000 | 0.000 | 0.000 | 0.020 |
+| Assessment items valid | 1.00 | 1.00 | 1.00 | 0.92 | 1.00 |
+| Median response latency | 4.2 s | 10.1 s | 3.3 s | 14.8 s | 11.7 s |
+| Responses produced | 946 | 534 | 474 | 649 | 530 |
 
-> Paired by scenario, the reference model is ahead on the composite by 0.143 points
-> ([0.143, 0.286]), on citations per response by 13.2 ([12.0, 15.4]) and on assessment item validity
-> by 0.083 ([0.067, 0.130]). Neither arm had a run fail, and the open-weight arm had two of its 1,424
-> calls stopped by the output cap, both in instruction rather than planning.
+### A newer model is not a better planner here
+
+> Paired by scenario, the composite does not separate the three proprietary models at all: the
+> difference against gpt-4o-mini is 0.000 ([0.000, 0.000]) and against gpt-3.5-turbo 0.000 ([0.000,
+> 0.071]). Only the two open-weight models are separated, each by 0.143. The ordering on individual
+> checks runs against model recency rather than with it: the oldest proprietary model is the most
+> reliable at producing a schema-valid syllabus (0.83) and at resolvable prerequisites (0.88), and the
+> newest is the least reliable of the three (0.54 and 0.75).
 >
-> The gap is not uniform, and the shape of it matters more than its size. The open-weight model is
-> worse at everything the syllabus schema and the learner's stated constraints depend on: it satisfies
-> the time budget in 9 scenarios of 24 against 24 of 24, covers the stated goal in 11 against 22, and
-> satisfies every constraint at once in 1 against 11. It is not worse at instruction in the ways that
-> are cheapest to measure: it writes more code per response with no parse failures in either arm, it
-> retrieves off-strand less often, and it refuses less often, returning an answer where the reference
-> model reports that nothing cleared the similarity threshold.
+> The explanation is the one §4.x already gave for the ablation. The newest model plans more
+> ambitiously, producing 946 instructional responses across 24 scenarios against 474 for the oldest,
+> and the extraction step that converts a free-text negotiation into JSON fails more often on the
+> longer, more discursive plans it writes. What the newest model is better at is the learner's
+> constraints: it is the only backend that satisfies the time budget in every scenario, and it covers
+> the stated goal in 0.92 against 0.62.
 >
-> Attribution separates them most sharply. The open-weight model carries a median of 4.8 citation
-> markers per response against 18.0, leaves 10.8% of its responses with no citation at all against
-> none, and points outside the supplied passages at 0.95% of markers against 0.03%. Whether the
-> citations either model writes are faithful is the annotation study's question, not this one's.
+> The cost difference is the part a deployment decision turns on. The current proprietary model costs
+> 10.7 times the mid-tier one for a composite that this design cannot distinguish from it. Reported as
+> a cost-effectiveness claim that would be an overreach, because the composite is a coarse instrument
+> and 24 scenarios is a small sample; reported as a null result with its interval, it is the honest
+> answer to whether the newest model earns its price on this task.
+
+### Instruction-following is a property of the model, not of the architecture
+
+> Every backend receives the same citation instruction, the same passages and the same prompt, and
+> compliance varies by an order of magnitude: 18.0 markers per response from the current proprietary
+> model and 12.3 from the current open-weight one, against 1.6 from the mid-tier proprietary model,
+> which omits citations entirely in 41.7% of its responses. The open-weight models are not the weak
+> case here. Misattribution stays rare wherever citations appear at all: 0.03% of markers for the
+> reference model, 0.34% for Gemma and 0.95% for Mistral, all measured against the passages actually
+> supplied. Whether a cited passage supports the sentence attached to it is the annotation study's
+> question, not this one's.
+
+### What the open-weight arms cost in other terms
+
+> Neither open-weight arm has an API charge and neither is free. Mistral occupied the machine for 5.7
+> hours and Gemma for 3.3, against minutes of wall clock for the proprietary arms. Energy and
+> amortised hardware are reported in §4.x rather than as zero.
 >
-> **A measurement caution that belongs with this table.** The cross-strand figure is computed only
-> over modules the corpus can place in a strand, and the open-weight model plans outside the corpus
-> more often, writing modules on file handling, packaging and error handling that the four strands do
-> not cover. Its lower off-strand rate is therefore computed over 77 to 85% of its retrieval against
-> effectively all of the reference model's, and reads as better retrieval when part of it is a
-> narrower question being asked.
+> Two smaller findings belong with them. Gemma is the only backend that produced code that fails to
+> parse (2.0% of its blocks, in 4.7% of its responses), which matters for a programming tutor more
+> than its planning scores do. And Gemma never once failed to retrieve, against 9.3% of responses for
+> the reference model, which reflects how many topics each one plans rather than any difference in the
+> retriever they share.
 >
-> **Cost is not comparable in the same units.** The reference model's arm cost $6.11 in API charges
-> for 24 scenarios. The local arm cost nothing in API terms and is not free: it occupied the machine
-> for 5.7 hours. Energy and amortised hardware are reported separately in §4.x once power is measured,
-> as R4.10 asked, rather than recorded as zero.
+> **A caution about the sizes being compared.** The current open-weight model is 4B parameters against
+> Mistral's 7B, because the two Qwen 3.5 candidates that would have matched the size could not
+> complete the protocol on the available hardware: both generated roughly 8,000 tokens per call and
+> needed between 28 minutes and two hours per scenario. The open-weight contrast therefore varies
+> generation and size together, and should not be read as isolating either.
 
 ---
 
 ## Not yet written
 
 - **§4.x citation faithfulness (E3)**: awaiting the two-rater study. The pilot pack is drawn.
-- **§4.x model backends (E2)**: the proprietary arms await API credit, and the current-generation
-  open-weight arm is being re-run on a smaller model. The section below covers the arm that is
-  complete.
+- **Cost per faithfully grounded response**: needs E3, and is the measure that replaces the withdrawn
+  cost-effectiveness ratio.
 - **Cost of ownership for local backends**: `tco.py` computes it once power is measured with sudo.
