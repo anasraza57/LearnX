@@ -21,6 +21,7 @@ DOCUMENTS = {
     "handoff": ROOT / "LearnX Revision Handoff.md",
     "results": ROOT / "docs" / "results_draft.md",
     "methods": ROOT / "docs" / "methods_draft.md",
+    "discussion": ROOT / "docs" / "discussion_draft.md",
 }
 
 
