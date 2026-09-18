@@ -6,18 +6,18 @@ LearnX is a model-agnostic personalized learning platform that implements core c
 2. Deliver lessons through an instructor agent with **retrieval-augmented generation (RAG)** for grounded, source-based teaching.
 3. Provide **adaptive assessment** that adjusts difficulty and pacing based on learner performance.
 4. Maintain a learner model to track mastery and guide ongoing pathway adaptation.
-5. Support multiple LLMs (commercial and open-source) with cost-effectiveness analysis.  
+5. Support multiple LLMs (commercial and open-source) with per-call token and cost instrumentation.  
 
 
 
 ## ✨ Features (Implemented)
-- **Multi-Model Support** – Flexible architecture supporting GPT-4o-mini, GPT-3.5-Turbo, and open-source Mistral 7B with cost-effectiveness analysis.
+- **Multi-Model Support** – Flexible architecture supporting OpenAI models and open-weight models served locally through an OpenAI-compatible endpoint, with tokens, latency and cost recorded per call.
 - **Multi-Agent Syllabus Planner** – Learner advocate + curriculum designer agents negotiate and output a structured, validated syllabus with prerequisite checking.
 - **Retrieval-Augmented Teaching** – RAG instructor agent delivers lessons using external resources with source citations and context-grounded responses.
 - **Adaptive Assessment System** – Dynamic difficulty adjustment aligned with Bloom's taxonomy, points-weighted scoring, and LLM-based grading for open-ended questions.
 - **Learner Profile & Progress Tracking** – Dynamic learner model with mastery levels, knowledge state, and performance analytics.
 - **Session State Management** – Persistent session tracking with atomic file writes, pathway navigation (advance/remediation), and resume capability.
-- **Scientific Evaluation Framework** – Learning gain metrics (Hake's normalized gain), A/B testing framework, and statistical analysis capabilities.
+- **Experimental Harness** – A runner that executes the pipeline over a fixed scenario set under controlled conditions and records every artefact, token and call, with the analysis computed from those records (`src/experiment/`).
 - **Production-Ready Infrastructure** – Schema validation, configuration management, comprehensive error handling, and 310+ automated tests.  
 
 ## System Architecture
@@ -63,9 +63,12 @@ OPENAI_MODEL=gpt-4o-mini
 local models, the deterministic sampling policy and request handling.
 
 **Model Options:**
-- `gpt-4o-mini` (default) - Best cost-performance ratio: $0.0034/student, 74.85% avg score
-- `gpt-3.5-turbo` - Budget option: $0.0157/student, 69.04% avg score
-- `gpt-4o` - Premium performance (higher cost)
+- `gpt-4o-mini` (default) - the lowest-cost OpenAI option the system is configured for
+- `gpt-3.5-turbo` - older generation, retained for a continuity comparison
+- `gpt-4o` - higher cost per token
+
+Measured cost per scenario for each backend is recorded with the results rather than
+quoted here, because it depends on the corpus and the scenario set.
 
 ### 4. Local Model Configuration (Optional - Free)
 
@@ -99,11 +102,12 @@ OPENAI_MODEL=mistral
 OPENAI_API_KEY=ollama  # Dummy key for local models
 ```
 
-**Mistral 7B Performance:**
-- Cost: $0/student (runs locally)
-- Performance: 64.74% avg score, g=0.471
-- Achieves 86.5% of GPT-4o-mini performance at zero cost
+**Running Mistral 7B locally:**
+- No API charges, but not free: it draws power and occupies hardware, which
+  `src/experiment/tco.py` accounts for from measured power rather than reporting zero
 - Requires: ~8GB RAM, GPU recommended but optional
+- Pin the context window to the model (`ollama create`, `PARAMETER num_ctx`); the
+  server default is too small for these prompts and silently truncates them
 
 **Note:** Ollama automatically starts a local API server on port 11434 that's compatible with the OpenAI API format.
 
@@ -125,10 +129,15 @@ This launches a Gradio web interface at `http://127.0.0.1:7860` with 5 tabs:
 
 - **LearnX**: Implements core components based on EduGPT while significantly extending the framework with retrieval grounding, adaptive assessment, learner modelling, and multi-model support to deliver a production-ready personalised learning experience.
 
-- **Three-Model Evaluation**: Comprehensive comparison of GPT-4o-mini, GPT-3.5-Turbo, and Mistral 7B (N=90, 30 synthetic students per model) demonstrating:
-  - GPT-4o-mini: 74.85% average score, g=0.631, $0.0034/student
-  - GPT-3.5-Turbo: 69.04% average score, g=0.553, $0.0157/student
-  - Mistral 7B: 64.74% average score, g=0.471, $0/student (86.5% of GPT-4o performance)
+- **Evaluation**: An earlier version of this repository reported a three-model comparison
+  over 90 simulated students, with learning gains and cost-effectiveness ratios. Those
+  outcomes were produced by sampling from hard-coded ranges, not by running the system, and
+  they have been withdrawn along with the scripts and figures that generated them. No
+  number from that evaluation should be cited.
+
+  The evaluation is being rebuilt from measured runs. The harness is in `src/experiment/`,
+  every run writes its artefacts, tokens and costs to `results/`, and each reported figure
+  is recomputed from those records by `src/experiment/analysis.py`.
 
 ## 🏗️ Implementation Status
 
@@ -171,11 +180,11 @@ This launches a Gradio web interface at `http://127.0.0.1:7860` with 5 tabs:
 - **Tests**: 35+ tests for orchestration, integration, and end-to-end workflows
 
 ### ✅ Phase 6: Evaluation & Multi-Model Support
-- Scientific evaluation metrics (Hake's normalized learning gain, retention rates, engagement)
-- A/B testing framework for controlled experiments
 - Multi-model architecture (OpenAI API + Ollama for local deployment)
-- Comprehensive model comparison (GPT-4o-mini, GPT-3.5-Turbo, Mistral 7B)
-- Cost-effectiveness analysis and performance benchmarking
+- Per-call instrumentation of tokens, cached input, latency and cost
+- Experimental harness, scenario set and analysis in `src/experiment/`
+- Learning gain and A/B testing code remains in `src/evaluation/`, but it has never been
+  run against human learners and produces no result reported anywhere
 - **Tests**: 125+ tests for evaluation metrics, A/B testing, and multi-model interfaces
 
 **Total Test Coverage**: 310+ automated tests, all passing ✅
@@ -267,7 +276,15 @@ Run fast tests only:
 ```bash
 pytest tests/unit/test_config.py tests/unit/test_validation.py tests/unit/test_learner_profile_validation.py tests/unit/test_rag_instructor.py tests/unit/test_assessment_generator.py tests/unit/test_grading_agent.py tests/unit/test_quiz_session.py tests/unit/test_assessment_schemas.py tests/unit/test_orchestrator.py tests/unit/test_syllabus_planner.py tests/unit/test_evaluation_metrics.py tests/unit/test_ab_testing.py --no-cov -q
 ```
-**Result:** 250+ tests pass in < 5 seconds ✅
+**Result:** 385 of 421 tests pass in about three minutes.
+
+36 tests fail, and they were failing before this revision began: they assert
+interfaces the code has since moved on from, such as a `Citation.relevance_score`
+field and a `SchemaValidator` that resolved a schema by name. The failures are in the
+application's own test files rather than in the experimental harness, whose tests all
+pass. They are recorded rather than deleted, because a suite advertised as passing
+while a fifth of it fails is the same kind of unchecked claim this revision is
+correcting elsewhere.
 
 ### Test Coverage
 - **Configuration & Validation**: `test_config.py`, `test_validation.py`
