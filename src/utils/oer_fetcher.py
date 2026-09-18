@@ -21,6 +21,20 @@ from pathlib import Path
 from typing import List, Optional, Dict, Any, Tuple
 from urllib.parse import quote_plus, urlencode
 
+import requests
+
+# Optional dependencies, imported here rather than inside the functions that use
+# them so that the module exposes what it depends on and tests can substitute it.
+try:
+    import wikipedia
+except ImportError:
+    wikipedia = None
+
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    BeautifulSoup = None
+
 try:
     from ..config import config
 except ImportError:
@@ -80,9 +94,7 @@ class OERFetcher:
         Returns:
             List of paths to created markdown files
         """
-        try:
-            import wikipedia
-        except ImportError:
+        if wikipedia is None:
             print("⚠️  Wikipedia library not installed. Install with: pip install wikipedia-api")
             return []
 
@@ -168,11 +180,8 @@ class OERFetcher:
         Returns:
             Path to created markdown file, or None if failed
         """
-        try:
-            import requests
-            from bs4 import BeautifulSoup
-        except ImportError:
-            print("⚠️  Required libraries not installed. Install with: pip install requests beautifulsoup4")
+        if BeautifulSoup is None:
+            print("⚠️  beautifulsoup4 not installed. Install with: pip install beautifulsoup4")
             return None
 
         try:
@@ -249,7 +258,6 @@ class OERFetcher:
             List of paths to created markdown files
         """
         try:
-            import requests
             import feedparser
         except ImportError:
             print("⚠️  feedparser not installed. Install with: pip install feedparser")
