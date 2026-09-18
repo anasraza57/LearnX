@@ -192,3 +192,11 @@ results/smoke/
 # harness; the derived analysis, run manifests and corpus provenance are tracked
 results/*/*/A[1-5]/
 results/*/*/logs/
+
+# Private working documents and the submitted manuscript. These were published to
+# this public repository by accident and must not be re-added: the planning
+# documents quote correspondence and record decisions that are not for readers of
+# the repository, and the PDF is the submitted article.
+LearnX Revision Handoff.md
+LearnX Experimental Plan.md
+sn-article.pdf
