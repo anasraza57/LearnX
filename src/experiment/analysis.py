@@ -279,6 +279,54 @@ def _fmt(value: Any, digits: int = 3) -> str:
     return str(value)
 
 
+# The pre-registered composite counts a prerequisite failure twice: once through
+# schema validity, because prerequisites are a schema field, and again through the
+# prerequisite checks. The composite is reported as declared, and these variants
+# say how much of the difference that double counting accounts for.
+COMPOSITE_VARIANTS = {
+    "As pre-registered": ["schema_valid_as_extracted", "time_budget_satisfied",
+                          "module_count_in_range", "goal_covered", "prerequisites_present",
+                          "prerequisites_resolvable", "prerequisites_acyclic"],
+    "Schema validity judged without the prerequisites field": [
+        "schema_valid_ignoring_prerequisites", "time_budget_satisfied", "module_count_in_range",
+        "goal_covered", "prerequisites_present", "prerequisites_resolvable", "prerequisites_acyclic"],
+    "Without the schema check": ["time_budget_satisfied", "module_count_in_range", "goal_covered",
+                                 "prerequisites_present", "prerequisites_resolvable",
+                                 "prerequisites_acyclic"],
+    "Without the prerequisite checks": ["schema_valid_as_extracted", "time_budget_satisfied",
+                                        "module_count_in_range", "goal_covered"],
+    "No overlap, and without the weak prerequisites_present": [
+        "schema_valid_ignoring_prerequisites", "time_budget_satisfied", "module_count_in_range",
+        "goal_covered", "prerequisites_resolvable", "prerequisites_acyclic"],
+}
+
+
+def composite_sensitivity(runs: List[Dict[str, Any]], first: str, second: str,
+                          direction: str) -> List[Dict[str, Any]]:
+    """The primary contrast recomputed under each definition of the composite."""
+    by: Dict[str, Dict[str, Any]] = {}
+    for run in runs:
+        by.setdefault(run["condition"], {})[run["scenario_id"]] = run["planning"]
+    if first not in by or second not in by:
+        return []
+    scenarios = sorted(set(by[first]) & set(by[second]))
+    rows = []
+    for name, checks in COMPOSITE_VARIANTS.items():
+        def rate(condition: str, scenario: str) -> float:
+            planning = by[condition][scenario]
+            return sum(bool(planning[c]) for c in checks) / len(checks)
+        pairs = [(s, rate(first, s), rate(second, s)) for s in scenarios]
+        result = paired_comparison(pairs, direction=direction)
+        rows.append({
+            "composite": name, "checks": len(checks),
+            "mean_first": statistics.fmean(p[1] for p in pairs),
+            "mean_second": statistics.fmean(p[2] for p in pairs),
+            **{k: result[k] for k in ("median_difference", "difference_ci",
+                                      "cliffs_delta_unpaired", "p_value", "supported")},
+        })
+    return rows
+
+
 def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str, Dict[str, Any]]:
     """A markdown report and the same content as data."""
     conditions = sorted({r["condition"] for r in runs})
@@ -334,6 +382,24 @@ def report(experiment: str, model: str, runs: List[Dict[str, Any]]) -> Tuple[str
                          f"{_fmt(result['ci_first'])} | {_fmt(result['proportion_second'])} "
                          f"{_fmt(result['ci_second'])} | McNemar exact | discordant {m['discordant']} "
                          f"({m['only_first']} vs {m['only_second']}) | | {_fmt(m['p_value'])} | |")
+
+    primary = PRIMARY_CONTRASTS[0]
+    rows = composite_sensitivity(runs, *primary["conditions"], primary["direction"])
+    if rows:
+        summary["composite_sensitivity"] = rows
+        lines += ["", "## How much of the primary contrast is one failure counted twice", "",
+                  f"A prerequisite written as prose fails the schema and the prerequisite checks "
+                  f"alike, so it costs two of the seven composite constraints. "
+                  f"{primary['contrast']} recomputed under each definition:", "",
+                  "| Composite | Checks | " + " | ".join(primary["conditions"])
+                  + " | Median difference | 95% CI | Cliff's delta | p | Supported |",
+                  "|---" * 9 + "|"]
+        for row in rows:
+            lines.append(
+                f"| {row['composite']} | {row['checks']} | {row['mean_first']:.2f} | "
+                f"{row['mean_second']:.2f} | {_fmt(row['median_difference'])} | "
+                f"{_fmt(row['difference_ci'])} | {_fmt(row['cliffs_delta_unpaired'])} | "
+                f"{_fmt(row['p_value'])} | {_fmt(row['supported'])} |")
 
     lines += ["", "## Automatic measures by condition", "",
               "| Measure | " + " | ".join(conditions) + " |", "|---" * (len(conditions) + 1) + "|"]

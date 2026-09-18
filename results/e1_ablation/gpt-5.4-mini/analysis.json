@@ -12305,6 +12305,78 @@
         "status": "pending annotation"
       }
     ],
+    "composite_sensitivity": [
+      {
+        "composite": "As pre-registered",
+        "checks": 7,
+        "mean_first": 0.8869047619047619,
+        "mean_second": 0.9702380952380952,
+        "median_difference": 0.0,
+        "difference_ci": [
+          -0.1428571428571429,
+          0.0
+        ],
+        "cliffs_delta_unpaired": -0.3854166666666667,
+        "p_value": 0.011066885214094484,
+        "supported": false
+      },
+      {
+        "composite": "Schema validity judged without the prerequisites field",
+        "checks": 7,
+        "mean_first": 0.9464285714285715,
+        "mean_second": 0.9702380952380952,
+        "median_difference": 0.0,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "cliffs_delta_unpaired": -0.16666666666666666,
+        "p_value": 0.2059032107320683,
+        "supported": false
+      },
+      {
+        "composite": "Without the schema check",
+        "checks": 6,
+        "mean_first": 0.9444444444444445,
+        "mean_second": 0.9722222222222222,
+        "median_difference": 0.0,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "cliffs_delta_unpaired": -0.16666666666666666,
+        "p_value": 0.15729920705028505,
+        "supported": false
+      },
+      {
+        "composite": "Without the prerequisite checks",
+        "checks": 4,
+        "mean_first": 0.8645833333333334,
+        "mean_second": 0.9583333333333334,
+        "median_difference": 0.0,
+        "difference_ci": [
+          -0.25,
+          0.0
+        ],
+        "cliffs_delta_unpaired": -0.375,
+        "p_value": 0.01255491859696655,
+        "supported": false
+      },
+      {
+        "composite": "No overlap, and without the weak prerequisites_present",
+        "checks": 6,
+        "mean_first": 0.9375,
+        "mean_second": 0.9652777777777778,
+        "median_difference": 0.0,
+        "difference_ci": [
+          0.0,
+          0.0
+        ],
+        "cliffs_delta_unpaired": -0.16666666666666666,
+        "p_value": 0.2059032107320683,
+        "supported": false
+      }
+    ],
     "descriptive": {
       "no_passage_above_threshold": {
         "A1": {

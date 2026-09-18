@@ -23,6 +23,18 @@ Runs: 120 across conditions A1, A2, A3, A4, A5. Unit of analysis: the scenario (
 | A1 vs A5 | the citation instruction | misattribution_rate | pending E3 annotation | | | | | | |
 | A1 vs A5 | the citation instruction | missing_citation_rate | pending E3 annotation | | | | | | |
 
+## How much of the primary contrast is one failure counted twice
+
+A prerequisite written as prose fails the schema and the prerequisite checks alike, so it costs two of the seven composite constraints. A1 vs A2 recomputed under each definition:
+
+| Composite | Checks | A1 | A2 | Median difference | 95% CI | Cliff's delta | p | Supported |
+|---|---|---|---|---|---|---|---|---|
+| As pre-registered | 7 | 0.89 | 0.97 | 0.000 | [-0.143, +0.000] | -0.385 | 0.011 | no |
+| Schema validity judged without the prerequisites field | 7 | 0.95 | 0.97 | 0.000 | [+0.000, +0.000] | -0.167 | 0.206 | no |
+| Without the schema check | 6 | 0.94 | 0.97 | 0.000 | [+0.000, +0.000] | -0.167 | 0.157 | no |
+| Without the prerequisite checks | 4 | 0.86 | 0.96 | 0.000 | [-0.250, +0.000] | -0.375 | 0.013 | no |
+| No overlap, and without the weak prerequisites_present | 6 | 0.94 | 0.97 | 0.000 | [+0.000, +0.000] | -0.167 | 0.206 | no |
+
 ## Automatic measures by condition
 
 | Measure | A1 | A2 | A3 | A4 | A5 |

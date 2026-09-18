@@ -66,6 +66,28 @@ the stored records. 120 runs, five conditions over 24 scenarios, one model
 > architecture: validating the syllabus at the handoff, which §3.4 of the submitted manuscript already
 > claimed the system did, is exactly the missing step.
 
+### How much of the contrast is one failure counted twice
+
+> Prerequisites are a schema field, so a prerequisite written as prose fails the schema check and the
+> prerequisite checks alike and costs two of the seven composite constraints. The composite is
+> reported as it was pre-registered, and the contrast is also recomputed under four other definitions
+> of it:
+>
+> | Composite | A1 | A2 | Cliff's delta | p |
+> |---|---|---|---|---|
+> | As pre-registered, 7 checks | 0.89 | 0.97 | -0.385 | 0.011 |
+> | Schema validity judged without the prerequisites field | 0.95 | 0.97 | -0.167 | 0.206 |
+> | Without the schema check | 0.94 | 0.97 | -0.167 | 0.157 |
+> | Without the prerequisite checks | 0.86 | 0.96 | -0.375 | 0.013 |
+> | No overlap, and without the weak prerequisites_present check | 0.94 | 0.97 | -0.167 | 0.206 |
+>
+> The decision does not move: under every definition the difference runs against the predicted
+> direction and the interval includes zero, so the contrast is unsupported either way. What the double
+> counting affects is the size of the apparent disadvantage, roughly half of which is the same failure
+> entering twice. The honest statement is the one the rows agree on: removing the prerequisites field
+> leaves the two architectures separated by 0.02 on a seven-point composite, which this design cannot
+> distinguish from no difference at all.
+
 ### What the architecture does provide
 
 > Two components have effects that are not in dispute because they are categorical rather than
