@@ -12,8 +12,12 @@ Every bar carries its value as text: three of the five series colours sit below
 Conditions keep a fixed colour throughout, so a figure that drops one does not
 repaint the rest.
 
+A fifth replaces figure D10, the model comparison dashboard, which the submitted
+version built from hard-coded numbers.
+
 Usage:
     python -m src.experiment.figures --experiment e1 --model gpt-5.4-mini
+    python -m src.experiment.figures --backends
 """
 
 from __future__ import annotations
@@ -51,6 +55,35 @@ CONDITION_LABELS = {
     "A4": "A4 no negotiation",
     "A5": "A5 no citation instruction",
 }
+
+# Backends keep a fixed colour and a fixed order: proprietary by generation, then
+# open-weight by generation. Same validated hues as the conditions.
+BACKEND_ORDER = ["gpt-5.4-mini", "gpt-4o-mini", "gpt-3.5-turbo", "mistral-7b-32k", "gemma3-4b-32k"]
+BACKEND_COLOURS = {
+    "gpt-5.4-mini": "#2a78d6",
+    "gpt-4o-mini": "#eb6834",
+    "gpt-3.5-turbo": "#1baf7a",
+    "mistral-7b-32k": "#eda100",
+    "gemma3-4b-32k": "#e87ba4",
+}
+BACKEND_LABELS = {
+    "gpt-5.4-mini": "GPT-5.4 mini\n(proprietary, current)",
+    "gpt-4o-mini": "GPT-4o mini\n(proprietary, mid)",
+    "gpt-3.5-turbo": "GPT-3.5 Turbo\n(proprietary, older)",
+    "mistral-7b-32k": "Mistral 7B\n(open weight, older)",
+    "gemma3-4b-32k": "Gemma 3 4B\n(open weight, current)",
+}
+
+# Panels of the backend figure. Proportions share a 0 to 1 axis; the last two
+# carry their own units and so are never plotted on a shared scale with them.
+BACKEND_PANELS = [
+    ("schema_valid_as_extracted", "Syllabus schema valid", "proportion"),
+    ("time_budget_satisfied", "Time budget satisfied", "proportion"),
+    ("goal_covered", "Stated goal covered", "proportion"),
+    ("all_constraints_satisfied", "All constraints satisfied", "proportion"),
+    ("citations_per_response", "Citation markers per response", "count"),
+    ("__cost__", "Cost for 24 scenarios", "usd"),
+]
 
 PLANNING_CHECKS = [
     ("schema_valid_as_extracted", "Schema valid\n(as extracted)"),
@@ -244,6 +277,77 @@ def figure_cost(runs: List[Dict[str, Any]], out_dir: Path) -> Path:
     return _save(fig, out_dir, "e1_cost_latency")
 
 
+def figure_backends(data: Dict[str, Any], out_dir: Path) -> Path:
+    """
+    E2 across backends: the figure that replaces D10.
+
+    Six panels rather than one axis, because the quantities do not share units.
+    Proportions carry their Wilson intervals; cost and citation counts have their
+    own scales and are never plotted against the proportions.
+    """
+    arms = [b for b in BACKEND_ORDER if b in data["arms"]]
+    fig, axes = plt.subplots(2, 3, figsize=(10.4, 6.2))
+
+    for ax, (key, title, kind) in zip(axes.flat, BACKEND_PANELS):
+        values, errs = [], [[], []]
+        for backend in arms:
+            if key == "__cost__":
+                value = data["arms"][backend]["cost_usd"] or 0.0
+                values.append(value)
+                errs[0].append(0); errs[1].append(0)
+                continue
+            entry = data["measures"][key][backend]
+            value = entry.get("rate", entry.get("median"))
+            value = 0.0 if value is None else value
+            values.append(value)
+            ci = entry.get("wilson_ci")
+            errs[0].append(value - ci[0] if ci else 0)
+            errs[1].append(ci[1] - value if ci else 0)
+
+        ys = list(range(len(arms)))[::-1]
+        colours = [BACKEND_COLOURS[b] for b in arms]
+        ax.barh(ys, values, 0.66, color=colours, zorder=2)
+        if any(errs[0]) or any(errs[1]):
+            ax.errorbar(values, ys, xerr=errs, fmt="none", ecolor=INK_MUTED,
+                        elinewidth=0.9, capsize=2, zorder=3)
+
+        span = max(values + [0.001])
+        # The label sits past the interval, not past the bar, or it lands on the cap
+        ends = [v + e for v, e in zip(values, errs[1])]
+        for y, value, end in zip(ys, values, ends):
+            if kind == "usd":
+                text = "no API cost" if value == 0 else f"${value:.2f}"
+            elif kind == "count":
+                text = f"{value:.1f}"
+            else:
+                text = f"{value:.2f}".lstrip("0")
+            ax.text(end + span * 0.04, y, text, va="center", ha="left",
+                    fontsize=7.5, color=INK)
+
+        ax.set_yticks(ys)
+        ax.set_yticklabels([BACKEND_LABELS[b] for b in arms], fontsize=6.8)
+        ax.set_xlim(0, span * 1.35)
+        ax.set_title(title, loc="left", fontsize=9)
+        ax.grid(axis="x", alpha=0.7)
+        ax.set_axisbelow(True)
+        if kind == "proportion":
+            ax.set_xlim(0, 1.25)
+            ax.set_xticks([0, 0.5, 1.0])
+
+    fig.suptitle("Condition A1 across five backends, 24 scenarios each, no failed run\n"
+                 "Proportions carry 95% Wilson intervals; the two right-hand panels have their own units",
+                 x=0.005, ha="left", fontsize=10.5)
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
+    return _save(fig, out_dir, "e2_backends")
+
+
+def build_backends() -> List[Path]:
+    root = RESULTS_DIR / EXPERIMENT_DIRS["e2"]
+    data = json.loads((root / "backends.json").read_text(encoding="utf-8"))
+    _style()
+    return [figure_backends(data, root / "figures")]
+
+
 def build(experiment: str, model: str) -> List[Path]:
     root = RESULTS_DIR / EXPERIMENT_DIRS[experiment] / model_slug(model)
     data = json.loads((root / "analysis.json").read_text(encoding="utf-8"))
@@ -260,8 +364,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--experiment", choices=sorted(EXPERIMENT_DIRS), default="e1")
     parser.add_argument("--model", default="gpt-5.4-mini")
+    parser.add_argument("--backends", action="store_true",
+                        help="draw the cross-backend figure from results/e2_backends/backends.json")
     args = parser.parse_args()
-    for path in build(args.experiment, args.model):
+    for path in (build_backends() if args.backends else build(args.experiment, args.model)):
         print(f"Written: {path}")
 
 
