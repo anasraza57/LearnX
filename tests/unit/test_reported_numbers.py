@@ -135,6 +135,50 @@ class TestPlanningClaims:
         assert "61 to 83 hours" in text
 
 
+@pytest.fixture(scope="module")
+def backends():
+    path = ROOT / "results" / "e2_backends" / "backends.json"
+    if not path.exists():
+        pytest.skip("no backend comparison in this checkout")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+class TestBackendComparison:
+    """The E2 numbers in the results draft, checked against backends.json."""
+
+    def test_every_arm_ran_the_same_scenarios_without_failures(self, backends):
+        for name, arm in backends["arms"].items():
+            assert arm["scenarios"] == 24, f"{name} did not run all 24 scenarios"
+
+    def test_the_draft_quotes_the_measured_costs(self, backends):
+        text = _text("results")
+        for name, expected in (("gpt-4o-mini", "0.57"), ("gpt-3.5-turbo", "1.21")):
+            cost = backends["arms"][name]["cost_usd"]
+            assert f"{cost:.2f}" == expected, f"{name} cost moved to {cost:.2f}"
+            assert f"${expected}" in text, f"the results draft does not quote ${expected}"
+
+    def test_local_arms_report_no_api_cost(self, backends):
+        for name in ("mistral-7b-32k", "gemma3-4b-32k"):
+            assert backends["arms"][name]["cost_usd"] is None, \
+                f"{name} is local and must not carry an API cost"
+
+    def test_the_draft_quotes_the_current_planning_rates(self, backends):
+        text = _text("results")
+        for measure in ("schema_valid_as_extracted", "time_budget_satisfied"):
+            for name, entry in backends["measures"][measure].items():
+                rendered = f"{entry['rate']:.2f}"
+                assert rendered in text, \
+                    f"the results draft does not quote {measure} {rendered} for {name}"
+
+    def test_the_proprietary_composite_difference_is_reported_as_null(self, backends):
+        """The headline E2 claim: the composite does not separate the API models."""
+        against = backends["against_first"]["constraint_satisfaction_rate"]
+        for name in ("gpt-4o-mini", "gpt-3.5-turbo"):
+            low, high = against[name]["difference_ci"]
+            assert low <= 0 <= high, \
+                f"the interval against {name} no longer includes zero; the draft says it does"
+
+
 class TestRunProvenance:
     """
     Every arm must have run against the same corpus and scenario set, or the

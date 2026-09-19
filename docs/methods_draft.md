@@ -152,8 +152,22 @@ than ungrounded instruction.
 > full architecture without retrieval; without the negotiation protocol; and without the citation
 > instruction. The single-agent prompt is published in full in Appendix E.
 >
-> The model backend is then varied with the architecture held fixed, across proprietary and
-> open-weight families and across model generations.
+> The model backend is then varied with the architecture held fixed, over five models spanning two
+> tiers and two generations within each tier: a current proprietary model, a mid-tier proprietary
+> model, the older proprietary model used in the submitted version, the older open-weight model used
+> in the submitted version, and a current open-weight model. Every arm runs the full architecture over
+> the same 24 scenarios, so the arm for the reference model serves both the ablation and this
+> comparison.
+>
+> Two choices in the open-weight tier should be stated rather than assumed. The current open-weight
+> model is smaller than the older one, 4B parameters against 7B, because the two current models that
+> would have matched the size could not complete the protocol on the available hardware: both
+> generated around 8,000 tokens per call and needed between 28 minutes and two hours per scenario
+> against nine minutes for the model used. The open-weight comparison therefore varies generation and
+> size together and cannot isolate either. Every local model is served with its context window pinned
+> to 32,768 tokens and its sampling parameters set to match the other arms, because a model pulled
+> from a registry can carry its own temperature and penalties, and the serving default truncates long
+> prompts without reporting it.
 
 ### 3.6.6 Evaluation metrics
 
