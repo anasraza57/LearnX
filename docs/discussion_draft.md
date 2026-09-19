@@ -1,12 +1,12 @@
 # Discussion, draft text
 
-Draft prose for the two new subsections of Section 5 that do not depend on the results still being
-collected: applicability (R2 asked for it explicitly) and limitations (R1 and R2). The subsections
-that rewrite around E2 and E3 are left unwritten until those results exist.
+Draft prose for Section 5: the two new subsections the revision map calls for, applicability (R2)
+and limitations (R1, R2), and the two rewrites whose evidence now exists, the scaffolding hypothesis
+(E1) and diminishing returns (E2). Verifiability waits on the annotation study.
 
 Every claim below is traceable to a recorded artefact: `data/corpus/python_v1/index_report.json`,
-`data/scenarios/scenarios_v1.json`, `results/e1_ablation/gpt-5.4-mini/analysis.md`, and
-`results/e1_determinism_probe/`.
+`data/scenarios/scenarios_v1.json`, `results/e1_ablation/gpt-5.4-mini/analysis.md`,
+`results/e2_backends/backends.md`, and `results/e1_determinism_probe/`.
 
 ---
 
@@ -88,10 +88,69 @@ Every claim below is traceable to a recorded artefact: `data/corpus/python_v1/in
 
 ---
 
+## 5.2 The scaffolding hypothesis, tested
+
+> The submitted version asserted that decomposing the tutor into negotiating agents improves the
+> plans it produces. E1 tested that assertion against a single-agent baseline given the identical
+> model, corpus, retrieval stack, citation instruction and syllabus schema, differing only in that one
+> agent plans, teaches and assesses. The prediction was fixed in advance, and it was not supported.
+>
+> The direction is the uncomfortable part: the single agent scored higher, not lower, on the composite
+> of planning constraints, and the difference is concentrated in one place. The multi-agent pipeline
+> hands a free-text negotiation to an extraction step, and that step copies prose into a field the
+> schema defines as module identifiers: "Comfort with variables and assignment" where an identifier
+> belongs. Scored while ignoring that single field, the two architectures are indistinguishable, 0.96
+> against 0.96.
+>
+> So the finding is not that decomposition is worthless. It is that decomposition as implemented here
+> buys nothing the single agent cannot produce, and costs a fidelity loss at the handoff between the
+> conversation and the artefact. That is a narrower and more useful claim than the original one, and
+> it points at a fix inside the architecture rather than away from it: validating the syllabus at the
+> handoff, which §3.4 of the submitted manuscript already claimed the system did.
+>
+> Two cautions belong with it. The composite counts a prerequisite failure twice, once through schema
+> validity and once through the prerequisite checks, and removing that overlap halves the apparent
+> effect while leaving the decision unchanged. And 24 scenarios can detect a large effect, not a small
+> one, so this is evidence that decomposition does not help much here, not proof that it never helps.
+
+---
+
+## 5.4 Diminishing returns across model generations
+
+> Reviewer 5 objected that the submitted baselines were outdated generations, and that without current
+> models the results would confound architecture with model progress. E2 answers that by holding the
+> architecture fixed and varying the model across five backends in two tiers and two generations.
+>
+> The answer is a null result, and it is worth stating as one. Paired by scenario, the composite does
+> not separate the three proprietary models at all: the difference against the mid-tier model is 0.000
+> with an interval of [0.000, 0.000], and against the older model 0.000 with [0.000, 0.071]. Over the
+> same 24 scenarios the current model costs $6.11 against $0.57, which is 10.7 times the price for a
+> difference this design cannot measure.
+>
+> The per-check ordering runs against model recency rather than with it. The oldest proprietary model
+> produced the most schema-valid syllabi, 0.83 against the current model's 0.54, and the most
+> resolvable prerequisites, 0.88 against 0.75. The reason is visible in the artefacts: the current
+> model plans more ambitiously, producing 946 instructional responses across the scenario set against
+> 474, and the extraction step fails more often on longer and more discursive plans. Where the current
+> model does lead is on the learner's own constraints, satisfying the time budget in every scenario
+> against 0.79, and covering the stated goal in 0.92 against 0.62.
+>
+> The practical reading is that capability and suitability are not the same axis. A stronger model
+> writes a richer plan and strains a brittle handoff; the constraint that actually protects the learner
+> is met more often by the stronger model, and the constraint that protects the pipeline is met more
+> often by the weaker one. A deployment choosing on price would not be paying for measurably better
+> plans here, which is the opposite of the cost-effectiveness story the submitted version told.
+>
+> This is not a claim that model progress does not matter. It is a claim about one pipeline, one
+> corpus, one domain and 24 scenarios, where the binding constraint on quality turned out to be an
+> architectural seam rather than the model behind it.
+
+---
+
 ## Not yet written
 
-- **5.2 The Scaffolding Hypothesis**: rewrite around what E1 shows, including where it runs against
-  the hypothesis.
 - **5.3 Verifiability**: rebuild around E3 once the annotation study exists. The submitted claim of a
   correlation between citation density and learning outcomes is withdrawn, not restated.
-- **5.4 Diminishing Returns**: rewrite around E2 once the backend arms are complete.
+- **5.1 Bridging the divide**: keep the access and sovereignty argument, remove every implication that
+  equivalent learning was demonstrated.
+- **6 Conclusion**: write last, mirroring the revised contributions.

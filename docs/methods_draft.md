@@ -144,6 +144,24 @@ than ungrounded instruction.
 > The unit of analysis is the system artefact, not the learner. Each scenario yields one syllabus, one
 > instructional response per syllabus topic, and one assessment item per topic.
 
+### 3.6.2a Scenario factors (new table)
+
+> The scenario set is a 3 x 2 x 2 x 2 full factorial over four factors, generated once from seed 20260917 and
+> reused byte-identically across every condition and backend as version `v1`.
+
+| Factor | Levels | What it varies |
+|---|---|---|
+| Prior knowledge | novice, intermediate, advanced | What the learner is assumed to know already |
+| Time budget | 4 weeks at 5 h/week (20 h total); 8 weeks at 5 h/week (40 h total) | The constraint the syllabus must fit |
+| Goal profile | broad: broad foundations across all four modules; narrow: narrow applied focus on one strand (data structures) | Whether the plan must span the curriculum or concentrate on one strand |
+| Preference profile | P1: reading_writing style, slow pace, easy difficulty; P2: kinesthetic style, fast pace, hard difficulty | How instruction and assessment are asked to adapt |
+
+> The 24 cells are the full crossing of these levels, so every combination appears
+> exactly once and each factor is balanced against the others. A scenario fixes the profile the system
+> is given and nothing else: it produces no scores and models no learner behaviour.
+
+---
+
 ### 3.6.5 Conditions and backends
 
 > Five conditions isolate one component each, all on the same model, corpus and scenarios: the full
