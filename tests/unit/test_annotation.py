@@ -112,7 +112,7 @@ class TestPack:
         responses = [_response(f"R{i:03d}", condition, retrieved=condition != "A3")
                      for condition in conditions for i in range(5)]
         sample = annotation.sample_claims(responses, claims_total=8, claims_per_response=2)
-        manifest = annotation.write_pack(sample, tmp_path, ["anas", "baidaa"], purpose="pilot")
+        manifest = annotation.write_pack(sample, tmp_path, ["anas", "baidaa"], purpose="pilot", sheets=True)
         return sample, manifest
 
     def test_rating_sheets_hide_the_backend_and_condition(self, tmp_path):
@@ -175,7 +175,7 @@ class TestAgreement:
     def test_score_pack_reports_per_dimension(self, tmp_path):
         responses = [_response(f"R{i:03d}", "A1") for i in range(5)]
         sample = annotation.sample_claims(responses, claims_total=4, claims_per_response=2)
-        annotation.write_pack(sample, tmp_path, ["anas", "baidaa"], purpose="pilot")
+        annotation.write_pack(sample, tmp_path, ["anas", "baidaa"], purpose="pilot", sheets=True)
 
         labels = ["supported", "unsupported", "supported", "partial"]
         for rater, flipped in (("anas", False), ("baidaa", True)):
@@ -223,7 +223,7 @@ class TestAgreement:
     def test_typing_differences_do_not_move_agreement(self, tmp_path):
         responses = [_response(f"R{i:03d}", "A1") for i in range(5)]
         sample = annotation.sample_claims(responses, claims_total=4, claims_per_response=2)
-        annotation.write_pack(sample, tmp_path, ["anas", "baidaa"], purpose="pilot")
+        annotation.write_pack(sample, tmp_path, ["anas", "baidaa"], purpose="pilot", sheets=True)
 
         for rater, written in (("anas", ["supported", "partial", "supported", "partial"]),
                                ("baidaa", ["Supported", " partial ", "SUPPORTED", "partial"])):

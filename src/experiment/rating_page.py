@@ -181,22 +181,53 @@ _PAGE = r"""<!doctype html>
 <script>
 const DATA = __PAYLOAD__;
 const KEY = "learnx-ratings-" + DATA.rater;
-const state = JSON.parse(localStorage.getItem(KEY) || "{}");
-const started = Number(localStorage.getItem(KEY + "-started") || Date.now());
-localStorage.setItem(KEY + "-started", started);
+// Storage must never be able to stop the page rendering. Safari refuses
+// localStorage on file:// URLs, and a rater who opens this from an email
+// attachment is on file://. An unguarded read here threw before a single claim
+// was drawn, so the page came up blank with no way to tell why.
+const store = (() => {
+  try {
+    const probe = "__learnx__";
+    window.localStorage.setItem(probe, "1");
+    window.localStorage.removeItem(probe);
+    return window.localStorage;
+  } catch (e) {
+    return null;
+  }
+})();
+const getItem = k => { try { return store && store.getItem(k); } catch (e) { return null; } };
+const setItem = (k, v) => { try { store && store.setItem(k, v); } catch (e) {} };
+
+let state = {};
+try { state = JSON.parse(getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+const started = Number(getItem(KEY + "-started")) || Date.now();
+setItem(KEY + "-started", started);
 
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c =>
   ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
 
 function save() {
-  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  setItem(KEY, JSON.stringify(state));
   render_progress();
 }
 
 function render_progress() {
-  const done = DATA.rows.filter(r => (state[r.claim_id] || {}).claim_support).length;
-  document.getElementById("progress").textContent = done + " of " + DATA.rows.length + " rated";
-  document.getElementById("download").disabled = done === 0;
+  const answered = r => {
+    const v = state[r.claim_id] || {};
+    // Question 3 is deliberately optional: it is left blank where the response
+    // retrieved nothing, so completeness is questions 1 and 2 only.
+    return Boolean(v.claim_support) && Boolean(v.citation_correctness);
+  };
+  const done = DATA.rows.filter(answered).length;
+  const started_any = DATA.rows.filter(r => (state[r.claim_id] || {}).claim_support).length;
+  const el = document.getElementById("progress");
+  el.textContent = done + " of " + DATA.rows.length + " complete";
+  el.classList.toggle("warn", done < DATA.rows.length && started_any > 0);
+  const btn = document.getElementById("download");
+  btn.disabled = started_any === 0;
+  btn.textContent = done < DATA.rows.length && started_any > 0
+    ? "Download (" + (DATA.rows.length - done) + " unfinished)"
+    : "Download my ratings";
   DATA.rows.forEach(r => {
     const el = document.getElementById("claim-" + r.claim_id);
     if (el) el.classList.toggle("done", Boolean((state[r.claim_id] || {}).claim_support));
@@ -277,7 +308,7 @@ document.getElementById("download").addEventListener("click", () => {
   const minutes = Math.round((Date.now() - started) / 60000);
   const quote = v => {
     const s = String(v == null ? "" : v);
-    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
   };
   const lines = [DATA.columns.join(",")];
   DATA.rows.forEach(row => {
@@ -290,9 +321,15 @@ document.getElementById("download").addEventListener("click", () => {
   lines.push("# minutes spent on this sitting: " + minutes);
   const blob = new Blob([lines.join("\n")], { type: "text/csv" });
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
+  a.href = url;
   a.download = "ratings_" + DATA.rater + ".csv";
+  // Firefox and older Safari ignore a click on an anchor that is not in the
+  // document, which would fail silently after an hour of rating.
+  a.style.display = "none";
+  document.body.appendChild(a);
   a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 0);
 });
 
 const corpus = document.getElementById("corpus");

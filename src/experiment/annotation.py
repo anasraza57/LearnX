@@ -36,14 +36,25 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from ..config import config
+from .conditions import CONDITIONS
 from .runner import EXPERIMENT_DIRS, RESULTS_DIR, model_slug
 
 ANNOTATION_DIR = config.paths.data_dir / "annotation"
 SEGMENTER_VERSION = "rule-v2"
 DEFAULT_SEED = 20260917
 
-# Conditions that emit citations, so the citation dimension applies (handoff 4.4).
-CITING_CONDITIONS = {"A1", "A2", "A5"}
+# The citation dimension applies wherever retrieval was on, so the response had
+# sources it could have cited. Only A3 retrieves nothing, so only A3 is exempt.
+#
+# A5 is deliberately included even though its citation instruction is removed:
+# the pre-registered A1 vs A5 contrast is on missing_citation_rate (D29), so an
+# absent citation there must score "missing", not "not_applicable", or the
+# contrast is undefined. A4 likewise carries the instruction and must be rated;
+# excluding it silently recorded real missing citations as not applicable.
+#
+# Derived from the canonical condition definitions rather than written out, so a
+# new condition defaults to "the dimension applies" instead of being dropped.
+CITING_CONDITIONS = {cid for cid, c in CONDITIONS.items() if c.retrieval}
 
 SUPPORT_LABELS = ["supported", "partial", "unsupported", "contradicted", "not_applicable"]
 CITATION_LABELS = ["correct", "misattributed", "missing", "not_applicable"]
@@ -212,7 +223,8 @@ def sample_claims(
     return sample
 
 
-def write_pack(sample: List[Dict[str, Any]], out_dir: Path, raters: Sequence[str], purpose: str) -> Dict[str, Any]:
+def write_pack(sample: List[Dict[str, Any]], out_dir: Path, raters: Sequence[str],
+               purpose: str, sheets: bool = False) -> Dict[str, Any]:
     """
     Write one rating sheet per rater (no backend or condition columns), the
     shared claim and context files, and the key, kept separately.
@@ -220,19 +232,30 @@ def write_pack(sample: List[Dict[str, Any]], out_dir: Path, raters: Sequence[str
     out_dir.mkdir(parents=True, exist_ok=True)
     citation_applies = {c["claim_id"]: c["condition"] in CITING_CONDITIONS for c in sample}
 
-    for rater in raters:
-        path = out_dir / f"ratings_{rater}.csv"
-        with path.open("w", encoding="utf-8", newline="") as handle:
-            writer = csv.writer(handle)
-            writer.writerow(["claim_id", "response_id", "module_title", "topic", "claim_text",
-                             "claim_support", "citation_correctness", "supported_by_retrieved",
-                             "rater_note"])
-            for claim in sample:
-                writer.writerow([
-                    claim["claim_id"], claim["response_id"], claim["module_title"], claim["topic"],
-                    claim["claim_text"], "", "" if citation_applies[claim["claim_id"]] else "not_applicable",
-                    "", "",
-                ])
+    # Blank rating sheets are off by default. The scorer reads
+    # ratings_<rater>.csv from this directory, so empty sheets sitting here let it
+    # run before any rating exists: it reported kappa = 1.000 on n = 4 that way,
+    # because the pre-locked cells agree trivially, which reads like a result. And
+    # the CSV route cannot judge support against the whole corpus (D26) without the
+    # repository, a virtual environment and an indexed store, so a rater taking it
+    # judges against the retrieved passages instead, the exact circularity D26
+    # exists to prevent. The browser sheet from src.experiment.rating_page is the
+    # supported route and writes its own CSV when the rater is done. Tests pass
+    # sheets=True to assert the invariants the sheet has to carry.
+    if sheets:
+        for rater in raters:
+            path = out_dir / f"ratings_{rater}.csv"
+            with path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.writer(handle)
+                writer.writerow(["claim_id", "response_id", "module_title", "topic", "claim_text",
+                                 "claim_support", "citation_correctness", "supported_by_retrieved",
+                                 "rater_note"])
+                for claim in sample:
+                    writer.writerow([
+                        claim["claim_id"], claim["response_id"], claim["module_title"],
+                        claim["topic"], claim["claim_text"], "",
+                        "" if citation_applies[claim["claim_id"]] else "not_applicable", "", "",
+                    ])
 
     # What a rater reads to judge a claim: the response it came from and, where
     # one exists, the passages that response was given.
@@ -301,8 +324,33 @@ def confusion_matrix(first: Sequence[str], second: Sequence[str], labels: Sequen
 
 
 def _read_ratings(path: Path) -> Dict[str, Dict[str, str]]:
-    with path.open(encoding="utf-8") as handle:
-        return {row["claim_id"]: row for row in csv.DictReader(handle)}
+    """
+    One rater's returned sheet.
+
+    The browser sheet appends a blank line and a "# minutes spent" comment, so a
+    returned file is not strictly a table. Those trailing lines used to parse as
+    a row whose every field was None and crash the scorer on a sheet that took an
+    hour to fill in, so they are skipped here rather than trusted. A cell that is
+    absent entirely also becomes None under DictReader when a row is short, so
+    every value is normalised to a string.
+    """
+    out: Dict[str, Dict[str, str]] = {}
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        for row in csv.DictReader(handle):
+            claim_id = (row.get("claim_id") or "").strip()
+            if not claim_id or claim_id.startswith("#"):
+                continue
+            out[claim_id] = {k: ("" if v is None else v) for k, v in row.items() if k is not None}
+    return out
+
+
+def read_minutes(path: Path) -> Optional[int]:
+    """The sitting length the browser sheet records, used to size the main sample (D16)."""
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
+        match = re.search(r"#\s*minutes spent on this sitting:\s*(\d+)", line)
+        if match:
+            return int(match.group(1))
+    return None
 
 
 class RatingError(ValueError):
@@ -343,15 +391,26 @@ def score_pack(pack_dir: Path, raters: Sequence[str]) -> Dict[str, Any]:
     for dimension, labels in (("claim_support", SUPPORT_LABELS),
                               ("citation_correctness", CITATION_LABELS),
                               ("supported_by_retrieved", ["yes", "no", "not_applicable"])):
-        first = [_label(ratings[0][c].get(dimension, ""), labels, raters[0], c, dimension) for c in shared]
-        second = [_label(ratings[1][c].get(dimension, ""), labels, raters[1], c, dimension) for c in shared]
-        both = [(a, b, c) for a, b, c in zip(first, second, shared) if a and b]
+        # The citation dimension is pre-set to not_applicable on conditions that
+        # retrieve nothing, so those cells are constants rather than judgements.
+        # Counting them inflates agreement: two blank sheets scored kappa = 1.000
+        # on n = 4 purely because both carried the same forced value, and even a
+        # real pair of sheets would be flattered by them. They are excluded here,
+        # so the citation kappa is computed only where a rater actually chose.
+        eligible = shared
+        if dimension == "citation_correctness":
+            eligible = [c for c in shared
+                        if key.get(c, {}).get("condition") in CITING_CONDITIONS]
+        first = [_label(ratings[0][c].get(dimension, ""), labels, raters[0], c, dimension) for c in eligible]
+        second = [_label(ratings[1][c].get(dimension, ""), labels, raters[1], c, dimension) for c in eligible]
+        both = [(a, b, c) for a, b, c in zip(first, second, eligible) if a and b]
         if not both:
             report["dimensions"][dimension] = {"status": "not rated"}
             continue
         agree = sum(a == b for a, b, _ in both)
         report["dimensions"][dimension] = {
             "n": len(both),
+            "too_few_to_interpret": len(both) < 10,
             "raw_agreement": agree / len(both),
             "cohens_kappa": cohens_kappa([a for a, _, _ in both], [b for _, b, _ in both]),
             "confusion_matrix": confusion_matrix([a for a, _, _ in both], [b for _, b, _ in both], labels),
