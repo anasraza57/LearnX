@@ -48,7 +48,7 @@ DEFAULT_SEED = 20260917
 #
 # A5 is deliberately included even though its citation instruction is removed:
 # the pre-registered A1 vs A5 contrast is on missing_citation_rate (D29), so an
-# absent citation there must score "missing", not "not_applicable", or the
+# absent citation there must score "uncited", not "not_applicable", or the
 # contrast is undefined. A4 likewise carries the instruction and must be rated;
 # excluding it silently recorded real missing citations as not applicable.
 #
@@ -57,7 +57,7 @@ DEFAULT_SEED = 20260917
 CITING_CONDITIONS = {cid for cid, c in CONDITIONS.items() if c.retrieval}
 
 SUPPORT_LABELS = ["supported", "partial", "unsupported", "contradicted", "not_applicable"]
-CITATION_LABELS = ["correct", "misattributed", "missing", "not_applicable"]
+CITATION_LABELS = ["correct", "misattributed", "uncited", "not_applicable"]
 
 CODE_BLOCK = re.compile(r"```.*?```|~~~.*?~~~", re.DOTALL)
 INLINE_CODE = re.compile(r"`[^`\n]*`")
@@ -257,6 +257,20 @@ def write_pack(sample: List[Dict[str, Any]], out_dir: Path, raters: Sequence[str
                         "" if citation_applies[claim["claim_id"]] else "not_applicable", "", "",
                     ])
 
+    # The units a rater is given: everything needed to judge a claim and nothing
+    # that identifies the condition or the backend. This is what the browser
+    # sheet is built from. It used to be read out of a blank rating CSV, which
+    # broke the moment packs stopped shipping one, and it must stay separate
+    # from key.json, which a rater is not supposed to open.
+    claims_file = [
+        {"claim_id": c["claim_id"], "response_id": c["response_id"],
+         "module_title": c["module_title"], "topic": c["topic"],
+         "claim_text": c["claim_text"],
+         "citation_applies": citation_applies[c["claim_id"]]}
+        for c in sample
+    ]
+    (out_dir / "claims.json").write_text(json.dumps(claims_file, indent=2), encoding="utf-8")
+
     # What a rater reads to judge a claim: the response it came from and, where
     # one exists, the passages that response was given.
     context = {}
@@ -379,6 +393,49 @@ def _label(value: str, labels: Sequence[str], rater: str, claim_id: str, dimensi
     return cleaned
 
 
+def check_sheet(pack_dir: Path, rater: str) -> Dict[str, Any]:
+    """
+    Mechanical validity of one rater's sheet, before anyone looks at agreement.
+
+    This checks only what the pack itself determines, never whether a judgement
+    is right. A label can be perfectly reasonable and still be impossible: the
+    pilot lost a whole dimension to `correct` being chosen on claims that carried
+    no citation marker at all, which no amount of judgement could make valid.
+    Catching that costs a second and does not touch the rater's independence.
+    """
+    rows = _read_ratings(pack_dir / f"ratings_{rater}.csv")
+    claims = {c["claim_id"]: c for c in
+              json.loads((pack_dir / "key.json").read_text(encoding="utf-8"))["claims"]}
+    contexts = {c["response_id"]: c for c in
+                json.loads((pack_dir / "contexts.json").read_text(encoding="utf-8"))}
+
+    problems: List[Dict[str, str]] = []
+    for claim_id, row in sorted(rows.items()):
+        meta = claims.get(claim_id, {})
+        marker = bool(CITATION_MARKER.search(row.get("claim_text", "")))
+        passages = contexts.get(meta.get("response_id"), {}).get("retrieved_passages") or []
+        support = (row.get("claim_support") or "").strip().lower()
+        citation = (row.get("citation_correctness") or "").strip().lower()
+        retrieved = (row.get("supported_by_retrieved") or "").strip().lower()
+
+        def flag(what: str) -> None:
+            problems.append({"claim_id": claim_id, "problem": what})
+
+        if not support:
+            flag("dimension 1 is blank")
+        if citation in {"correct", "misattributed"} and not marker:
+            flag(f"dimension 2 is {citation!r} but this claim carries no citation marker, "
+                 "so there is nothing attached to be correct or misattributed")
+        if citation == "uncited" and marker:
+            flag("dimension 2 is 'uncited' but this claim does carry a citation marker")
+        if support == "not_applicable" and citation not in {"not_applicable", ""}:
+            flag("dimension 1 is 'not_applicable', so dimension 2 should be too")
+        if retrieved and not passages:
+            flag(f"dimension 3 is {retrieved!r} but this response retrieved nothing, "
+                 "so the cell should be left blank")
+    return {"rater": rater, "claims": len(rows), "problems": problems}
+
+
 def score_pack(pack_dir: Path, raters: Sequence[str]) -> Dict[str, Any]:
     """Agreement per dimension, with the confusion matrices and the disagreeing claims."""
     if len(raters) != 2:
@@ -429,7 +486,7 @@ def _load_or_exit(experiment: str, model: str) -> List[Dict[str, Any]]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("command", choices=["pilot", "main", "score"])
+    parser.add_argument("command", choices=["pilot", "main", "score", "check"])
     parser.add_argument("--experiment", choices=sorted(EXPERIMENT_DIRS), default="e1")
     parser.add_argument("--model", default="gpt-5.4-mini")
     parser.add_argument("--claims", type=int, help="claims to sample (default: 20 pilot, 240 main)")
@@ -438,6 +495,24 @@ def main() -> None:
     parser.add_argument("--raters", nargs="+", default=["anas", "baidaa"])
     parser.add_argument("--pack", type=Path, help="pack directory (for score)")
     args = parser.parse_args()
+
+    if args.command == "check":
+        pack = args.pack or (ANNOTATION_DIR / "pilot")
+        bad = 0
+        for rater in args.raters:
+            report = check_sheet(pack, rater)
+            if report["problems"]:
+                bad += len(report["problems"])
+                print(f"\n{rater}: {len(report['problems'])} problem(s) in {report['claims']} claims")
+                for item in report["problems"]:
+                    print(f"  {item['claim_id']}: {item['problem']}")
+            else:
+                print(f"{rater}: {report['claims']} claims, nothing mechanically wrong")
+        if bad:
+            print("\nThese are rule violations, not disagreements. Fix them and run check again.")
+            raise SystemExit(1)
+        return
+
 
     if args.command == "score":
         pack = args.pack or ANNOTATION_DIR / "main"

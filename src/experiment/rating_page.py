@@ -54,7 +54,17 @@ def _corpus_chunks() -> List[Dict[str, str]]:
 
 
 def build(pack_dir: Path, rater: str) -> Path:
-    rows = list(csv.DictReader((pack_dir / f"ratings_{rater}.csv").open(encoding="utf-8")))
+    # Built from the pack's claims file, never from a rating sheet. Reading a
+    # sheet meant a page could not be built before one existed, and rebuilding
+    # after ratings came back pulled the trailing "# minutes spent" comment in
+    # as an extra claim and pre-filled every answer.
+    claims = json.loads((pack_dir / "claims.json").read_text(encoding="utf-8"))
+    rows = [{"claim_id": c["claim_id"], "response_id": c["response_id"],
+             "module_title": c["module_title"], "topic": c["topic"],
+             "claim_text": c["claim_text"], "claim_support": "",
+             "citation_correctness": "" if c["citation_applies"] else "not_applicable",
+             "supported_by_retrieved": "", "rater_note": ""}
+            for c in claims]
     contexts = {c["response_id"]: c
                 for c in json.loads((pack_dir / "contexts.json").read_text(encoding="utf-8"))}
     payload = {
@@ -234,10 +244,11 @@ function render_progress() {
   });
 }
 
-function options(claim_id, dim, labels, locked) {
+function options(claim_id, dim, labels, locked, also_disabled) {
+  const off = also_disabled || [];
   return labels.map(v => {
     const current = (state[claim_id] || {})[dim];
-    const dis = locked ? " disabled" : "";
+    const dis = (locked || off.includes(v)) ? " disabled" : "";
     return '<label class="' + (locked ? "disabled" : "") + '">' +
       '<input type="radio" name="' + dim + "-" + claim_id + '" value="' + v + '"' +
       (current === v ? " checked" : "") + dis + '><span>' + v + "</span></label>";
@@ -246,7 +257,7 @@ function options(claim_id, dim, labels, locked) {
 
 function passage_block(p) {
   const src = esc(p.source || "source " + p.passage_index);
-  const url = p.url ? ' <a href="' + esc(p.url) + '" target="_blank" rel="noreferrer">link</a>' : "";
+  const url = p.url ? ' <a href="' + esc(p.url) + '" target="_blank" rel="noreferrer">source page</a>' : "";
   return '<div class="passage"><span class="src">[' + esc(p.passage_index) + '] ' + src + url +
          "</span>" + esc(p.content) + "</div>";
 }
@@ -255,6 +266,24 @@ document.getElementById("claims").innerHTML = DATA.rows.map((row, i) => {
   const ctx = DATA.contexts[row.response_id] || {};
   const passages = ctx.retrieved_passages || [];
   const locked = row.citation_correctness === "not_applicable";
+  // The citation is the [n] marker inside the claim itself, not the source-page
+  // link beside each passage. Reading those as the same thing cost a whole
+  // dimension in the pilot, so the marker is resolved and shown here.
+  const marks = (row.claim_text.match(/\[(?:Sources?\s+)?\d+(?:\s*[-,;]\s*\d+)*\]/g) || []);
+  const cited_ids = [...new Set(marks.join(" ").match(/\d+/g) || [])].map(Number);
+  const cited = passages.filter(p => cited_ids.includes(Number(p.passage_index)));
+  const cite_help = cited_ids.length
+    ? '<div class="cited"><p class="hint">This claim cites ' +
+        cited_ids.map(n => "[" + n + "]").join(" ") +
+        ". Judge whether the passage below supports it.</p>" +
+        (cited.length ? cited.map(passage_block).join("")
+                      : '<p class="hint warnbox">No passage with that number was supplied to this ' +
+                        'response. A marker pointing at a passage that does not exist is ' +
+                        '<strong>misattributed</strong>.</p>') +
+      "</div>"
+    : '<p class="hint warnbox">This claim carries no citation marker, so there is nothing ' +
+      'attached to be correct or misattributed. If it is a factual claim that needed a source, ' +
+      'the answer is <strong>uncited</strong>.</p>';
   if (locked && !(state[row.claim_id] || {}).citation_correctness) {
     state[row.claim_id] = Object.assign({}, state[row.claim_id], { citation_correctness: "not_applicable" });
   }
@@ -276,8 +305,9 @@ document.getElementById("claims").innerHTML = DATA.rows.map((row, i) => {
       '<div class="dim"><label class="q">2. Is the citation attached to it correct?' +
         (locked ? " (fixed: this condition emits no citations)" : "") + "</label>" +
         '<div class="opts" data-dim="citation_correctness" data-claim="' + row.claim_id + '">' +
-        options(row.claim_id, "citation_correctness", DATA.labels.citation_correctness, locked) +
-        "</div></div>" +
+        options(row.claim_id, "citation_correctness", DATA.labels.citation_correctness, locked,
+                cited_ids.length ? [] : ["correct", "misattributed"]) +
+        "</div>" + cite_help + "</div>" +
       '<div class="dim"><label class="q">3. Does it follow from the passages this response was given?' +
         " Leave blank if it retrieved nothing.</label>" +
         '<div class="opts" data-dim="supported_by_retrieved" data-claim="' + row.claim_id + '">' +

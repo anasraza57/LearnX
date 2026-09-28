@@ -1,7 +1,9 @@
 # Annotation guide: claim support and citation correctness
 
-**Draft for the pilot.** Reconcile it with the second rater after the pilot, then freeze it for the
-main pass. Version 0.1, 17 September 2026.
+**Version 0.2, 28 September 2026.** Amended after the pilot. Dimension 2 is rewritten: it produced
+kappa = 0.079 across 16 claims, with all 11 disagreements the same shape, one rater reading the
+question as "does this claim carry a citation" and the other as "does the response cite acceptably".
+Dimensions 1 and 3 are unchanged (kappa 0.496 and 0.818). Pilot claims are discarded.
 
 ## What you are judging, and what you are not
 
@@ -27,7 +29,8 @@ Support is judged against **the whole indexed corpus**, not against the passages
 response happened to retrieve. This is what makes the conditions comparable: one of them retrieves
 nothing at all, and judging it against its own (empty) context would make its claims unjudgeable.
 
-Search the corpus rather than reading it end to end:
+Search the corpus rather than reading it end to end. The browser sheet has a **Search the corpus**
+button that does this with no setup. From the repository the same search is:
 
 ```bash
 .venv/bin/python -m src.experiment.corpus search "list comprehension syntax"
@@ -57,20 +60,36 @@ Worked examples:
 - "Tuples are mutable." The tutorial says tuples are immutable, so `contradicted`.
 - "In this lesson you will learn about dictionaries." Not a factual claim, so `not_applicable`.
 
-## Dimension 2: citation correctness (claims from responses that cite)
+## Dimension 2: citation correctness (every factual claim)
 
-Only applies where the response carries inline citations. Where the sheet already reads
-`not_applicable`, leave it.
+**Start by looking at the claim itself for a citation marker**, something like `[3]` or `[1, 3]`.
+This dimension is about *this claim*, not about the response's citing habits. A response that cites
+well in other paragraphs does not make an uncited claim `correct`. That single confusion produced
+every disagreement in the pilot.
 
 | Label | Use when |
 |---|---|
-| `correct` | A citation is attached and the passage it points to supports the claim. |
-| `misattributed` | A citation is attached but that passage does not support the claim, even if some other passage would. |
-| `missing` | The claim needs attribution (it is a factual claim about Python drawn from the materials) and none is attached. |
-| `not_applicable` | The claim itself is `not_applicable` under dimension 1. |
+| `correct` | A marker is on this claim **and** the passage it points to supports the claim. |
+| `misattributed` | A marker is on this claim **but** the passage it points to does not support it, even if some other passage would. Also use this where the marker points to a passage that does not exist, which happens in the condition that retrieves nothing. |
+| `uncited` | No marker on this claim, and the claim is a factual statement about Python that should have carried one. (Called `missing` in version 0.1.) |
+| `not_applicable` | The claim is `not_applicable` under dimension 1, **or** the response retrieved nothing and this claim carries no marker, so there was no source it could have pointed at. |
 
-A claim can be `supported` and `misattributed` at the same time: the corpus backs it, but the source
-the system pointed at does not. That combination is the reason the two dimensions are separate.
+Decision order, which removes the ambiguity:
+
+1. Is the claim `not_applicable` under dimension 1? Then `not_applicable`.
+2. Does the claim carry a marker? If yes, check the passage it names: supporting is `correct`,
+   not supporting, or naming a passage that was never supplied, is `misattributed`.
+3. No marker, and the response was given passages? Then `uncited`.
+4. No marker, and the response was given no passages at all? Then `not_applicable`.
+
+Step 2's "passage that was never supplied" is not hypothetical. In the ungrounded condition 541 of
+919 responses carry citation markers despite having been given no passages whatsoever, 6,157 markers
+in total. Those are fabricated attributions and they should be recorded as `misattributed`.
+
+A claim can be `supported` and `uncited` at the same time, and that pairing is common: the corpus
+backs the claim, and the system simply did not attribute it. It can equally be `supported` and
+`misattributed`: the corpus backs it, but the source pointed at does not. Both combinations are why
+the two dimensions are kept separate.
 
 ## Dimension 3: supported by the retrieved passages (secondary, grounded responses only)
 
@@ -107,13 +126,16 @@ Please do not look up the key, and do not let a guess about the condition influe
 
 ## Practical notes
 
-- Work in `ratings_<yourname>.csv`. Fill `claim_support`, `citation_correctness`,
-  `supported_by_retrieved`, and use `rater_note` for anything the labels cannot express.
-- Do not reorder or delete rows; the claim ids join the two sheets.
+- Work in your own browser sheet, `data/annotation/pilot/rate_<yourname>.html`. Open it in any
+  browser; nothing needs installing and it works offline. It holds the claims, each full response,
+  the passages that response was given, and the corpus with a search box, and it exports the CSV
+  when you are done. There is no blank spreadsheet to fill in: judging support against the whole
+  corpus needs the corpus to hand, which the browser sheet carries and a CSV does not.
+- Your answers are kept in the browser as you type, so a closed tab does not lose them.
 - Write the labels as the guide spells them. Capitals and stray spaces are forgiven, so "Supported"
   and " supported " are the same label, but anything that is not a label at all is refused with the
   claim named, rather than being counted as a category of its own and quietly lowering our agreement.
 - A half-finished sheet is fine. Agreement is computed over the claims we have both rated.
-- Keep a rough note of how long a batch takes. Sizing the main sample depends on it (D16).
+- Keep a rough note of how long a batch takes. The size of the main sample is set from that figure.
 - If you find yourself unsure between two labels more than occasionally, stop and raise it: the guide
   is wrong, not you.
