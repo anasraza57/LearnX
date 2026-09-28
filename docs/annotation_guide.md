@@ -63,16 +63,29 @@ Worked examples:
 ## Dimension 2: citation correctness (every factual claim)
 
 **Start by looking at the claim itself for a citation marker**, something like `[3]` or `[1, 3]`.
+It sits in the claim line at the top of the card. You do not need to open anything to find it.
+
+Three things on the page are easy to confuse, and only one of them is the citation:
+
+| On the page | What it is |
+|---|---|
+| The `[n]` marker in the claim line | **The citation.** This is what dimension 2 judges |
+| The `source page` link beside each passage | Where that passage was taken from. Always correct by construction, since the system records it. Not the citation and never the thing being rated |
+| The corpus search results | Evidence for dimension 1 only |
+
+The mechanic: the claim says `[5]`, so find passage 5 in the list, read **its text**, and decide
+whether it supports the claim. The rating page now shows that passage directly under the question.
+
 This dimension is about *this claim*, not about the response's citing habits. A response that cites
-well in other paragraphs does not make an uncited claim `correct`. That single confusion produced
-every disagreement in the pilot.
+well in other paragraphs does not make an uncited claim `correct`. Confusing the citation with the
+passage link produced every disagreement in the pilot.
 
 | Label | Use when |
 |---|---|
 | `correct` | A marker is on this claim **and** the passage it points to supports the claim. |
-| `misattributed` | A marker is on this claim **but** the passage it points to does not support it, even if some other passage would. Also use this where the marker points to a passage that does not exist, which happens in the condition that retrieves nothing. |
+| `misattributed` | A marker is on this claim **but** the passage it points to does not support it, even if some other passage would. Also use this if the marker names a passage that was never supplied. |
 | `uncited` | No marker on this claim, and the claim is a factual statement about Python that should have carried one. (Called `missing` in version 0.1.) |
-| `not_applicable` | The claim is `not_applicable` under dimension 1, **or** the response retrieved nothing and this claim carries no marker, so there was no source it could have pointed at. |
+| `not_applicable` | The claim is `not_applicable` under dimension 1, **or** the response retrieved nothing, so there was no source it could have pointed at. |
 
 Decision order, which removes the ambiguity:
 
@@ -82,9 +95,10 @@ Decision order, which removes the ambiguity:
 3. No marker, and the response was given passages? Then `uncited`.
 4. No marker, and the response was given no passages at all? Then `not_applicable`.
 
-Step 2's "passage that was never supplied" is not hypothetical. In the ungrounded condition 541 of
-919 responses carry citation markers despite having been given no passages whatsoever, 6,157 markers
-in total. Those are fabricated attributions and they should be recorded as `misattributed`.
+In practice a marker naming a passage that was never supplied is rare: the condition that retrieves
+nothing almost never cites, which is what you would expect of a response with no sources and no
+instruction to attribute. The case is in the guide because it is unambiguous when it does occur, not
+because it is common.
 
 A claim can be `supported` and `uncited` at the same time, and that pairing is common: the corpus
 backs the claim, and the system simply did not attribute it. It can equally be `supported` and

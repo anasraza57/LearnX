@@ -37,6 +37,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from ..config import config
 from .conditions import CONDITIONS
+from ..agents.rag_instructor import extract_inline_citations
 from .runner import EXPERIMENT_DIRS, RESULTS_DIR, model_slug
 
 ANNOTATION_DIR = config.paths.data_dir / "annotation"
@@ -62,6 +63,22 @@ CITATION_LABELS = ["correct", "misattributed", "uncited", "not_applicable"]
 CODE_BLOCK = re.compile(r"```.*?```|~~~.*?~~~", re.DOTALL)
 INLINE_CODE = re.compile(r"`[^`\n]*`")
 CITATION_MARKER = re.compile(r"\[(?:Sources?\s+)?\d+(?:\s*[-–,;]\s*(?:Sources?\s+)?\d+)*(?:\s*:[^\]\n]*)?\]")
+
+
+def cited_indices(text: str, num_passages: int = 99) -> List[int]:
+    """
+    Passage numbers this text cites, using the same extractor as the analysis.
+
+    Python indexing looks exactly like a citation: `word[0]`, `items[1:]`,
+    `grid[1][2]`. A naive pattern counted a lesson's code examples as
+    attributions and put the ungrounded condition at 58.9% of responses
+    "citing" when the real figure is 0.1%, which read as fabricated attribution
+    rather than the artefact it was. Delegating to extract_inline_citations
+    keeps this in step with the numbers the paper reports, rather than being a
+    second implementation that can drift.
+    """
+    return sorted({c["passage_index"]
+                   for c in extract_inline_citations(text or "", num_passages)})
 # A sentence ends at .!? plus any citation markers that trail it, when the next
 # thing looks like the start of a new sentence. The markers stay with the claim
 # they support.
@@ -137,8 +154,7 @@ def segment_claims(response_text: str) -> List[Dict[str, Any]]:
                 continue  # mostly markup or code
             claims.append({
                 "text": sentence,
-                "cited_passages": sorted({int(n) for marker in CITATION_MARKER.findall(sentence)
-                                          for n in re.findall(r"\d+", marker)}),
+                "cited_passages": cited_indices(sentence),
             })
     return claims
 
@@ -412,7 +428,7 @@ def check_sheet(pack_dir: Path, rater: str) -> Dict[str, Any]:
     problems: List[Dict[str, str]] = []
     for claim_id, row in sorted(rows.items()):
         meta = claims.get(claim_id, {})
-        marker = bool(CITATION_MARKER.search(row.get("claim_text", "")))
+        marker = bool(cited_indices(row.get("claim_text", "")))
         passages = contexts.get(meta.get("response_id"), {}).get("retrieved_passages") or []
         support = (row.get("claim_support") or "").strip().lower()
         citation = (row.get("citation_correctness") or "").strip().lower()
